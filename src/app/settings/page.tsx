@@ -11,6 +11,7 @@ export default function SettingsPage() {
         </div>
       </div>
       {/* Settings content will go here */}
+      <p>This is where your general settings will be.</p>
     </div>
   )
 }
