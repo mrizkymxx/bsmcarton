@@ -59,7 +59,10 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", ...fontFamily.sans],
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        inter: "var(--font-inter)",
+        roboto: "var(--font-roboto)",
+        poppins: "var(--font-poppins)",
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",

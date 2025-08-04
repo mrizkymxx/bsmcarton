@@ -36,6 +36,9 @@
 
     --chart-1: 0 0% 0%;
     --chart-2: 0 0% 0%;
+
+    --font-sans: "Inter", sans-serif;
+    --font-size-base: 1rem;
   }
  
   .dark {
@@ -80,5 +83,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
   }
 }
