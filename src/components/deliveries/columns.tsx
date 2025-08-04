@@ -50,7 +50,11 @@ const renderItems = (items: DeliveryItem[]) => {
                                     <TableCell>
                                       <div className="font-medium">{item.name}</div>
                                       <div className="text-xs text-muted-foreground">
-                                          {item.type === 'Box' ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm` : `${item.finishedSize.length}x${item.finishedSize.width} cm`}
+                                          {item.finishedSize
+                                            ? item.type === 'Box'
+                                              ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm`
+                                              : `${item.finishedSize.length}x${item.finishedSize.width} cm`
+                                            : '-'}
                                       </div>
                                     </TableCell>
                                     <TableCell>{item.poNumber}</TableCell>
