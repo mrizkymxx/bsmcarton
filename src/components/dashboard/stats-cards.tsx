@@ -34,7 +34,7 @@ export function StatsCards({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{activePOCount}</div>
-          <p className="text-xs text-muted-foreground">PO dengan status "Open"</p>
+          <p className="text-xs text-muted-foreground">total PO yang belum selesai</p>
         </CardContent>
       </Card>
       <Card>
