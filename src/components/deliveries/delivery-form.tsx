@@ -2,13 +2,12 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm, useWatch } from "react-hook-form"
+import { useFieldArray, useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Loader2, Trash } from "lucide-react"
+import { CalendarIcon, Loader2 } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
@@ -61,7 +60,6 @@ const formSchema = z.object({
   items: z.array(deliveryItemSchema).min(1, "Minimal harus ada 1 item untuk dikirim."),
 });
 
-
 type DeliveryFormValues = z.infer<typeof formSchema>
 
 interface DeliveryFormProps {
@@ -72,9 +70,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
   const { toast } = useToast()
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isPending, startTransition] = useTransition();
-  
   const [readyItems, setReadyItems] = useState<ReadyToShipItem[]>([]);
-  const [selectedItems, setSelectedItems] = useState<Record<string, boolean>>({});
 
   const form = useForm<DeliveryFormValues>({
     resolver: zodResolver(formSchema),
@@ -87,23 +83,21 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
     mode: "onBlur",
   })
   
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, replace } = useFieldArray({
     control: form.control,
     name: "items"
   });
 
-  const selectedCustomerId = useWatch({ control: form.control, name: "customerId" });
+  const selectedCustomerId = form.watch("customerId");
 
   useEffect(() => {
     const fetchCustomers = async () => {
-        startTransition(async () => {
-            try {
-                const fetchedCustomers = await getCustomers();
-                setCustomers(fetchedCustomers);
-            } catch (error) {
-                toast({ title: "Error", description: "Gagal memuat data pelanggan.", variant: "destructive" });
-            }
-        });
+        try {
+            const fetchedCustomers = await getCustomers();
+            setCustomers(fetchedCustomers);
+        } catch (error) {
+            toast({ title: "Error", description: "Gagal memuat data pelanggan.", variant: "destructive" });
+        }
     };
     fetchCustomers();
   }, [toast]);
@@ -119,9 +113,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
            try {
                const items = await getReadyToShipItems(selectedCustomerId);
                setReadyItems(items);
-               // Reset selections when customer changes
-               setSelectedItems({});
-               replace([]); // Clear the form array
+               replace([]);
            } catch(error) {
                 toast({ title: "Error", description: "Gagal memuat item siap kirim.", variant: "destructive" });
            }
@@ -131,27 +123,31 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
   }, [selectedCustomerId, toast, replace]);
   
   const handleItemSelectionChange = (itemId: string, checked: boolean) => {
-      const newSelectedItems = {...selectedItems, [itemId]: checked };
-      setSelectedItems(newSelectedItems);
-
-      const formItems = readyItems
-        .filter(item => newSelectedItems[item.id])
-        .map(item => ({
-            poId: item.poId,
-            orderItemId: item.id,
-            name: item.name,
-            poNumber: item.poNumber,
-            quantity: item.availableToShip,
-            availableToShip: item.availableToShip,
-            type: item.type,
-            finishedSize: {
-                length: item.finishedSize?.length ?? 0,
-                width: item.finishedSize?.width ?? 0,
-                height: item.finishedSize?.height ?? 0,
-            },
-        }));
-      
-      replace(formItems);
+    const currentFormItems = form.getValues('items');
+    
+    if (checked) {
+        const itemToAdd = readyItems.find(item => item.id === itemId);
+        if (itemToAdd) {
+             const newFormItem = {
+                poId: itemToAdd.poId,
+                orderItemId: itemToAdd.id,
+                name: itemToAdd.name,
+                poNumber: itemToAdd.poNumber,
+                quantity: itemToAdd.availableToShip,
+                availableToShip: itemToAdd.availableToShip,
+                type: itemToAdd.type,
+                finishedSize: {
+                    length: itemToAdd.finishedSize?.length ?? 0,
+                    width: itemToAdd.finishedSize?.width ?? 0,
+                    height: itemToAdd.finishedSize?.height ?? 0,
+                },
+            };
+            replace([...currentFormItems, newFormItem]);
+        }
+    } else {
+        const newFormItems = currentFormItems.filter(item => item.orderItemId !== itemId);
+        replace(newFormItems);
+    }
   }
 
   const onSubmit = async (values: DeliveryFormValues) => {
@@ -163,15 +159,6 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         ...values,
         customerName: selectedCustomer.name,
         deliveryDate: values.deliveryDate.toISOString(),
-         items: values.items.map(item => ({
-          poId: item.poId,
-          orderItemId: item.orderItemId,
-          name: item.name,
-          poNumber: item.poNumber,
-          quantity: item.quantity,
-          type: item.type,
-          finishedSize: item.finishedSize,
-        })),
       };
       
       await createDelivery(deliveryData);
@@ -303,7 +290,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                                 <TableRow key={item.id}>
                                     <TableCell>
                                         <Checkbox 
-                                            checked={selectedItems[item.id] || false}
+                                            checked={fieldIndex > -1}
                                             onCheckedChange={(checked) => handleItemSelectionChange(item.id, !!checked)}
                                         />
                                     </TableCell>
@@ -338,9 +325,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                 </div>
             )}
            <FormMessage className="mt-2">{form.formState.errors.items?.message}</FormMessage>
-           <FormMessage className="mt-2">{form.formState.errors.items?.root?.message}</FormMessage>
         </div>
-
 
         <div className="flex justify-end gap-4">
             <Button type="submit" disabled={form.formState.isSubmitting || isPending || fields.length === 0}>

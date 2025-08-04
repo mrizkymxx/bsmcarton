@@ -8,15 +8,12 @@ import {
   getDocs,
   doc,
   addDoc,
-  updateDoc,
-  serverTimestamp,
-  query,
-  orderBy,
-  Timestamp,
   writeBatch,
   where,
   getDoc,
-  deleteDoc,
+  query,
+  orderBy,
+  Timestamp,
 } from "firebase/firestore";
 import { Delivery, PurchaseOrder, ReadyToShipItem } from "../types";
 
@@ -80,12 +77,13 @@ export async function getReadyToShipItems(
       const po = doc.data() as Omit<PurchaseOrder, "id" | "items"> & { items: any[] };
       po.items.forEach((item) => {
         const delivered = item.delivered || 0;
-        const availableToShip = item.produced - delivered;
+        const produced = item.produced || 0;
+        const availableToShip = produced - delivered;
         
-        // **FIX:** Only include items that have a quantity > 0 available to ship.
-        if (availableToShip > 0) {
+        if (item.status === 'Siap Kirim' && availableToShip > 0) {
           items.push({
             ...item,
+            id: item.id, // Ensure item.id is passed correctly
             poId: doc.id,
             poNumber: po.poNumber,
             customerName: po.customerName,
@@ -114,7 +112,6 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
     const deliveryData = {
       ...data,
       deliveryDate: new Date(data.deliveryDate),
-      // Ensure all item fields are included
       items: data.items.map(item => ({
         poId: item.poId,
         orderItemId: item.orderItemId,
@@ -145,9 +142,8 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
 
       const poData = poDoc.data() as PurchaseOrder;
       const updatedItems = [...poData.items];
-      let isPoCompleted = true; // Assume PO will be completed
+      let isPoCompleted = true;
 
-      // Update items within the PO
       itemsByPo[poId].forEach((deliveryItem) => {
         const itemIndex = updatedItems.findIndex(
           (item) => item.id === deliveryItem.orderItemId
@@ -162,7 +158,6 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
         }
       });
       
-      // Check if all items in the PO are now fully delivered
       for (const item of updatedItems) {
         if ((item.delivered || 0) < item.total) {
           isPoCompleted = false;
@@ -170,17 +165,14 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
         }
       }
 
-      // 4. Batch the PO update
       batch.update(poRef, { 
         items: updatedItems,
         status: isPoCompleted ? 'Completed' : 'Open' 
       });
     }
 
-    // 5. Commit all batched writes
     await batch.commit();
 
-    // 6. Revalidate paths
     revalidatePath("/deliveries");
     revalidatePath("/production");
     revalidatePath("/purchase-orders");
@@ -197,22 +189,18 @@ export async function deleteDelivery(id: string) {
   const deliveryRef = doc(db, "deliveries", id);
 
   try {
-    // 1. Get the delivery document to know what to roll back
     const deliveryDoc = await getDoc(deliveryRef);
     if (!deliveryDoc.exists()) {
       throw new Error("Surat Jalan tidak ditemukan.");
     }
     const deliveryData = deliveryDoc.data() as Delivery;
 
-    // 2. Group items by their PO to minimize reads
     const itemsByPo = deliveryData.items.reduce((acc, item) => {
       acc[item.poId] = acc[item.poId] || [];
       acc[item.poId].push(item);
       return acc;
     }, {} as Record<string, typeof deliveryData.items>);
 
-
-    // 3. Update each affected Purchase Order
     for (const poId in itemsByPo) {
       const poRef = doc(db, "purchase_orders", poId);
       const poDoc = await getDoc(poRef);
@@ -224,7 +212,6 @@ export async function deleteDelivery(id: string) {
       const poData = poDoc.data() as PurchaseOrder;
       const updatedItems = [...poData.items];
 
-      // Subtract the delivered quantity for each item in the deleted delivery
       itemsByPo[poId].forEach((deliveryItem) => {
         const itemIndex = updatedItems.findIndex(
           (item) => item.id === deliveryItem.orderItemId
@@ -232,32 +219,26 @@ export async function deleteDelivery(id: string) {
 
         if (itemIndex > -1) {
           const item = updatedItems[itemIndex];
-          item.delivered = (item.delivered || 0) - deliveryItem.quantity;
-          if (item.delivered < 0) item.delivered = 0; // Prevent negative values
+          const originalDelivered = item.delivered || 0;
+          item.delivered = originalDelivered - deliveryItem.quantity;
+          if (item.delivered < 0) item.delivered = 0;
 
-          // Re-evaluate status
-          if (item.produced >= item.total) {
-              item.status = 'Siap Kirim';
-          } else if (item.produced > item.delivered) {
-              item.status = 'Diproduksi';
+          if (item.produced > item.delivered) {
+             item.status = 'Siap Kirim';
           }
         }
       });
 
-      // The PO status must be 'Open' if we are deleting a delivery
       batch.update(poRef, { 
         items: updatedItems,
         status: 'Open'
       });
     }
 
-    // 4. Delete the actual delivery document
     batch.delete(deliveryRef);
 
-    // 5. Commit all batched writes
     await batch.commit();
 
-    // 6. Revalidate paths
     revalidatePath("/deliveries");
     revalidatePath("/production");
     revalidatePath("/purchase-orders");
