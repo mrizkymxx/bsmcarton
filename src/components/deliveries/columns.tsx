@@ -131,11 +131,12 @@ const renderItems = (items: DeliveryItem[]) => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {items.map(item => (
-                                <TableRow key={item.orderItemId}>
+                            {items.map((item, index) => (
+                                <TableRow key={`${item.orderItemId}-${index}`}>
                                     <TableCell>
                                       <div className="font-medium">{item.name}</div>
                                       <div className="text-xs text-muted-foreground">
+                                          {/* **CRITICAL FIX**: Safely access finishedSize */}
                                           {item.finishedSize
                                             ? item.type === 'Box'
                                               ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm`
@@ -223,3 +224,5 @@ export const columns: ColumnDef<Delivery>[] = [
     cell: ({ row }) => <ActionsCell delivery={row.original} />,
   },
 ]
+
+    

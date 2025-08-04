@@ -35,19 +35,21 @@ import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Checkbox } from "../ui/checkbox"
 
+// **REBUILD**: Simplified schema, focusing on what's needed from the form.
 const deliveryItemSchema = z.object({
   poId: z.string(),
   orderItemId: z.string(),
   name: z.string(),
   poNumber: z.string(),
-  quantity: z.coerce.number().min(1, "Jumlah harus minimal 1."),
-  availableToShip: z.coerce.number(),
   type: z.enum(["Box", "Layer"]),
+  // **REBUILD**: Make finishedSize optional and just check for object shape
   finishedSize: z.object({
     length: z.coerce.number(),
     width: z.coerce.number(),
     height: z.coerce.number().optional(),
-  }),
+  }).nullable(),
+  quantity: z.coerce.number().min(1, "Jumlah harus minimal 1."),
+  availableToShip: z.coerce.number(), // This is for reference, not direct validation here
 });
 
 const formSchema = z.object({
@@ -80,10 +82,10 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         deliveryDate: new Date(),
         items: [],
     },
-    mode: "onBlur",
+    mode: "onChange", // Use onChange for more responsive validation
   })
   
-  const { fields, replace } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items"
   });
@@ -103,6 +105,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
   }, [toast]);
   
   useEffect(() => {
+      form.setValue('items', []); // Reset items when customer changes
       if (!selectedCustomerId) {
           setReadyItems([]);
           return;
@@ -113,14 +116,13 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
            try {
                const items = await getReadyToShipItems(selectedCustomerId);
                setReadyItems(items);
-               replace([]);
            } catch(error) {
                 toast({ title: "Error", description: "Gagal memuat item siap kirim.", variant: "destructive" });
            }
         });
       };
       fetchReadyItems();
-  }, [selectedCustomerId, toast, replace]);
+  }, [selectedCustomerId, toast, form]);
   
   const handleItemSelectionChange = (itemId: string, checked: boolean) => {
     const currentFormItems = form.getValues('items');
@@ -128,7 +130,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
     if (checked) {
         const itemToAdd = readyItems.find(item => item.id === itemId);
         if (itemToAdd) {
-             const newFormItem = {
+             const newFormItem: z.infer<typeof deliveryItemSchema> = {
                 poId: itemToAdd.poId,
                 orderItemId: itemToAdd.id,
                 name: itemToAdd.name,
@@ -136,17 +138,20 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                 quantity: itemToAdd.availableToShip,
                 availableToShip: itemToAdd.availableToShip,
                 type: itemToAdd.type,
-                finishedSize: {
-                    length: itemToAdd.finishedSize?.length ?? 0,
-                    width: itemToAdd.finishedSize?.width ?? 0,
-                    height: itemToAdd.finishedSize?.height ?? 0,
-                },
+                // **REBUILD**: Safely handle finishedSize
+                finishedSize: itemToAdd.finishedSize ? {
+                    length: itemToAdd.finishedSize.length,
+                    width: itemToAdd.finishedSize.width,
+                    height: itemToAdd.finishedSize.height,
+                } : null,
             };
-            replace([...currentFormItems, newFormItem]);
+            append(newFormItem);
         }
     } else {
-        const newFormItems = currentFormItems.filter(item => item.orderItemId !== itemId);
-        replace(newFormItems);
+        const itemIndexToRemove = currentFormItems.findIndex(item => item.orderItemId === itemId);
+        if (itemIndexToRemove > -1) {
+            remove(itemIndexToRemove);
+        }
     }
   }
 
@@ -310,7 +315,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                                                 render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input type="number" {...field} max={item.availableToShip} />
+                                                        <Input type="number" {...field} max={item.availableToShip} min={1} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -324,15 +329,18 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                     </Table>
                 </div>
             )}
-           <FormMessage className="mt-2">{form.formState.errors.items?.message}</FormMessage>
+           {/* Show root error for items array if it exists */}
+           {form.formState.errors.items && !form.formState.errors.items.root && <FormMessage className="mt-2">{form.formState.errors.items.message}</FormMessage>}
         </div>
 
         <div className="flex justify-end gap-4">
-            <Button type="submit" disabled={form.formState.isSubmitting || isPending || fields.length === 0}>
-              {(form.formState.isSubmitting || isPending) ? 'Menyimpan...' : 'Simpan & Buat Surat Jalan'}
+            <Button type="submit" disabled={form.formState.isSubmitting || isPending || !form.formState.isValid}>
+              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan & Buat Surat Jalan'}
             </Button>
         </div>
       </form>
     </Form>
   )
 }
+
+    

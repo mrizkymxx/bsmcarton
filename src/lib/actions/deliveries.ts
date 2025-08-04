@@ -80,10 +80,11 @@ export async function getReadyToShipItems(
         const produced = item.produced || 0;
         const availableToShip = produced - delivered;
         
+        // **CRITICAL FIX**: Only return items that are ready AND have stock > 0
         if (item.status === 'Siap Kirim' && availableToShip > 0) {
           items.push({
             ...item,
-            id: item.id, // Ensure item.id is passed correctly
+            id: item.id,
             poId: doc.id,
             poNumber: po.poNumber,
             customerName: po.customerName,
@@ -109,6 +110,7 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
 
   try {
     // 1. Create the new delivery note document
+    // **CRITICAL FIX**: Ensure all required fields from the form are saved.
     const deliveryData = {
       ...data,
       deliveryDate: new Date(data.deliveryDate),
@@ -119,7 +121,7 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
         poNumber: item.poNumber,
         quantity: item.quantity,
         type: item.type,
-        finishedSize: item.finishedSize,
+        finishedSize: item.finishedSize || null, // Handle potentially missing size
       })),
     };
     const deliveryRef = doc(collection(db, "deliveries"));
@@ -179,9 +181,10 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
     revalidatePath("/");
   } catch (error) {
     console.error("Error creating delivery: ", error);
-    throw new Error("Failed to create delivery note.");
+    throw new Error(error instanceof Error ? error.message : "Failed to create delivery note.");
   }
 }
+
 
 // DELETE
 export async function deleteDelivery(id: string) {
@@ -223,12 +226,14 @@ export async function deleteDelivery(id: string) {
           item.delivered = originalDelivered - deliveryItem.quantity;
           if (item.delivered < 0) item.delivered = 0;
 
-          if (item.produced > item.delivered) {
+          // If item is now not fully delivered, revert status
+          if ((item.produced || 0) > item.delivered) {
              item.status = 'Siap Kirim';
           }
         }
       });
-
+      
+      // A PO that was 'Completed' might now be 'Open' again
       batch.update(poRef, { 
         items: updatedItems,
         status: 'Open'
@@ -245,6 +250,8 @@ export async function deleteDelivery(id: string) {
     revalidatePath("/");
   } catch (error) {
     console.error("Error deleting delivery: ", error);
-    throw new Error("Gagal menghapus Surat Jalan.");
+    throw new Error(error instanceof Error ? error.message : "Gagal menghapus Surat Jalan.");
   }
 }
+
+    
