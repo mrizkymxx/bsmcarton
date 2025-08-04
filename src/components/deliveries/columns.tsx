@@ -218,7 +218,7 @@ export const columns: ColumnDef<Delivery>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="font-mono">{row.getValue("deliveryNoteNumber")}</div>,
+    cell: ({ row }) => <div className="font-mono whitespace-nowrap">{row.getValue("deliveryNoteNumber")}</div>,
   },
   {
     accessorKey: "customerName",
