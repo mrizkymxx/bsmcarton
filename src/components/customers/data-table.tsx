@@ -101,7 +101,7 @@ export function DataTable<TData extends Customer, TValue>({
             <div className="flex items-center gap-2">
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="btn-primary-glow">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Tambah Pelanggan
                 </Button>

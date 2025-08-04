@@ -60,7 +60,7 @@ export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
     
     if (data.length === 0) {
         // Return a placeholder or null while data is being processed to avoid rendering differences
-        return null;
+        return <div style={{width: '100%', height: 350}} />;
     }
 
     return (
@@ -90,8 +90,8 @@ export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
                     }}
                     labelStyle={{ color: 'hsl(var(--foreground))' }}
                 />
-                <Bar dataKey="Dipesan" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Terkirim" fill="hsl(var(--accent-foreground))" radius={[4, 4, 0, 0]} opacity={0.5} />
+                <Bar dataKey="Dipesan" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Terkirim" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
             </BarChart>
         </ResponsiveContainer>
     );
