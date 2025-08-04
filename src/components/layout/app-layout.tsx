@@ -6,15 +6,16 @@ import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarFooter,
   SidebarTrigger,
-  SidebarInset,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { UserNav } from "./user-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { SidebarNavigation } from "./sidebar-navigation";
 import { usePathname } from "next/navigation";
-import { Star } from "lucide-react";
+import { PanelLeft, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 const pageTitles: { [key: string]: string } = {
   "/": "Dashboard",
@@ -25,43 +26,53 @@ const pageTitles: { [key: string]: string } = {
   "/settings": "Settings",
 };
 
+function SidebarWrapper() {
+    const { toggleSidebar, state } = useSidebar();
+    return (
+         <Sidebar>
+            <SidebarHeader>
+                <div className="flex items-center gap-2">
+                    <span className="flex items-center justify-center h-8 w-8 text-primary">
+                    <Star className="h-6 w-6" />
+                    </span>
+                    <span className={cn(state === 'collapsed' && "hidden")}>
+                        <h1 className="text-xl font-bold">CartonFlow</h1>
+                    </span>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hidden md:flex" onClick={toggleSidebar}>
+                    <PanelLeft />
+                </Button>
+            </SidebarHeader>
+            <SidebarContent>
+                <SidebarNavigation />
+            </SidebarContent>
+        </Sidebar>
+    )
+}
+
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const title = pageTitles[pathname] ?? "CartonFlow";
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center gap-2 p-2">
-                <span className="flex items-center justify-center h-8 w-8 text-primary">
-                  <Star className="h-6 w-6" />
-                </span>
-                <h1 className="text-xl font-bold">CartonFlow</h1>
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarNavigation />
-          </SidebarContent>
-          <SidebarFooter>
-             {/* Can add footer items here */}
-          </SidebarFooter>
-        </Sidebar>
-        <div className="flex flex-col flex-1 w-full">
-          <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
-            <SidebarTrigger className="md:hidden" />
-            <div className="w-full flex-1">
-              <h1 className="text-lg font-semibold">{title}</h1>
-            </div>
-            <ThemeToggle />
-            <UserNav />
-          </header>
-          <main className="flex-1 p-4 md:p-8">
-            {children}
-          </main>
+        <div className="min-h-screen w-full">
+            <SidebarWrapper />
+             <main className="flex flex-col pl-0 md:pl-[3.5rem] group-data-[state=expanded]/sidebar-wrapper:md:pl-[16rem] transition-all duration-300 ease-in-out">
+                 <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
+                    <SidebarTrigger className="md:hidden" />
+                     <div className="w-full flex-1">
+                        <h1 className="text-lg font-semibold">
+                            {pageTitles[usePathname()] ?? "CartonFlow"}
+                        </h1>
+                    </div>
+                    <ThemeToggle />
+                    <UserNav />
+                </header>
+                <div className="flex-1 p-4 md:p-8">
+                    {children}
+                </div>
+            </main>
         </div>
-      </div>
     </SidebarProvider>
   );
 }
