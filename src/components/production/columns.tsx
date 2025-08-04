@@ -111,6 +111,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
       const delivered = item.delivered || 0;
       const notDelivered = item.produced - delivered;
       const progress = item.total > 0 ? ((item.delivered || 0) / item.total) * 100 : 0;
+      
       return (
         <div className="flex flex-col gap-1.5 w-48">
            <Progress value={progress} className="h-2" />
@@ -150,9 +151,5 @@ export const columns: ColumnDef<ProductionItem>[] = [
         }
       return <Badge variant={variant}>{status}</Badge>
     }
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <ActionsCell item={row.original} />,
-  },
+  }
 ]
