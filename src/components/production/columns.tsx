@@ -76,7 +76,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
             <div>
                 <div className="font-medium">{item.name}</div>
                 <div className="text-xs text-muted-foreground">
-                    {item.type === 'Box' ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm` : `${item.finishedSize.length}x${item.finishedSize.width} cm`}
+                    {item.finishedSize ? (item.type === 'Box' ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm` : `${item.finishedSize.length}x${item.finishedSize.width} cm`) : '-'}
                 </div>
             </div>
         )
@@ -110,7 +110,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
       const item = row.original;
       const delivered = item.delivered || 0;
       const notDelivered = item.produced - delivered;
-      const progress = item.total > 0 ? (delivered / item.total) * 100 : 0;
+      const progress = item.total > 0 ? ((item.delivered || 0) / item.total) * 100 : 0;
       return (
         <div className="flex flex-col gap-1.5 w-48">
            <Progress value={progress} className="h-2" />
@@ -126,7 +126,14 @@ export const columns: ColumnDef<ProductionItem>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status:any = row.getValue("status") as string;
+      const item = row.original;
+      const delivered = item.delivered || 0;
+      let status:any = item.status;
+      
+      if (delivered >= item.total) {
+        status = "Dikirim";
+      }
+
       let variant: "default" | "secondary" | "outline" | "destructive" = "outline";
         switch (status) {
             case 'Siap Kirim':
