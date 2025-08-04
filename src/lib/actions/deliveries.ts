@@ -114,6 +114,16 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
     const deliveryData = {
       ...data,
       deliveryDate: new Date(data.deliveryDate),
+      // Ensure all item fields are included
+      items: data.items.map(item => ({
+        poId: item.poId,
+        orderItemId: item.orderItemId,
+        name: item.name,
+        poNumber: item.poNumber,
+        quantity: item.quantity,
+        type: item.type,
+        finishedSize: item.finishedSize,
+      })),
     };
     const deliveryRef = doc(collection(db, "deliveries"));
     batch.set(deliveryRef, deliveryData);
