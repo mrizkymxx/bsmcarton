@@ -1,60 +1,27 @@
+
 "use client"
 
 import * as React from "react"
-import { PanelLeft } from "lucide-react"
-
-import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-} from "@/components/ui/sheet"
 
-interface SidebarProps extends React.ComponentProps<"div"> {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  side?: "left" | "right"
-}
+interface SidebarProps extends React.ComponentProps<"div"> {}
 
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   (
     {
-      side = "left",
       className,
       children,
-      open,
-      onOpenChange,
       ...props
     },
     ref
   ) => {
-    const isMobile = useIsMobile()
-
-    if (isMobile) {
-      return (
-          <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent
-              data-sidebar="sidebar"
-              data-mobile="true"
-              className="w-72 bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-              side={side}
-            >
-              <SheetTitle className="sr-only">Navigation</SheetTitle>
-              <div className="flex h-full w-full flex-col">{children}</div>
-            </SheetContent>
-          </Sheet>
-      )
-    }
 
     return (
        <div 
           ref={ref} 
           data-sidebar="sidebar"
           className={cn(
-            "fixed inset-y-0 left-0 z-20 flex h-full w-56 flex-col border-r bg-sidebar text-sidebar-foreground",
-            "hidden md:flex",
+            "h-full w-full flex-col border-r bg-sidebar text-sidebar-foreground",
             className
           )}
           {...props}
@@ -65,27 +32,6 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   }
 )
 Sidebar.displayName = "Sidebar"
-
-const SidebarTrigger = React.forwardRef<
-  React.ElementRef<typeof Button>,
-  React.ComponentProps<typeof Button>
->(({ className, ...props }, ref) => {
-  return (
-      <Button
-        ref={ref}
-        data-sidebar="trigger"
-        variant="ghost"
-        size="icon"
-        className={cn("h-7 w-7", className)}
-        {...props}
-      >
-        <PanelLeft />
-        <span className="sr-only">Toggle Sidebar</span>
-      </Button>
-  )
-})
-SidebarTrigger.displayName = "SidebarTrigger"
-
 
 const SidebarHeader = React.forwardRef<
   HTMLDivElement,
@@ -188,6 +134,5 @@ export {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
+  SidebarMenuItem
 }
