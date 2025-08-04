@@ -164,7 +164,7 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                 />
                 <div className="md:col-span-4 flex items-end">
                     <p className="text-sm text-muted-foreground">
-                        Ukuran Bahan: {panjangBahan.toFixed(2)} x {lebarBahan.toFixed(2)} mm
+                        Ukuran Bahan: {Number(panjangBahan.toFixed(2))} x {Number(lebarBahan.toFixed(2))} mm
                     </p>
                 </div>
                 <FormField
@@ -256,7 +256,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
         throw new Error("Pelanggan tidak valid.");
       }
       
-      const processedItems = values.items.map(item => {
+       const processedItems = values.items.map(item => {
         const P = parseFloat(String(item.finishedSize.length)) || 0;
         const L = parseFloat(String(item.finishedSize.width)) || 0;
         const T = parseFloat(String(item.finishedSize.height)) || 0;
