@@ -56,6 +56,9 @@ export function DataTable<TData, TValue>({
   )
    const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
+    
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
+
 
   const table = useReactTable({
     data,
@@ -86,7 +89,7 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
             />
             <div className="flex items-center gap-2">
-            <Dialog>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <PlusCircle className="mr-2 h-4 w-4" />
@@ -100,7 +103,7 @@ export function DataTable<TData, TValue>({
                       Isi detail pelanggan di bawah ini. Klik simpan jika sudah selesai.
                   </DialogDescription>
                   </DialogHeader>
-                  <CustomerForm />
+                  <CustomerForm onSuccess={() => setIsCreateDialogOpen(false)} />
               </DialogContent>
             </Dialog>
             <DropdownMenu>

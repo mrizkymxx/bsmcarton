@@ -1,8 +1,10 @@
-import { customers } from "@/lib/data";
+
+import { getCustomers } from "@/lib/actions/customers";
 import { columns } from "@/components/customers/columns";
 import { DataTable } from "@/components/customers/data-table";
 
-export default function CustomersPage() {
+export default async function CustomersPage() {
+  const customers = await getCustomers();
 
   return (
     <div className="h-full flex-1 flex-col space-y-8 p-4 md:p-8 flex">

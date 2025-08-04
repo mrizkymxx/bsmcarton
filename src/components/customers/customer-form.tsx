@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -16,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { upsertCustomer } from "@/lib/actions/customers"
+import { Customer } from "@/lib/types"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -32,27 +33,51 @@ const formSchema = z.object({
   }),
 })
 
-export function CustomerForm() {
-  const { toast } = useToast()
+type CustomerFormValues = z.infer<typeof formSchema>
 
-  const form = useForm<z.infer<typeof formSchema>>({
+interface CustomerFormProps {
+  customer?: Customer;
+  onSuccess?: () => void;
+}
+
+
+export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
+  const { toast } = useToast()
+  const isEditMode = !!customer;
+
+  const form = useForm<CustomerFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
+      name: customer?.name || "",
+      email: customer?.email || "",
+      phone: customer?.phone || "",
+      address: customer?.address || "",
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    toast({
-      title: "Sukses!",
-      description: "Data pelanggan baru berhasil disimpan.",
-    })
-    // Here you would typically call a server action or API to save the data
-  }
+  const onSubmit = async (values: CustomerFormValues) => {
+    try {
+      const customerData: Omit<Customer, 'id' | 'registered'> = {
+        ...values
+      };
+      
+      await upsertCustomer(isEditMode ? customer.id : null, customerData);
+
+      toast({
+        title: "Sukses!",
+        description: `Data pelanggan berhasil ${isEditMode ? 'diperbarui' : 'disimpan'}.`,
+      });
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Gagal ${isEditMode ? 'memperbarui' : 'menyimpan'} data pelanggan.`,
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Form {...form}>
@@ -114,7 +139,9 @@ export function CustomerForm() {
           )}
         />
         <div className="flex justify-end">
-            <Button type="submit">Simpan</Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan'}
+            </Button>
         </div>
       </form>
     </Form>
