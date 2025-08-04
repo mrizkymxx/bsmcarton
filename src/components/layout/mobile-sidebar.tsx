@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { SidebarNavigation } from "./sidebar-navigation";
@@ -17,7 +17,10 @@ export function MobileSidebar() {
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0" onClick={() => setIsOpen(false)}>
+            <SheetContent side="left" className="p-0">
+                <SheetHeader className="sr-only">
+                    <SheetTitle>Navigation Menu</SheetTitle>
+                </SheetHeader>
                 <SidebarNavigation />
             </SheetContent>
         </Sheet>
