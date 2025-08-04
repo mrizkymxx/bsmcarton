@@ -212,6 +212,7 @@ export const columns: ColumnDef<Delivery>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="pl-0"
         >
           No. Surat Jalan
           <ArrowUpDown className="ml-2 h-4 w-4" />
