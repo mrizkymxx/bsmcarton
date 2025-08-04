@@ -12,7 +12,6 @@ const navItems = [
     { href: "/purchase-orders", label: "Purchase Orders" },
     { href: "/production", label: "Production" },
     { href: "/deliveries", label: "Deliveries" },
-    { href: "/settings", label: "Settings" },
 ]
 
 export function SidebarNavigation() {

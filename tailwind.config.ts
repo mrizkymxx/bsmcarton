@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 const { fontFamily } = require("tailwindcss/defaultTheme")
@@ -60,9 +61,6 @@ export default {
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
-        inter: "var(--font-inter)",
-        roboto: "var(--font-roboto)",
-        poppins: "var(--font-poppins)",
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
