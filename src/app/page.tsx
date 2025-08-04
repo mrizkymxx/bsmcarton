@@ -55,7 +55,7 @@ export default async function Dashboard() {
     id: `po-${po.id}`,
     type: 'PO',
     date: po.orderDate,
-    title: `PO: ${po.poNumber}`,
+    title: `PO Baru: ${po.poNumber}`,
     description: `Dari: ${po.customerName}`,
   }));
 
@@ -63,8 +63,8 @@ export default async function Dashboard() {
     id: `delivery-${d.id}`,
     type: 'Pengiriman',
     date: d.deliveryDate,
-    title: `SJ: ${d.deliveryNoteNumber}`,
-    description: `Ke: ${d.customerName}`,
+    title: `Surat Jalan Dibuat: ${d.deliveryNoteNumber}`,
+    description: `Tujuan: ${d.customerName}`,
   }));
 
   const recentActivities = [...poActivities, ...deliveryActivities]
