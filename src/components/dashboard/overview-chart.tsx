@@ -1,12 +1,13 @@
 
-'use client';
+"use client";
 
-import { PurchaseOrder, Delivery } from '@/lib/types';
+import * as React from "react";
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Delivery, PurchaseOrder } from "@/lib/types";
 
 const OverviewChartClient = dynamic(
-  () => import('./overview-chart-client').then((mod) => mod.OverviewChartClient),
+  () => import('@/components/dashboard/overview-chart-client').then(mod => mod.OverviewChartClient),
   {
     ssr: false,
     loading: () => <Skeleton className="h-[350px] w-full" />,
@@ -14,10 +15,12 @@ const OverviewChartClient = dynamic(
 );
 
 interface OverviewChartProps {
-  orders: PurchaseOrder[];
-  deliveries: Delivery[];
+    orders: PurchaseOrder[];
+    deliveries: Delivery[];
 }
 
 export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
-  return <OverviewChartClient orders={orders} deliveries={deliveries} />;
+    return <OverviewChartClient orders={orders} deliveries={deliveries} />;
 }
+
+

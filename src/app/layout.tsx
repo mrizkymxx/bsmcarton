@@ -6,9 +6,8 @@ import AppLayout from '@/components/layout/app-layout';
 import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ 
-  subsets: ['latin'], 
+  subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -24,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${inter.variable} font-body antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"

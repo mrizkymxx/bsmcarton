@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -11,7 +10,7 @@ import { UserNav } from "./user-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { SidebarNavigation } from "./sidebar-navigation";
 import { usePathname } from "next/navigation";
-import { Star, PanelLeft } from "lucide-react";
+import { Triangle, PanelLeft } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -30,12 +29,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
       <div className="min-h-screen w-full">
-        {/* Desktop Sidebar */}
         <Sidebar className="hidden md:flex">
           <SidebarHeader>
             <div className="flex items-center gap-2">
               <span className="flex items-center justify-center h-8 w-8 text-primary">
-                <Star className="h-6 w-6" />
+                <Triangle className="h-6 w-6" />
               </span>
               <span>
                 <h1 className="text-xl font-bold">CartonFlow</h1>
@@ -47,23 +45,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </SidebarContent>
         </Sidebar>
         
-        <div className="flex flex-col md:pl-56">
-          <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
+        <div className="flex flex-col md:pl-64">
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             
-            {/* Mobile Sidebar */}
             <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
                 <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="md:hidden">
+                    <Button variant="outline" size="icon" className="md:hidden">
                         <PanelLeft />
                         <span className="sr-only">Toggle Sidebar</span>
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="p-0">
-                    <Sidebar className="flex">
+                    <Sidebar>
                         <SidebarHeader>
                             <div className="flex items-center gap-2">
                             <span className="flex items-center justify-center h-8 w-8 text-primary">
-                                <Star className="h-6 w-6" />
+                                <Triangle className="h-6 w-6" />
                             </span>
                             <span>
                                 <h1 className="text-xl font-bold">CartonFlow</h1>
@@ -85,7 +82,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <ThemeToggle />
             <UserNav />
           </header>
-          <main className="flex-1 p-4 md:p-8">
+          <main className="flex-1 p-4 sm:p-6">
             {children}
           </main>
         </div>

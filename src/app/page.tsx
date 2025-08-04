@@ -1,6 +1,5 @@
 
 import { StatsCards } from '@/components/dashboard/stats-cards';
-import { OverviewChart } from '@/components/dashboard/overview-chart';
 import {
   Card,
   CardContent,
@@ -21,6 +20,8 @@ import { getPurchaseOrders } from '@/lib/actions/purchase-orders';
 import { getCustomers } from '@/lib/actions/customers';
 import { getDeliveries } from '@/lib/actions/deliveries';
 import { FileText, Truck } from 'lucide-react';
+import { OverviewChart } from '@/components/dashboard/overview-chart';
+
 
 type RecentActivity = {
     id: string;
