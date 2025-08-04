@@ -51,17 +51,8 @@ const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[], year:
 };
 
 export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
-    const [year, setYear] = useState<number | null>(null);
-
-    useEffect(() => {
-        setYear(new Date().getFullYear());
-    }, []);
-
-    if (year === null) {
-        return <div className="w-full h-[350px] bg-muted animate-pulse rounded-lg" />;
-    }
-
-    const data = processChartData(orders, deliveries, year);
+    const currentYear = new Date().getFullYear();
+    const data = processChartData(orders, deliveries, currentYear);
     
     return (
         <ResponsiveContainer width="100%" height={350}>

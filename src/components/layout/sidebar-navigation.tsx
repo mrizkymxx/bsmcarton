@@ -4,7 +4,6 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { useEffect, useState } from "react"
 
 const navItems = [
     { href: "/", label: "Dashboard" },
@@ -16,11 +15,6 @@ const navItems = [
 
 export function SidebarNavigation() {
   const pathname = usePathname();
-  const [activePath, setActivePath] = useState(pathname)
-
-  useEffect(() => {
-    setActivePath(pathname)
-  }, [pathname])
 
   return (
     <div className="flex h-full flex-col p-4 md:p-0 md:flex-row md:items-center md:space-x-6">
@@ -48,7 +42,7 @@ export function SidebarNavigation() {
             href={item.href}
             className={cn(
               "transition-colors hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 text-lg md:text-sm",
-              activePath === item.href ? "bg-accent text-accent-foreground" : "text-foreground/60"
+              pathname === item.href ? "bg-accent text-accent-foreground" : "text-foreground/60"
             )}
           >
             {item.label}
