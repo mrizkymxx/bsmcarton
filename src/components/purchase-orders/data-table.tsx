@@ -80,6 +80,13 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
       columnVisibility,
     },
   })
+  
+  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
+  const mainColumn = columns.find(c => c.accessorKey === 'poNumber') || getVisibleColumns()[0];
+  const orderDateColumn = columns.find(c => c.accessorKey === 'orderDate');
+  const statusColumn = columns.find(c => c.accessorKey === 'status');
+  const itemsColumn = columns.find(c => c.accessorKey === 'items');
+  const actionsColumn = columns.find(c => c.id === 'actions');
 
   return (
     <div>
@@ -100,7 +107,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
                   Tambah PO
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-4xl w-full max-w-4xl">
+              <DialogContent className="sm:max-w-4xl">
                   <DialogHeader>
                   <DialogTitle>Tambah Purchase Order Baru</DialogTitle>
                   <DialogDescription>
@@ -205,14 +212,14 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
                                     <div className="font-semibold">{row.original.poNumber}</div>
                                     <div className="text-sm text-muted-foreground">{row.original.customerName}</div>
                                 </div>
-                                {flexRender(columns.find(c => c.id === 'actions')!.cell!, { row } as any)}
+                                {actionsColumn && actionsColumn.cell && flexRender(actionsColumn.cell, { row } as any)}
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                {flexRender(columns.find(c => c.accessorKey === 'orderDate')!.cell!, { row } as any)}
-                                {flexRender(columns.find(c => c.accessorKey === 'status')!.cell!, { row } as any)}
+                                {orderDateColumn && orderDateColumn.cell && flexRender(orderDateColumn.cell, { row } as any)}
+                                {statusColumn && statusColumn.cell && flexRender(statusColumn.cell, { row } as any)}
                             </div>
                             <div>
-                                {flexRender(columns.find(c => c.accessorKey === 'items')!.cell!, { row } as any)}
+                                {itemsColumn && itemsColumn.cell && flexRender(itemsColumn.cell, { row } as any)}
                             </div>
                         </CardContent>
                     </Card>

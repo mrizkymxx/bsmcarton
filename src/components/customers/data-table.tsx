@@ -83,6 +83,8 @@ export function DataTable<TData extends Customer, TValue>({
   })
   
   const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
+  const mainColumn = columns.find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
+  const actionsColumn = columns.find(c => c.id === 'actions');
 
 
   return (
@@ -104,7 +106,7 @@ export function DataTable<TData extends Customer, TValue>({
                   Tambah Pelanggan
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] w-full max-w-md">
+              <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
                   <DialogTitle>Tambah Pelanggan Baru</DialogTitle>
                   <DialogDescription>
@@ -197,12 +199,12 @@ export function DataTable<TData extends Customer, TValue>({
                     <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
                         <CardContent className="p-4 space-y-2">
                             <div className="flex justify-between items-start">
-                                {flexRender(
-                                    columns.find(c => c.id === 'name')!.cell!,
+                                {mainColumn && mainColumn.cell && flexRender(
+                                    mainColumn.cell,
                                     { row } as any
                                 )}
-                                {flexRender(
-                                    columns.find(c => c.id === 'actions')!.cell!,
+                                {actionsColumn && actionsColumn.cell && flexRender(
+                                    actionsColumn.cell,
                                     { row } as any
                                 )}
                             </div>

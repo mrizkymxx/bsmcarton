@@ -66,6 +66,13 @@ export function DataTable<TData extends ProductionItem, TValue>({
       columnVisibility,
     },
   })
+  
+  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
+  const mainColumn = columns.find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
+  const statusColumn = columns.find(c => c.accessorKey === 'status');
+  const customerColumn = columns.find(c => c.accessorKey === 'customerName');
+  const progressColumn = columns.find(c => c.accessorKey === 'produced');
+
 
   return (
     <div>
@@ -168,16 +175,16 @@ export function DataTable<TData extends ProductionItem, TValue>({
                 <CardContent className="p-4 space-y-2">
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
-                      {flexRender(columns.find(c => c.accessorKey === 'name')!.cell!, { row } as any)}
+                      {mainColumn && mainColumn.cell && flexRender(mainColumn.cell, { row } as any)}
                     </div>
-                    {flexRender(columns.find(c => c.accessorKey === 'status')!.cell!, { row } as any)}
+                    {statusColumn && statusColumn.cell && flexRender(statusColumn.cell, { row } as any)}
                   </div>
                   <div>
-                    {flexRender(columns.find(c => c.accessorKey === 'customerName')!.cell!, { row } as any)}
+                    {customerColumn && customerColumn.cell && flexRender(customerColumn.cell, { row } as any)}
                   </div>
                   <div>
                     <div className="text-sm font-medium mt-2 mb-1">Progress</div>
-                     {flexRender(columns.find(c => c.accessorKey === 'produced')!.cell!, { row } as any)}
+                     {progressColumn && progressColumn.cell && flexRender(progressColumn.cell, { row } as any)}
                   </div>
                 </CardContent>
               </Card>

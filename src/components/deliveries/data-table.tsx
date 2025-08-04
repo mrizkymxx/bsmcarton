@@ -115,6 +115,10 @@ export function DataTable<TData extends Delivery, TValue>({
       globalFilter,
     },
   })
+  
+  const mainColumn = columns.find(c => c.accessorKey === 'deliveryNoteNumber');
+  const itemsColumn = columns.find(c => c.accessorKey === 'items');
+  const actionsColumn = columns.find(c => c.id === 'actions');
 
   return (
     <div>
@@ -133,7 +137,7 @@ export function DataTable<TData extends Delivery, TValue>({
                   Buat Surat Jalan
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-4xl w-full max-w-4xl">
+              <DialogContent className="sm:max-w-4xl">
                   <DialogHeader>
                   <DialogTitle>Buat Surat Jalan Baru</DialogTitle>
                   <DialogDescription>
@@ -234,13 +238,13 @@ export function DataTable<TData extends Delivery, TValue>({
                         <CardContent className="p-4 space-y-2">
                            <div className="flex justify-between items-start">
                                 <div className="space-y-1">
-                                    {flexRender(columns.find(c => c.accessorKey === 'deliveryNoteNumber')!.cell!, { row } as any)}
+                                    {mainColumn && mainColumn.cell && flexRender(mainColumn.cell, { row } as any)}
                                     <div className="text-sm text-muted-foreground">{row.original.customerName}</div>
                                 </div>
-                                {flexRender(columns.find(c => c.id === 'actions')!.cell!, { row } as any)}
+                                {actionsColumn && actionsColumn.cell && flexRender(actionsColumn.cell, { row } as any)}
                            </div>
                            <div>
-                            {flexRender(columns.find(c => c.accessorKey === 'items')!.cell!, { row } as any)}
+                            {itemsColumn && itemsColumn.cell && flexRender(itemsColumn.cell, { row } as any)}
                            </div>
                         </CardContent>
                     </Card>
