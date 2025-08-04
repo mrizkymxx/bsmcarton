@@ -108,8 +108,8 @@ export const columns: ColumnDef<ProductionItem>[] = [
     header: "Progres Produksi",
     cell: ({ row }) => {
       const item = row.original;
-      const progress = item.total > 0 ? (item.produced / item.total) * 100 : 0;
       const delivered = item.delivered || 0;
+      const progress = item.total > 0 ? (delivered / item.total) * 100 : 0;
       return (
         <div className="flex flex-col gap-1.5 w-40">
            <Progress value={progress} className="h-2" />
@@ -125,7 +125,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
+      const status:any = row.getValue("status") as string;
       let variant: "default" | "secondary" | "outline" | "destructive" = "outline";
         switch (status) {
             case 'Siap Kirim':
