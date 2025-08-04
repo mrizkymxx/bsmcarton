@@ -59,11 +59,6 @@ const formSchema = z.object({
   vehicleNumber: z.string().optional(),
   driverName: z.string().optional(),
   items: z.array(deliveryItemSchema).min(1, "Minimal harus ada 1 item untuk dikirim."),
-}).refine((data) => {
-    return data.items.every(item => item.quantity <= item.availableToShip);
-}, {
-    message: "Jumlah kirim tidak boleh melebihi stok yang tersedia.",
-    path: ['items']
 });
 
 
@@ -146,10 +141,14 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
             orderItemId: item.id,
             name: item.name,
             poNumber: item.poNumber,
-            quantity: item.availableToShip, // Default to max available
+            quantity: item.availableToShip,
             availableToShip: item.availableToShip,
             type: item.type,
-            finishedSize: item.finishedSize,
+            finishedSize: {
+                length: item.finishedSize?.length || 0,
+                width: item.finishedSize?.width || 0,
+                height: item.finishedSize?.height || 0,
+            },
         }));
       
       replace(formItems);
@@ -164,6 +163,15 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         ...values,
         customerName: selectedCustomer.name,
         deliveryDate: values.deliveryDate.toISOString(),
+         items: values.items.map(item => ({
+          poId: item.poId,
+          orderItemId: item.orderItemId,
+          name: item.name,
+          poNumber: item.poNumber,
+          quantity: item.quantity,
+          type: item.type,
+          finishedSize: item.finishedSize,
+        })),
       };
       
       await createDelivery(deliveryData);
@@ -289,7 +297,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {readyItems.map((item, index) => {
+                            {readyItems.map((item) => {
                                 const fieldIndex = fields.findIndex(field => field.orderItemId === item.id);
                                 return (
                                 <TableRow key={item.id}>
@@ -302,7 +310,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                                     <TableCell>
                                         <div className="font-medium">{item.name}</div>
                                         <div className="text-xs text-muted-foreground">
-                                            {item.type === 'Box' ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm` : `${item.finishedSize.length}x${item.finishedSize.width} cm`}
+                                            {item.finishedSize ? (item.type === 'Box' ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm` : `${item.finishedSize.length}x${item.finishedSize.width} cm`) : '-'}
                                         </div>
                                     </TableCell>
                                     <TableCell>{item.poNumber}</TableCell>
