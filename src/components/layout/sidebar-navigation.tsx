@@ -42,17 +42,14 @@ export function SidebarNavigation() {
     <SidebarMenu>
       {navItems.map((item) => (
         <SidebarMenuItem key={item.href}>
-          <SidebarMenuButton
-            asChild
-            tooltip={item.label}
-            isActive={pathname === item.href}
-            onClick={handleLinkClick}
-          >
-            <Link href={item.href} prefetch={true}>
-              <item.icon className={item.color} />
-              <span>{item.label}</span>
+            <Link href={item.href} prefetch={true} onClick={handleLinkClick} className="w-full">
+              <SidebarMenuButton
+                isActive={pathname === item.href}
+              >
+                <item.icon className={item.color} />
+                <span>{item.label}</span>
+              </SidebarMenuButton>
             </Link>
-          </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
