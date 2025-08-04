@@ -1,5 +1,6 @@
 import { SidebarNavigation } from './sidebar-navigation';
 import { UserNav } from './user-nav';
+import { MobileSidebar } from './mobile-sidebar';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,6 +9,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
           <SidebarNavigation />
         </nav>
+        <div className="md:hidden">
+          <MobileSidebar />
+        </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
             <UserNav />
         </div>

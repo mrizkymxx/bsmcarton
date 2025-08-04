@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -23,8 +22,8 @@ export function SidebarNavigation() {
   }, [pathname])
 
   return (
-    <>
-      <Link href="/" className="mr-6 flex items-center space-x-2">
+    <div className="flex h-full flex-col p-4 md:flex-row md:items-center md:space-x-6 md:p-0">
+      <Link href="/" className="mb-4 flex items-center space-x-2 md:mb-0 md:mr-6">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -39,20 +38,22 @@ export function SidebarNavigation() {
           <path d="m3.3 7 8.7 5 8.7-5" />
           <path d="M12 22V12" />
         </svg>
-        <span className="font-bold text-lg">BSMcarton</span>
+        <span className="font-bold text-lg">CartonFlow</span>
       </Link>
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            "transition-colors hover:text-foreground/80",
-            activePath === item.href ? "text-foreground" : "text-foreground/60"
-          )}
-        >
-          {item.label}
-        </Link>
-      ))}
-    </>
+      <nav className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              "transition-colors hover:text-foreground/80 text-lg md:text-sm",
+              activePath === item.href ? "text-foreground" : "text-foreground/60"
+            )}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+    </div>
   )
 }

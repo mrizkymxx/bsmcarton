@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { Inter } from 'next/font/google';
@@ -9,11 +8,10 @@ import { Toaster } from '@/components/ui/toaster';
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'BSMcarton',
+  title: 'CartonFlow',
   description: 'Cardboard carton production management system',
 };
 
