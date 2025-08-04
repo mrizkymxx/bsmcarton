@@ -18,12 +18,12 @@ import {
 } from "lucide-react"
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/customers", label: "Pelanggan", icon: Users },
-  { href: "/purchase-orders", label: "Purchase Orders", icon: FileText },
-  { href: "/production", label: "Produksi", icon: Boxes },
-  { href: "/deliveries", label: "Pengiriman", icon: Truck },
-  { href: "/settings", label: "Pengaturan", icon: Settings },
+    { href: "/", label: "Dashboard", icon: LayoutDashboard, color: "text-sky-500" },
+    { href: "/customers", label: "Pelanggan", icon: Users, color: "text-violet-500" },
+    { href: "/purchase-orders", label: "Purchase Orders", icon: FileText, color: "text-amber-500" },
+    { href: "/production", label: "Produksi", icon: Boxes, color: "text-rose-500" },
+    { href: "/deliveries", label: "Pengiriman", icon: Truck, color: "text-teal-500" },
+    { href: "/settings", label: "Pengaturan", icon: Settings, color: "text-slate-500" },
 ]
 
 export function SidebarNavigation() {
@@ -39,7 +39,7 @@ export function SidebarNavigation() {
             tooltip={item.label}
           >
             <Link href={item.href}>
-              <item.icon />
+              <item.icon className={item.color} />
               <span>{item.label}</span>
             </Link>
           </SidebarMenuButton>
