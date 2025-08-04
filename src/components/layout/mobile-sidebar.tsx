@@ -9,6 +9,10 @@ import { SidebarNavigation } from "./sidebar-navigation";
 export function MobileSidebar() {
     const [isOpen, setIsOpen] = useState(false);
 
+    const handleLinkClick = () => {
+        setIsOpen(false);
+    }
+
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -21,7 +25,7 @@ export function MobileSidebar() {
                 <SheetHeader className="sr-only">
                     <SheetTitle>Navigation Menu</SheetTitle>
                 </SheetHeader>
-                <SidebarNavigation />
+                <SidebarNavigation onLinkClick={handleLinkClick} />
             </SheetContent>
         </Sheet>
     );

@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -13,12 +12,16 @@ const navItems = [
     { href: "/deliveries", label: "Deliveries" },
 ]
 
-export function SidebarNavigation() {
+interface SidebarNavigationProps {
+  onLinkClick?: () => void;
+}
+
+export function SidebarNavigation({ onLinkClick }: SidebarNavigationProps) {
   const pathname = usePathname();
 
   return (
     <div className="flex h-full flex-col p-4 md:p-0 md:flex-row md:items-center md:space-x-6">
-      <Link href="/" className="mb-4 flex items-center space-x-2 md:mb-0 md:mr-6">
+      <Link href="/" className="mb-4 flex items-center space-x-2 md:mb-0 md:mr-6" onClick={onLinkClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -40,6 +43,7 @@ export function SidebarNavigation() {
           <Link
             key={item.href}
             href={item.href}
+            onClick={onLinkClick}
             className={cn(
               "transition-colors hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 text-lg md:text-sm",
               pathname === item.href ? "bg-accent text-accent-foreground" : "text-foreground/60"
