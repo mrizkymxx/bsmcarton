@@ -26,45 +26,6 @@ import { Badge } from "@/components/ui/badge"
 import { ProductionForm } from "./production-form"
 import { Progress } from "../ui/progress"
 
-function ActionsCell({ item }: { item: ProductionItem }) {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const router = useRouter();
-  
-  return (
-    <>
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Update Progres Produksi</DialogTitle>
-            <DialogDescription>
-              Perbarui jumlah yang sudah diproduksi untuk item ini.
-            </DialogDescription>
-          </DialogHeader>
-          <ProductionForm
-            item={item}
-            onSuccess={() => {
-              setIsEditDialogOpen(false);
-              router.refresh();
-            }}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Buka menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Update Progress</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
-  );
-}
 
 export const columns: ColumnDef<ProductionItem>[] = [
   {
@@ -131,6 +92,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
       const delivered = item.delivered || 0;
       let status:any = item.status;
       
+      // Force status to 'Dikirim' if all items are delivered, overriding any other status.
       if (delivered >= item.total) {
         status = "Dikirim";
       }
