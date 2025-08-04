@@ -59,7 +59,10 @@ export function DataTable<TData extends Customer, TValue>({
     []
   )
    const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({
+      email: false,
+      phone: false,
+    })
     
   const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
   const router = useRouter();
@@ -201,7 +204,7 @@ export function DataTable<TData extends Customer, TValue>({
                             <div className="flex justify-between items-start">
                                 {mainColumn && mainColumn.cell && flexRender(
                                     mainColumn.cell,
-                                    { row } as any
+                                    { row, getValue: () => row.original.name } as any
                                 )}
                                 {actionsColumn && actionsColumn.cell && flexRender(
                                     actionsColumn.cell,
