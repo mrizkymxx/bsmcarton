@@ -1,25 +1,22 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 
-export default function DeliveriesPage() {
+import { getDeliveries } from "@/lib/actions/deliveries";
+import { columns } from "@/components/deliveries/columns";
+import { DataTable } from "@/components/deliveries/data-table";
+
+export default async function DeliveriesPage() {
+  const deliveries = await getDeliveries();
+
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Pengiriman</CardTitle>
-          <CardDescription>
-            This page is under construction.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>Fitur untuk mengelola pengiriman dan mencetak surat jalan akan tersedia di sini.</p>
-        </CardContent>
-      </Card>
+    <div className="h-full flex-1 flex-col space-y-8 p-4 md:p-8 flex">
+       <div className="flex items-center justify-between space-y-2">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Pengiriman</h2>
+          <p className="text-muted-foreground">
+            Daftar surat jalan yang telah dibuat.
+          </p>
+        </div>
+      </div>
+      <DataTable data={deliveries} columns={columns} />
     </div>
-  )
+  );
 }

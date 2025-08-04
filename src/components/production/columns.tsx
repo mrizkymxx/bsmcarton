@@ -98,6 +98,10 @@ export const columns: ColumnDef<ProductionItem>[] = [
   {
     accessorKey: "total",
     header: "Jumlah Pesan",
+    cell: ({row}) => {
+      const item = row.original;
+      return <span>{item.total.toLocaleString()}</span>
+    }
   },
   {
     accessorKey: "produced",
@@ -105,10 +109,14 @@ export const columns: ColumnDef<ProductionItem>[] = [
     cell: ({ row }) => {
       const item = row.original;
       const progress = item.total > 0 ? (item.produced / item.total) * 100 : 0;
+      const delivered = item.delivered || 0;
       return (
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 w-40">
            <Progress value={progress} className="h-2" />
-           <span className="text-xs text-muted-foreground">{item.produced.toLocaleString()} / {item.total.toLocaleString()} pcs</span>
+           <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Produksi: {item.produced.toLocaleString()}</span>
+                <span>Terkirim: {delivered.toLocaleString()}</span>
+           </div>
         </div>
       )
     }
@@ -118,8 +126,20 @@ export const columns: ColumnDef<ProductionItem>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-      const variant = status === 'Siap Kirim' ? 'secondary' : status === 'Dikirim' ? 'default' : 'outline';
-      // @ts-ignore
+      let variant: "default" | "secondary" | "outline" | "destructive" = "outline";
+        switch (status) {
+            case 'Siap Kirim':
+                variant = 'secondary';
+                break;
+            case 'Dikirim':
+                variant = 'default';
+                break;
+             case 'Diproduksi':
+                variant = 'default';
+                break;
+            default:
+                variant = 'outline';
+        }
       return <Badge variant={variant}>{status}</Badge>
     }
   },

@@ -58,6 +58,13 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
         });
         return;
     }
+     if (values.produced < (item.delivered || 0)) {
+        form.setError("produced", {
+            type: "manual",
+            message: `Jumlah produksi tidak boleh kurang dari yang sudah terkirim (${item.delivered || 0} pcs).`
+        });
+        return;
+    }
     
     try {
         await updateProductionItem(item.poId, item.id, values.produced, values.status as OrderItemStatus);
@@ -115,6 +122,10 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
               </FormItem>
           )}
         />
+        <p className="text-sm text-muted-foreground">
+            Total Dipesan: {item.total.toLocaleString()} pcs <br />
+            Total Terkirim: {(item.delivered || 0).toLocaleString()} pcs
+        </p>
         <div className="flex justify-end">
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}

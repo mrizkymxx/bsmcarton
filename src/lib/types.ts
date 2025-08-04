@@ -1,4 +1,5 @@
 
+
 export interface Customer {
   id: string;
   name: string;
@@ -20,6 +21,7 @@ export interface OrderItem {
   finishedSize: { length: number; width: number; height: number };
   total: number;
   produced: number;
+  delivered: number; // Add delivered quantity
   status: OrderItemStatus;
   notes?: string;
 }
@@ -41,6 +43,17 @@ export interface ProductionItem extends OrderItem {
     orderDate: string;
 }
 
+export interface ReadyToShipItem extends ProductionItem {
+  availableToShip: number;
+}
+
+export interface DeliveryItem {
+    poId: string;
+    orderItemId: string;
+    name: string;
+    poNumber: string;
+    quantity: number;
+}
 
 export interface Delivery {
   id: string;
@@ -48,8 +61,8 @@ export interface Delivery {
   customerId: string;
   customerName: string;
   deliveryDate: string; // ISO date string
-  expedition: string;
-  vehicleNumber: string;
-  driver: string;
-  items: { orderItemId: string, name: string, poNumber: string, quantity: number }[];
+  expedition?: string;
+  vehicleNumber?: string;
+  driverName?: string;
+  items: DeliveryItem[];
 }

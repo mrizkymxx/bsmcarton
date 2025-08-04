@@ -10,10 +10,10 @@ import {
   updateDoc,
   query,
   where,
-  writeBatch,
+  getDoc,
   Timestamp,
 } from "firebase/firestore";
-import { ProductionItem, PurchaseOrder } from "../types";
+import { OrderItemStatus, ProductionItem, PurchaseOrder } from "../types";
 
 const poCollection = collection(db, "purchase_orders");
 
@@ -24,7 +24,6 @@ export async function getProductionItems(): Promise<ProductionItem[]> {
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      console.log("No open purchase orders found.");
       return [];
     }
 
@@ -32,13 +31,16 @@ export async function getProductionItems(): Promise<ProductionItem[]> {
     snapshot.docs.forEach((doc) => {
       const po = doc.data() as Omit<PurchaseOrder, "id">;
       po.items.forEach((item) => {
-        productionItems.push({
-          ...item,
-          poId: doc.id,
-          poNumber: po.poNumber,
-          customerName: po.customerName,
-          orderDate: (po.orderDate as any)?.toDate ? (po.orderDate as any).toDate().toISOString() : po.orderDate,
-        });
+        // Only include items that are not fully delivered
+        if ((item.delivered || 0) < item.total) {
+            productionItems.push({
+            ...item,
+            poId: doc.id,
+            poNumber: po.poNumber,
+            customerName: po.customerName,
+            orderDate: (po.orderDate as any)?.toDate ? (po.orderDate as any).toDate().toISOString() : po.orderDate,
+          });
+        }
       });
     });
 
@@ -57,17 +59,17 @@ export async function updateProductionItem(
   poId: string,
   itemId: string,
   newProduced: number,
-  newStatus: 'Draft' | 'Diproduksi' | 'Siap Kirim' | 'Dikirim'
+  newStatus: OrderItemStatus
 ) {
+  const poRef = doc(db, "purchase_orders", poId);
   try {
-    const poRef = doc(db, "purchase_orders", poId);
-    const poSnapshot = await getDocs(query(collection(db, "purchase_orders"), where("__name__", "==", poId)));
+    const poSnapshot = await getDoc(poRef);
 
-    if (poSnapshot.empty) {
+    if (!poSnapshot.exists()) {
         throw new Error("Purchase Order not found.");
     }
 
-    const poData = poSnapshot.docs[0].data() as PurchaseOrder;
+    const poData = poSnapshot.data() as PurchaseOrder;
     const itemIndex = poData.items.findIndex((item) => item.id === itemId);
 
     if (itemIndex === -1) {
@@ -80,20 +82,16 @@ export async function updateProductionItem(
     currentItem.produced = newProduced;
     currentItem.status = newStatus;
 
-    // Optional: Auto-complete item if production is done
+    // Auto-update status based on production
     if (currentItem.produced >= currentItem.total) {
         currentItem.status = 'Siap Kirim';
+    } else if (currentItem.produced > (currentItem.delivered || 0)) {
+        currentItem.status = 'Diproduksi';
     }
 
     await updateDoc(poRef, { items: updatedItems });
 
-    // Optional: Auto-complete PO if all items are ready
-    const allItemsReady = updatedItems.every(item => item.status === 'Siap Kirim' || item.status === 'Dikirim');
-    if (allItemsReady) {
-        await updateDoc(poRef, { status: 'Completed' });
-    }
-
-
+    // Revalidate paths to refresh data on relevant pages
     revalidatePath("/production");
     revalidatePath("/purchase-orders");
     revalidatePath("/");

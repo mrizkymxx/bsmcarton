@@ -110,9 +110,10 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
             length: panjangBahan,
             width: lebarBahan
         }, { shouldValidate: true });
-    }, [panjangBahan, lebarBahan, index, form.setValue, form]);
+    }, [panjangBahan, lebarBahan, index, form.setValue, form, itemType]);
 
     const formatNumber = (num: number) => {
+        if (isNaN(num) || num === 0) return '0';
         return Number.isInteger(num) ? num : num.toFixed(2);
     }
 
@@ -125,7 +126,16 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     render={({ field }) => (
                     <FormItem className="md:col-span-4">
                         <FormLabel>Jenis Item</FormLabel>
-                         <Select onValueChange={field.onChange} defaultValue={field.value}>
+                         <Select 
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                // Reset height when type changes from Box to Layer
+                                if (value === 'Layer') {
+                                    form.setValue(`items.${index}.finishedSize.height`, 0);
+                                }
+                            }}
+                            defaultValue={field.value}
+                         >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Pilih jenis" />
@@ -282,7 +292,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     customerName: purchaseOrder?.customerName || "",
     orderDate: purchaseOrder ? new Date(purchaseOrder.orderDate) : new Date(),
     status: purchaseOrder?.status || "Open",
-    items: defaultItems,
+    items: defaultItems.length > 0 ? defaultItems : [],
   }
 
   const form = useForm<POFormValues>({
@@ -322,12 +332,15 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
             }
             return [0, 0];
         })();
+        
+        const existingItem = purchaseOrder?.items.find(i => i.id === item.id);
 
         return {
            ...item,
            id: item.id || crypto.randomUUID(),
-           produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
-           status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
+           produced: existingItem?.produced || 0,
+           delivered: existingItem?.delivered || 0,
+           status: existingItem?.status || 'Draft',
            finishedSize: {
                length: P,
                width: L,

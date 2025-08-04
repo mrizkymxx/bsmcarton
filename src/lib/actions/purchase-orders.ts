@@ -39,7 +39,7 @@ export async function getPurchaseOrders(): Promise<PurchaseOrder[]> {
          customerId: data.customerId,
          orderDate: (data.orderDate as Timestamp)?.toDate()?.toISOString() || new Date().toISOString(),
          status: data.status,
-         items: data.items || [], // Ensure items is always an array
+         items: data.items?.map((item: any) => ({ ...item, delivered: item.delivered || 0 })) || [], // Ensure items and delivered is always available
        }
     });
 
@@ -73,6 +73,7 @@ export async function upsertPurchaseOrder(
     }
     revalidatePath("/purchase-orders");
     revalidatePath("/"); // Also revalidate dashboard for recent POs
+    revalidatePath("/production");
   } catch (error) {
     console.error("Error upserting purchase order: ", error);
     throw new Error("Failed to save purchase order data.");
@@ -85,7 +86,8 @@ export async function deletePurchaseOrder(id: string) {
     const poDoc = doc(db, "purchase_orders", id);
     await deleteDoc(poDoc);
     revalidatePath("/purchase-orders");
-     revalidatePath("/");
+    revalidatePath("/");
+    revalidatePath("/production");
   } catch (error) {
     console.error("Error deleting purchase order: ", error);
     throw new Error("Failed to delete purchase order.");
