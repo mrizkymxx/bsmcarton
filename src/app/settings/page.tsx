@@ -104,13 +104,6 @@ export default function SettingsPage() {
                   中文 (简体)
                 </Label>
               </div>
-               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="cn-traditional" id="r-cn-t" />
-                <Label htmlFor="r-cn-t" className="flex items-center cursor-pointer">
-                  <FlagChina />
-                  中文 (繁體)
-                </Label>
-              </div>
             </RadioGroup>
           </CardContent>
         </Card>
