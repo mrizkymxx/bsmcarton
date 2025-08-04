@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import jsPDF from 'jspdf';
@@ -53,11 +51,11 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.setFont('helvetica', 'bold');
   doc.text('Kepada Yth:', 15, infoY);
   doc.setFont('helvetica', 'normal');
-  doc.text(delivery.customerName, 15, infoY + 5);
+  doc.text(delivery.customerName.toUpperCase(), 15, infoY + 5);
   const addressText = doc.splitTextToSize(customer?.address || '', 80);
   doc.text(addressText, 15, infoY + 10);
   const addressHeight = doc.getTextDimensions(addressText).h;
-  doc.text(customer?.phone || '', 15, infoY + 10 + addressHeight + 2); // Add more space here
+  doc.text(customer?.phone || '', 15, infoY + 12 + addressHeight);
   
   // Right column - Aligned colons
   doc.setFont('helvetica', 'bold');
