@@ -116,8 +116,7 @@ export function DataTable<TData extends Delivery, TValue>({
     },
   })
   
-  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
-  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'deliveryNoteNumber') || getVisibleColumns()[0];
+  const mainColumn = columns.find(c => c.accessorKey === 'deliveryNoteNumber') || columns[0];
   const itemsColumn = columns.find(c => c.accessorKey === 'items');
   const actionsColumn = columns.find(c => c.id === 'actions');
 

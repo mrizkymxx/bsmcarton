@@ -81,8 +81,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
     },
   })
   
-  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
-  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'poNumber') || getVisibleColumns()[0];
+  const mainColumn = columns.find(c => c.accessorKey === 'poNumber') || columns[0];
   const orderDateColumn = columns.find(c => c.accessorKey === 'orderDate');
   const statusColumn = columns.find(c => c.accessorKey === 'status');
   const itemsColumn = columns.find(c => c.accessorKey === 'items');

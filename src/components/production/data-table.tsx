@@ -67,8 +67,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
     },
   })
   
-  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
-  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
+  const mainColumn = columns.find(c => c.accessorKey === 'name') || columns[0];
   const statusColumn = columns.find(c => c.accessorKey === 'status');
   const customerColumn = columns.find(c => c.accessorKey === 'customerName');
   const progressColumn = columns.find(c => c.accessorKey === 'produced');

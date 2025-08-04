@@ -85,11 +85,6 @@ export function DataTable<TData extends Customer, TValue>({
     },
   })
   
-  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
-  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
-  const actionsColumn = columns.find(c => c.id === 'actions');
-
-
   return (
     <div>
         <div className="flex items-center justify-between py-4">
