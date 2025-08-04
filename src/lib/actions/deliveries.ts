@@ -16,6 +16,7 @@ import {
   writeBatch,
   where,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { Delivery, PurchaseOrder, ReadyToShipItem } from "../types";
 
@@ -188,5 +189,82 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
   } catch (error) {
     console.error("Error creating delivery: ", error);
     throw new Error("Failed to create delivery note.");
+  }
+}
+
+// DELETE
+export async function deleteDelivery(id: string) {
+  const batch = writeBatch(db);
+  const deliveryRef = doc(db, "deliveries", id);
+
+  try {
+    // 1. Get the delivery document to know what to roll back
+    const deliveryDoc = await getDoc(deliveryRef);
+    if (!deliveryDoc.exists()) {
+      throw new Error("Surat Jalan tidak ditemukan.");
+    }
+    const deliveryData = deliveryDoc.data() as Delivery;
+
+    // 2. Group items by their PO to minimize reads
+    const itemsByPo = deliveryData.items.reduce((acc, item) => {
+      acc[item.poId] = acc[item.poId] || [];
+      acc[item.poId].push(item);
+      return acc;
+    }, {} as Record<string, typeof deliveryData.items>);
+
+
+    // 3. Update each affected Purchase Order
+    for (const poId in itemsByPo) {
+      const poRef = doc(db, "purchase_orders", poId);
+      const poDoc = await getDoc(poRef);
+      if (!poDoc.exists()) {
+        console.warn(`Purchase Order with ID ${poId} not found during deletion. Skipping.`);
+        continue;
+      }
+
+      const poData = poDoc.data() as PurchaseOrder;
+      const updatedItems = [...poData.items];
+
+      // Subtract the delivered quantity for each item in the deleted delivery
+      itemsByPo[poId].forEach((deliveryItem) => {
+        const itemIndex = updatedItems.findIndex(
+          (item) => item.id === deliveryItem.orderItemId
+        );
+
+        if (itemIndex > -1) {
+          const item = updatedItems[itemIndex];
+          item.delivered = (item.delivered || 0) - deliveryItem.quantity;
+          if (item.delivered < 0) item.delivered = 0; // Prevent negative values
+
+          // Re-evaluate status
+          if (item.produced >= item.total) {
+              item.status = 'Siap Kirim';
+          } else if (item.produced > item.delivered) {
+              item.status = 'Diproduksi';
+          }
+        }
+      });
+
+      // The PO status must be 'Open' if we are deleting a delivery
+      batch.update(poRef, { 
+        items: updatedItems,
+        status: 'Open'
+      });
+    }
+
+    // 4. Delete the actual delivery document
+    batch.delete(deliveryRef);
+
+    // 5. Commit all batched writes
+    await batch.commit();
+
+    // 6. Revalidate paths
+    revalidatePath("/deliveries");
+    revalidatePath("/production");
+    revalidatePath("/purchase-orders");
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Error deleting delivery: ", error);
+    throw new Error("Gagal menghapus Surat Jalan.");
   }
 }
