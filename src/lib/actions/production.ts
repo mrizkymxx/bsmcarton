@@ -20,7 +20,8 @@ const poCollection = collection(db, "purchase_orders");
 // READ Production Items
 export async function getProductionItems(): Promise<ProductionItem[]> {
   try {
-    const q = query(poCollection, where("status", "==", "Open"));
+    // Query all purchase orders, not just "Open" ones.
+    const q = query(poCollection);
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -31,16 +32,24 @@ export async function getProductionItems(): Promise<ProductionItem[]> {
     snapshot.docs.forEach((doc) => {
       const po = doc.data() as Omit<PurchaseOrder, "id">;
       po.items.forEach((item) => {
-        // Only include items that are not fully delivered
-        if ((item.delivered || 0) < item.total) {
-            productionItems.push({
-            ...item,
-            poId: doc.id,
-            poNumber: po.poNumber,
-            customerName: po.customerName,
-            orderDate: (po.orderDate as any)?.toDate ? (po.orderDate as any).toDate().toISOString() : po.orderDate,
-          });
+        
+        let isoOrderDate: string;
+        const orderDate = po.orderDate as any;
+        if (orderDate && typeof orderDate.toDate === 'function') {
+          isoOrderDate = orderDate.toDate().toISOString();
+        } else if (typeof orderDate === 'string') {
+          isoOrderDate = orderDate;
+        } else {
+          isoOrderDate = new Date().toISOString(); // Fallback
         }
+
+        productionItems.push({
+          ...item,
+          poId: doc.id,
+          poNumber: po.poNumber,
+          customerName: po.customerName,
+          orderDate: isoOrderDate,
+        });
       });
     });
 
@@ -80,14 +89,17 @@ export async function updateProductionItem(
     const currentItem = updatedItems[itemIndex];
 
     currentItem.produced = newProduced;
-    currentItem.status = newStatus;
-
+    
     // Auto-update status based on production
-    if (currentItem.produced >= currentItem.total) {
+    // This logic is now primarily visual on the frontend, but we keep a base status here.
+    if (newStatus) {
+       currentItem.status = newStatus;
+    } else if (currentItem.produced >= currentItem.total) {
         currentItem.status = 'Siap Kirim';
     } else if (currentItem.produced > (currentItem.delivered || 0)) {
         currentItem.status = 'Diproduksi';
     }
+
 
     await updateDoc(poRef, { items: updatedItems });
 
