@@ -1,7 +1,7 @@
 
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, FilterFn } from "@tanstack/react-table"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Delivery, DeliveryItem } from "@/lib/types"
@@ -156,6 +156,15 @@ const renderItems = (items: DeliveryItem[]) => {
     )
 }
 
+const poFilterFn: FilterFn<Delivery> = (row, columnId, filterValue) => {
+    if (!filterValue) return true;
+    const items = row.original.items;
+    return items.some(item => 
+        item.poNumber.toLowerCase().includes(String(filterValue).toLowerCase())
+    );
+};
+
+
 export const columns: ColumnDef<Delivery>[] = [
   {
     id: "select",
@@ -218,6 +227,7 @@ export const columns: ColumnDef<Delivery>[] = [
     accessorKey: "items",
     header: "Detail Item",
     cell: ({ row }) => renderItems(row.original.items),
+    filterFn: poFilterFn,
   },
   {
     id: "actions",

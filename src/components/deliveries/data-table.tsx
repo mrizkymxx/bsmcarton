@@ -4,7 +4,6 @@
 import * as React from "react"
 import {
   ColumnDef,
-  ColumnFiltersState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -54,9 +53,7 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+  const [globalFilter, setGlobalFilter] = React.useState('')
    const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
     
@@ -71,13 +68,13 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
      onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
-      columnFilters,
       columnVisibility,
+      globalFilter,
     },
   })
 
@@ -85,11 +82,9 @@ export function DataTable<TData, TValue>({
     <div>
         <div className="flex items-center justify-between py-4">
             <Input
-            placeholder="Cari berdasarkan no. surat jalan..."
-            value={(table.getColumn("deliveryNoteNumber")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-                table.getColumn("deliveryNoteNumber")?.setFilterValue(event.target.value)
-            }
+            placeholder="Cari no. surat jalan, pelanggan, atau no. PO..."
+            value={globalFilter ?? ""}
+            onChange={(event) => setGlobalFilter(event.target.value)}
             className="max-w-sm"
             />
             <div className="flex items-center gap-2">
@@ -215,5 +210,3 @@ export function DataTable<TData, TValue>({
     </div>
   )
 }
-
-    
