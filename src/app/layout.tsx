@@ -37,8 +37,32 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const fontScript = `
+    (function() {
+      try {
+        const font = localStorage.getItem('font') || 'inter';
+        const fontSize = localStorage.getItem('fontSize') || 'base';
+        
+        const root = document.documentElement;
+        root.style.setProperty('--font-sans', 'var(--font-' + font + ')');
+
+        if (fontSize === 'sm') {
+          root.style.setProperty('--font-size-base', '14px');
+        } else if (fontSize === 'base') {
+          root.style.setProperty('--font-size-base', '16px');
+        } else if (fontSize === 'lg') {
+          root.style.setProperty('--font-size-base', '18px');
+        }
+        
+      } catch (e) {}
+    })();
+  `;
+  
   return (
     <html lang="en" suppressHydrationWarning>
+       <head>
+        <script dangerouslySetInnerHTML={{ __html: fontScript }} />
+      </head>
       <body className={`${inter.variable} ${roboto.variable} ${poppins.variable} font-sans antialiased`}>
             <ThemeProvider
               attribute="class"

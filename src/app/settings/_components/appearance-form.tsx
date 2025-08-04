@@ -51,26 +51,23 @@ export function AppearanceForm() {
     const currentFontSize = localStorage.getItem("fontSize") || "base";
     form.setValue("font", currentFont as "inter" | "roboto" | "poppins");
     form.setValue("fontSize", currentFontSize as "sm" | "base" | "lg");
+  }, [form]);
 
-    document.documentElement.style.setProperty("--font-sans", `var(--font-${currentFont})`);
-    if(currentFontSize === 'sm') document.documentElement.style.setProperty("--font-size-base", '14px');
-    if(currentFontSize === 'base') document.documentElement.style.setProperty("--font-size-base", '16px');
-    if(currentFontSize === 'lg') document.documentElement.style.setProperty("--font-size-base", '18px');
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function onSubmit(data: AppearanceFormValues) {
+  function applyAppearance(data: AppearanceFormValues) {
     setTheme(data.theme);
     
     localStorage.setItem("font", data.font);
     localStorage.setItem("fontSize", data.fontSize);
 
-    document.documentElement.style.setProperty("--font-sans", `var(--font-${data.font})`);
-    if(data.fontSize === 'sm') document.documentElement.style.setProperty("--font-size-base", '14px');
-    if(data.fontSize === 'base') document.documentElement.style.setProperty("--font-size-base", '16px');
-    if(data.fontSize === 'lg') document.documentElement.style.setProperty("--font-size-base", '18px');
-    
+    const root = document.documentElement;
+    root.style.setProperty("--font-sans", `var(--font-${data.font})`);
+    if(data.fontSize === 'sm') root.style.setProperty("--font-size-base", '14px');
+    if(data.fontSize === 'base') root.style.setProperty("--font-size-base", '16px');
+    if(data.fontSize === 'lg') root.style.setProperty("--font-size-base", '18px');
+  }
+
+  function onSubmit(data: AppearanceFormValues) {
+    applyAppearance(data);
     toast({
       title: "Appearance updated!",
       description: `Theme, font, and font size have been updated.`,
