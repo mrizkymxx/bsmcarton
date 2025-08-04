@@ -10,7 +10,7 @@ import {
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-4 w-full">
+    <div className="w-full space-y-4">
       <div className="grid gap-4">
         <Card>
           <CardHeader>
