@@ -50,7 +50,7 @@ const orderItemSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(3, "Nama item minimal 3 karakter."),
   finishedSize: finishedSizeSchema,
-  materialSize: materialSizeSchema,
+  materialSize: materialSizeSchema.optional(),
   total: z.coerce.number().min(1, "Jumlah harus lebih dari 0."),
   notes: z.string().optional(),
 });
@@ -72,7 +72,7 @@ interface POFormProps {
   onSuccess?: () => void;
 }
 
-const ItemRow = ({ control, index, remove }: { control: any, index: number, remove: (index: number) => void }) => {
+const ItemRow = ({ control, index, remove, form }: { control: any, index: number, remove: (index: number) => void, form: any }) => {
     const itemValues = useWatch({
         control,
         name: `items.${index}`
@@ -82,8 +82,17 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
     const L = itemValues.finishedSize?.width || 0;
     const T = itemValues.finishedSize?.height || 0;
 
-    const panjangBahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
-    const lebarBahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
+    const panjangBahan = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
+    const lebarBahan = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
+    
+    // Use setValue from the form instance to update the materialSize
+    useEffect(() => {
+        form.setValue(`items.${index}.materialSize`, {
+            length: panjangBahan,
+            width: lebarBahan
+        }, { shouldValidate: true });
+    }, [panjangBahan, lebarBahan, index, form.setValue, form]);
+
 
     return (
         <div className="flex items-start gap-4 p-4 border rounded-md relative">
@@ -155,7 +164,7 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
                 />
                 <div className="md:col-span-4 flex items-end">
                     <p className="text-sm text-muted-foreground">
-                        Ukuran Bahan: {panjangBahan || 0} x {lebarBahan || 0} mm
+                        Ukuran Bahan: {panjangBahan.toFixed(2)} x {lebarBahan.toFixed(2)} mm
                     </p>
                 </div>
                 <FormField
@@ -206,13 +215,27 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     fetchCustomers();
   }, [toast]);
 
+  const defaultItems = purchaseOrder?.items?.map(item => ({
+      ...item,
+      finishedSize: {
+          length: item.finishedSize.length ?? 0,
+          width: item.finishedSize.width ?? 0,
+          height: item.finishedSize.height ?? 0
+      },
+      materialSize: {
+          length: item.materialSize.length ?? 0,
+          width: item.materialSize.width ?? 0
+      }
+  })) || [];
+
+
   const defaultValues: Partial<POFormValues> = {
     poNumber: purchaseOrder?.poNumber || "",
     customerId: purchaseOrder?.customerId || "",
     customerName: purchaseOrder?.customerName || "",
     orderDate: purchaseOrder ? new Date(purchaseOrder.orderDate) : new Date(),
     status: purchaseOrder?.status || "Open",
-    items: purchaseOrder?.items || [],
+    items: defaultItems,
   }
 
   const form = useForm<POFormValues>({
@@ -238,8 +261,8 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
         const L = item.finishedSize.width;
         const T = item.finishedSize.height;
 
-        const panjangBahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
-        const lebarBahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
+        const panjangBahan = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
+        const lebarBahan = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
 
         return {
            ...item,
@@ -367,7 +390,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
            <h3 className="text-lg font-medium mb-2">Item Pesanan</h3>
           <div className="space-y-4">
             {fields.map((field, index) => (
-              <ItemRow key={field.id} control={form.control} index={index} remove={remove} />
+              <ItemRow key={field.id} control={form.control} index={index} remove={remove} form={form} />
             ))}
           </div>
            <Button
@@ -420,9 +443,5 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     </Form>
   )
 }
-
-    
-
-    
 
     
