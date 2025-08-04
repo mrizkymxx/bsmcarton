@@ -58,7 +58,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <UserNav />
           </header>
           <SidebarInset>
-            <main className="flex-1">{children}</main>
+            <main className="flex-1">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                {children}
+              </div>
+            </main>
           </SidebarInset>
         </div>
       </div>

@@ -10,7 +10,7 @@ import {
 
 export default function SettingsPage() {
   return (
-    <div className="w-full max-w-7xl mx-auto flex-1 space-y-4 p-4 md:p-8">
+    <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
