@@ -15,7 +15,7 @@ import {
   orderBy,
   Timestamp,
 } from "firebase/firestore";
-import { Delivery, PurchaseOrder, ReadyToShipItem } from "../types";
+import { Delivery, DeliveryItem, PurchaseOrder, ReadyToShipItem } from "../types";
 
 const deliveriesCollection = collection(db, "deliveries");
 const poCollection = collection(db, "purchase_orders");
@@ -80,7 +80,8 @@ export async function getReadyToShipItems(
         const produced = item.produced || 0;
         const availableToShip = produced - delivered;
         
-        if (item.status === 'Siap Kirim' && availableToShip > 0) {
+        // **REVISED LOGIC**: Any item with stock available to ship should be included.
+        if (availableToShip > 0) {
           items.push({
             ...item,
             id: item.id,
@@ -112,6 +113,7 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
     const deliveryData = {
       ...data,
       deliveryDate: new Date(data.deliveryDate),
+      // Clean up the items to only include what's needed for the delivery note
       items: data.items.map(item => ({
         poId: item.poId,
         orderItemId: item.orderItemId,
@@ -200,7 +202,7 @@ export async function deleteDelivery(id: string) {
       acc[item.poId] = acc[item.poId] || [];
       acc[item.poId].push(item);
       return acc;
-    }, {} as Record<string, typeof deliveryData.items>);
+    }, {} as Record<string, DeliveryItem[]>);
 
     for (const poId in itemsByPo) {
       const poRef = doc(db, "purchase_orders", poId);
@@ -224,14 +226,14 @@ export async function deleteDelivery(id: string) {
           item.delivered = originalDelivered - deliveryItem.quantity;
           if (item.delivered < 0) item.delivered = 0;
 
-          // **REVISED LOGIC**: If item was 'Dikirim' or 'Siap Kirim', and now is not fully delivered, revert status
            if (item.status === 'Dikirim' && item.delivered < item.total) {
-             item.status = 'Siap Kirim';
+              const produced = item.produced || 0;
+              // If fully produced, it's ready to ship again. Otherwise it's 'Diproduksi'
+              item.status = produced >= item.total ? 'Siap Kirim' : 'Diproduksi';
            }
         }
       });
       
-      // A PO that was 'Completed' might now be 'Open' again
       batch.update(poRef, { 
         items: updatedItems,
         status: 'Open'

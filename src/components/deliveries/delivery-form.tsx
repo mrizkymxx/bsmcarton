@@ -35,21 +35,19 @@ import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Checkbox } from "../ui/checkbox"
 
-// **REBUILD**: Simplified schema, focusing on what's needed from the form.
 const deliveryItemSchema = z.object({
   poId: z.string(),
   orderItemId: z.string(),
   name: z.string(),
   poNumber: z.string(),
   type: z.enum(["Box", "Layer"]),
-  // **REBUILD**: Make finishedSize optional and just check for object shape
   finishedSize: z.object({
     length: z.coerce.number(),
     width: z.coerce.number(),
     height: z.coerce.number().optional(),
   }).nullable(),
   quantity: z.coerce.number().min(1, "Jumlah harus minimal 1."),
-  availableToShip: z.coerce.number(), // This is for reference, not direct validation here
+  availableToShip: z.coerce.number(),
 });
 
 const formSchema = z.object({
@@ -82,7 +80,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         deliveryDate: new Date(),
         items: [],
     },
-    mode: "onChange", // Use onChange for more responsive validation
+    mode: "onChange",
   })
   
   const { fields, append, remove } = useFieldArray({
@@ -105,7 +103,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
   }, [toast]);
   
   useEffect(() => {
-      form.setValue('items', []); // Reset items when customer changes
+      form.setValue('items', []);
       if (!selectedCustomerId) {
           setReadyItems([]);
           return;
@@ -138,7 +136,6 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                 quantity: itemToAdd.availableToShip,
                 availableToShip: itemToAdd.availableToShip,
                 type: itemToAdd.type,
-                // **REBUILD**: Safely handle finishedSize
                 finishedSize: itemToAdd.finishedSize ? {
                     length: itemToAdd.finishedSize.length,
                     width: itemToAdd.finishedSize.width,
@@ -329,7 +326,6 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                     </Table>
                 </div>
             )}
-           {/* Show root error for items array if it exists */}
            {form.formState.errors.items && !form.formState.errors.items.root && <FormMessage className="mt-2">{form.formState.errors.items.message}</FormMessage>}
         </div>
 
