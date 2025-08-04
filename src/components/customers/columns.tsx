@@ -162,7 +162,7 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => {
         const customer = row.original
         return (
-          <div className="font-medium">{customer.name}</div>
+          <div className="font-semibold">{customer.name}</div>
         )
     }
   },
@@ -170,16 +170,18 @@ export const columns: ColumnDef<Customer>[] = [
     accessorKey: "email",
     header: "Email",
     enableHiding: true,
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("email")}</div>
   },
   {
     accessorKey: "phone",
     header: "Phone",
     enableHiding: true,
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("phone")}</div>
   },
   {
     accessorKey: "address",
     header: "Address",
-    cell: ({ row }) => <div className="truncate max-w-[250px]">{row.getValue("address")}</div>
+    cell: ({ row }) => <div className="truncate max-w-[250px] font-semibold">{row.getValue("address")}</div>
   },
   {
     id: "actions",
