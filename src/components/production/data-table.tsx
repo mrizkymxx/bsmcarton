@@ -88,7 +88,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
             <div className="flex items-center gap-2">
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto hidden sm:flex">
+                <Button variant="outline" className="ml-auto hidden md:flex">
                 Show Columns
                 </Button>
             </DropdownMenuTrigger>
@@ -123,7 +123,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
             </DropdownMenu>
             </div>
         </div>
-        <div className="rounded-md border hidden sm:block">
+        <div className="rounded-md border hidden md:block">
         <Table>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -168,7 +168,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
         </Table>
         </div>
 
-        <div className="space-y-4 sm:hidden">
+        <div className="space-y-4 md:hidden">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <Card key={row.id}>
