@@ -34,14 +34,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2 p-2">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-8 w-8 text-primary"
-                >
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                </svg>
+                <span className="flex items-center justify-center h-8 w-8 text-primary font-bold text-3xl">
+                  工
+                </span>
                 <h1 className="text-xl font-bold">BSMcarton</h1>
             </div>
           </SidebarHeader>
