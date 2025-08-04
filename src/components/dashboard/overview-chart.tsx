@@ -3,7 +3,7 @@
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Delivery, PurchaseOrder } from '@/lib/types';
-import { useEffect, useState } from 'react';
+import { ChartContainer, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 
 interface OverviewChartProps {
     orders: PurchaseOrder[];
@@ -50,40 +50,51 @@ const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[], year:
     }));
 };
 
+const chartConfig = {
+    Dipesan: {
+        label: "Dipesan",
+        color: "hsl(var(--chart-1))",
+    },
+    Terkirim: {
+        label: "Terkirim",
+        color: "hsl(var(--chart-2))",
+    },
+} satisfies ChartConfig;
+
+
 export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
     const currentYear = new Date().getFullYear();
     const data = processChartData(orders, deliveries, currentYear);
     
     return (
-        <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis
-                    dataKey="name"
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                />
-                <YAxis
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `${value / 1000}K`}
-                />
-                <Tooltip
-                    cursor={{ fill: 'hsl(var(--card))' }}
-                    contentStyle={{
-                        backgroundColor: 'hsl(var(--background))',
-                        borderColor: 'hsl(var(--border))',
-                        borderRadius: 'var(--radius)'
-                    }}
-                    labelStyle={{ color: 'hsl(var(--foreground))' }}
-                />
-                <Bar dataKey="Dipesan" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Terkirim" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-            </BarChart>
-        </ResponsiveContainer>
+        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+             <ResponsiveContainer width="100%" height={350}>
+                <BarChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                    <XAxis
+                        dataKey="name"
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                    />
+                    <YAxis
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={(value) => `${value / 1000}K`}
+                    />
+                    <Tooltip
+                        cursor={{ fill: 'hsl(var(--card))' }}
+                        content={<ChartTooltipContent 
+                            labelStyle={{ color: 'hsl(var(--foreground))' }}
+                        />}
+                    />
+                    <Bar dataKey="Dipesan" fill="var(--color-Dipesan)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Terkirim" fill="var(--color-Terkirim)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+            </ResponsiveContainer>
+        </ChartContainer>
     );
 }
