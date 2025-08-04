@@ -88,7 +88,7 @@ body {
   }
   .dark {
     background-color: hsl(var(--background));
-    background-image: radial-gradient(hsl(var(--foreground)) 1px, transparent 0);
+    background-image: radial-gradient(hsl(var(--foreground) / 0.1) 1px, transparent 0);
     background-size: 40px 40px;
     background-position: -19px -19px;
   }
