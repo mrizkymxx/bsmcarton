@@ -78,7 +78,7 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle>Bahasa</CardTitle>
             <CardDescription>
-              Pilih bahasa yang digunakan di seluruh aplikasi. (UI Placeholder)
+              Pilih bahasa yang digunakan di seluruh aplikasi.
             </CardDescription>
           </CardHeader>
           <CardContent>
