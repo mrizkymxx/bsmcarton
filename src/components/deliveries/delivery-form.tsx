@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { Customer, Delivery, ReadyToShipItem } from "@/lib/types"
+import { Customer, Delivery, PurchaseOrder, ReadyToShipItem } from "@/lib/types"
 import {
   Select,
   SelectContent,
@@ -63,20 +63,22 @@ const formSchema = z.object({
 type DeliveryFormValues = z.infer<typeof formSchema>
 
 interface DeliveryFormProps {
+  purchaseOrder?: PurchaseOrder;
   onSuccess?: () => void;
 }
 
-export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
+export function DeliveryForm({ purchaseOrder, onSuccess }: DeliveryFormProps) {
   const { toast } = useToast()
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isPending, startTransition] = useTransition();
   const [readyItems, setReadyItems] = useState<ReadyToShipItem[]>([]);
+  const isFromPO = !!purchaseOrder;
 
   const form = useForm<DeliveryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
         deliveryNoteNumber: "",
-        customerId: "",
+        customerId: purchaseOrder?.customerId || "",
         deliveryDate: new Date(),
         items: [],
     },
@@ -91,6 +93,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
   const selectedCustomerId = form.watch("customerId");
 
   useEffect(() => {
+    if (isFromPO) return; // Don't fetch all customers if creating from a specific PO
     const fetchCustomers = async () => {
         try {
             const fetchedCustomers = await getCustomers();
@@ -100,7 +103,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         }
     };
     fetchCustomers();
-  }, [toast]);
+  }, [toast, isFromPO]);
   
   useEffect(() => {
       form.setValue('items', []);
@@ -112,7 +115,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
       const fetchReadyItems = async () => {
         startTransition(async () => {
            try {
-               const items = await getReadyToShipItems(selectedCustomerId);
+               const items = await getReadyToShipItems(selectedCustomerId, isFromPO ? purchaseOrder.id : null);
                setReadyItems(items);
            } catch(error) {
                 toast({ title: "Error", description: "Failed to load ready-to-ship items.", variant: "destructive" });
@@ -120,7 +123,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         });
       };
       fetchReadyItems();
-  }, [selectedCustomerId, toast, form]);
+  }, [selectedCustomerId, toast, form, isFromPO, purchaseOrder]);
   
   const handleItemSelectionChange = (itemId: string, checked: boolean) => {
     const currentFormItems = form.getValues('items');
@@ -154,7 +157,21 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
 
   const onSubmit = async (values: DeliveryFormValues) => {
     try {
-      const selectedCustomer = customers.find(c => c.id === values.customerId);
+      let selectedCustomer: Customer | undefined;
+      if (isFromPO) {
+        selectedCustomer = {
+          id: purchaseOrder.customerId,
+          name: purchaseOrder.customerName,
+          // Dummy data for other fields as they are not needed here
+          email: '',
+          phone: '',
+          address: '',
+          registered: ''
+        };
+      } else {
+        selectedCustomer = customers.find(c => c.id === values.customerId);
+      }
+
       if (!selectedCustomer) throw new Error("Invalid customer.");
 
       const deliveryData: Omit<Delivery, "id"> = {
@@ -205,18 +222,22 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                 render={({ field }) => (
                 <FormItem>
                     <FormLabel>Customer</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue placeholder={isPending ? "Loading..." : "Select customer"} />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                        {customers.map(customer => (
-                            <SelectItem key={customer.id} value={customer.id}>{customer.name}</SelectItem>
-                        ))}
-                        </SelectContent>
-                    </Select>
+                    {isFromPO ? (
+                        <Input value={purchaseOrder.customerName} disabled />
+                    ) : (
+                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder={isPending ? "Loading..." : "Select customer"} />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            {customers.map(customer => (
+                                <SelectItem key={customer.id} value={customer.id}>{customer.name}</SelectItem>
+                            ))}
+                            </SelectContent>
+                        </Select>
+                    )}
                     <FormMessage />
                 </FormItem>
                 )}

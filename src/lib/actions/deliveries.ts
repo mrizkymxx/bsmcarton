@@ -56,16 +56,30 @@ export async function getDeliveries(): Promise<Delivery[]> {
 
 // READ Items that are ready to be shipped for a specific customer
 export async function getReadyToShipItems(
-  customerId: string
+  customerId: string,
+  poId: string | null = null
 ): Promise<ReadyToShipItem[]> {
   if (!customerId) return [];
 
   try {
-    const q = query(
-      poCollection,
-      where("customerId", "==", customerId),
-      where("status", "==", "Open")
-    );
+    let q;
+    if (poId) {
+      // If a specific PO ID is provided, fetch only that PO
+      const poRef = doc(db, "purchase_orders", poId);
+      const poDoc = await getDoc(poRef);
+       if (!poDoc.exists() || poDoc.data().customerId !== customerId) {
+        return [];
+      }
+      q = query(poCollection, where("__name__", "==", poId));
+    } else {
+      // Otherwise, fetch all open POs for the customer
+      q = query(
+        poCollection,
+        where("customerId", "==", customerId),
+        where("status", "==", "Open")
+      );
+    }
+    
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -80,7 +94,6 @@ export async function getReadyToShipItems(
         const produced = item.produced || 0;
         const availableToShip = produced - delivered;
         
-        // **REVISED LOGIC**: Any item with stock available to ship should be included.
         if (availableToShip > 0) {
           items.push({
             ...item,

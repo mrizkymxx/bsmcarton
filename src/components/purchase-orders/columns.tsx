@@ -38,9 +38,11 @@ import { Badge } from "@/components/ui/badge"
 import { PurchaseOrderForm } from "./po-form"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { DeliveryForm } from "../deliveries/delivery-form"
 
 function ActionsCell({ po }: { po: PurchaseOrder }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeliveryDialogOpen, setIsDeliveryDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
@@ -82,6 +84,23 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
           />
         </DialogContent>
       </Dialog>
+      
+      <Dialog open={isDeliveryDialogOpen} onOpenChange={setIsDeliveryDialogOpen}>
+        <DialogContent className="sm:max-w-4xl">
+           <DialogHeader>
+              <DialogTitle>Create New Delivery Note</DialogTitle>
+              <DialogDescription>
+                  Creating a delivery note for PO: <span className="font-semibold text-primary">{po.poNumber}</span>
+              </DialogDescription>
+            </DialogHeader>
+            <DeliveryForm 
+              purchaseOrder={po}
+              onSuccess={() => {
+                setIsDeliveryDialogOpen(false);
+                router.refresh();
+            }} />
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
@@ -109,6 +128,7 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => setIsDeliveryDialogOpen(true)}>Create Delivery Note</DropdownMenuItem>
           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit</DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setIsDeleteDialogOpen(true)}
