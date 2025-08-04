@@ -80,21 +80,20 @@ export async function getReadyToShipItems(
       const po = doc.data() as Omit<PurchaseOrder, "id" | "items"> & { items: any[] };
       po.items.forEach((item) => {
         const delivered = item.delivered || 0;
-        // Item is ready if it's marked 'Siap Kirim' OR if it has been partially produced and is not fully delivered
-        if (item.status === 'Siap Kirim' || (item.status === 'Diproduksi' && item.produced > delivered)) {
-          const availableToShip = item.produced - delivered;
-          if (availableToShip > 0) {
-            items.push({
-              ...item,
-              poId: doc.id,
-              poNumber: po.poNumber,
-              customerName: po.customerName,
-              orderDate: (po.orderDate as any)?.toDate
-                ? (po.orderDate as any).toDate().toISOString()
-                : po.orderDate,
-              availableToShip: availableToShip,
-            });
-          }
+        const availableToShip = item.produced - delivered;
+        
+        // **FIX:** Only include items that have a quantity > 0 available to ship.
+        if (availableToShip > 0) {
+          items.push({
+            ...item,
+            poId: doc.id,
+            poNumber: po.poNumber,
+            customerName: po.customerName,
+            orderDate: (po.orderDate as any)?.toDate
+              ? (po.orderDate as any).toDate().toISOString()
+              : po.orderDate,
+            availableToShip: availableToShip,
+          });
         }
       });
     });
