@@ -1,91 +1,26 @@
-"use client";
-
-import {
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-} from "@/components/ui/sidebar";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { UserNav } from "./user-nav";
-import { ThemeToggle } from "./theme-toggle";
-import { SidebarNavigation } from "./sidebar-navigation";
-import { usePathname } from "next/navigation";
-import { Triangle, PanelLeft } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-
-const pageTitles: { [key: string]: string } = {
-  "/": "Dashboard",
-  "/customers": "Customers",
-  "/purchase-orders": "Purchase Orders",
-  "/production": "Production",
-  "/deliveries": "Deliveries",
-  "/settings": "Settings",
-};
+import Link from 'next/link';
+import { SidebarNavigation } from './sidebar-navigation';
+import { ThemeToggle } from './theme-toggle';
+import { UserNav } from './user-nav';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   return (
-      <div className="min-h-screen w-full">
-        <Sidebar className="hidden md:flex">
-          <SidebarHeader>
-            <div className="flex items-center gap-2">
-              <span className="flex items-center justify-center h-8 w-8 text-primary">
-                <Triangle className="h-6 w-6" />
-              </span>
-              <span>
-                <h1 className="text-xl font-bold">CartonFlow</h1>
-              </span>
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarNavigation />
-          </SidebarContent>
-        </Sidebar>
-        
-        <div className="flex flex-col md:pl-64">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-            
-            <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-                <SheetTrigger asChild>
-                    <Button variant="outline" size="icon" className="md:hidden">
-                        <PanelLeft />
-                        <span className="sr-only">Toggle Sidebar</span>
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="p-0">
-                    <Sidebar>
-                        <SidebarHeader>
-                            <div className="flex items-center gap-2">
-                            <span className="flex items-center justify-center h-8 w-8 text-primary">
-                                <Triangle className="h-6 w-6" />
-                            </span>
-                            <span>
-                                <h1 className="text-xl font-bold">CartonFlow</h1>
-                            </span>
-                            </div>
-                        </SidebarHeader>
-                        <SidebarContent>
-                            <SidebarNavigation onNavigate={() => setIsSidebarOpen(false)} />
-                        </SidebarContent>
-                    </Sidebar>
-                </SheetContent>
-            </Sheet>
-
-            <div className="w-full flex-1">
-                <h1 className="text-lg font-semibold">
-                {pageTitles[pathname] ?? "CartonFlow"}
-                </h1>
-            </div>
-            <ThemeToggle />
-            <UserNav />
-          </header>
-          <main className="flex-1 p-4 sm:p-6">
-            {children}
-          </main>
+    <div className="min-h-screen w-full flex flex-col">
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
+        <nav className="flex items-center gap-6 text-lg font-medium md:gap-5 md:text-sm lg:gap-6">
+          <SidebarNavigation />
+        </nav>
+        <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+          <div className="ml-auto flex-1 sm:flex-initial">
+             {/* Future search bar can go here */}
+          </div>
+          <ThemeToggle />
+          <UserNav />
         </div>
-      </div>
+      </header>
+      <main className="flex-1 p-4 sm:p-6">
+        {children}
+      </main>
+    </div>
   );
 }

@@ -3,54 +3,49 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from "@/components/ui/sidebar"
-import {
   LayoutDashboard,
   Users,
-  Package,
-  Truck,
   FileText,
+  Boxes,
+  Truck,
   Settings,
-  Boxes
+  Triangle
 } from "lucide-react"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { cn } from "@/lib/utils"
 
 const navItems = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard, color: "text-sky-500" },
-    { href: "/customers", label: "Customers", icon: Users, color: "text-violet-500" },
-    { href: "/purchase-orders", label: "Purchase Orders", icon: FileText, color: "text-amber-500" },
-    { href: "/production", label: "Production", icon: Boxes, color: "text-rose-500" },
-    { href: "/deliveries", label: "Deliveries", icon: Truck, color: "text-teal-500" },
-    { href: "/settings", label: "Settings", icon: Settings, color: "text-slate-500" },
+    { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/customers", label: "Customers", icon: Users },
+    { href: "/purchase-orders", label: "Purchase Orders", icon: FileText },
+    { href: "/production", label: "Production", icon: Boxes },
+    { href: "/deliveries", label: "Deliveries", icon: Truck },
+    { href: "/settings", label: "Settings", icon: Settings },
 ]
 
-export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
+export function SidebarNavigation() {
   const pathname = usePathname();
-  const isMobile = useIsMobile();
-
-  const handleLinkClick = () => {
-    if (isMobile && onNavigate) {
-      onNavigate();
-    }
-  }
 
   return (
-    <SidebarMenu>
-      {navItems.map((item) => (
-        <SidebarMenuItem key={item.href}>
-            <Link href={item.href} prefetch={true} onClick={handleLinkClick} className="w-full">
-              <SidebarMenuButton
-                isActive={pathname === item.href}
-              >
-                <item.icon className={item.color} />
-                <span>{item.label}</span>
-              </SidebarMenuButton>
+    <>
+        <Link
+            href="/"
+            className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+        >
+            <Triangle className="h-5 w-5 transition-all group-hover:scale-110" />
+            <span className="sr-only">CartonFlow</span>
+        </Link>
+        {navItems.map((item) => (
+            <Link 
+                key={item.href} 
+                href={item.href} 
+                className={cn(
+                    "transition-colors hover:text-foreground",
+                    pathname === item.href ? "text-foreground" : "text-muted-foreground"
+                )}
+            >
+                {item.label}
             </Link>
-        </SidebarMenuItem>
       ))}
-    </SidebarMenu>
+    </>
   )
 }
