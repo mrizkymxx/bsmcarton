@@ -6,53 +6,74 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
+ 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+ 
+    --primary: 246 83% 54%;
     --primary-foreground: 210 40% 98%;
+ 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
+ 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
+ 
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
+ 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 246 83% 54%;
+ 
     --radius: 0.5rem;
-    --chart-1: 222.2 47.4% 11.2%;
-    --chart-2: 210 40% 96.1%;
-  }
 
+    --chart-1: 262 82% 70%;
+    --chart-2: 48 96% 61%;
+  }
+ 
   .dark {
-    --background: 224 71% 4%;
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-    --card: 224 71% 4%;
+ 
+    --card: 212 48% 13%;
     --card-foreground: 210 40% 98%;
-    --popover: 224 71% 4%;
+ 
+    --popover: 212 48% 13%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 224 71% 4%;
-    --secondary: 215 28% 17%;
+ 
+    --primary: 262 82% 70%; /* #A78BFA */
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 215 28% 17%;
+ 
+    --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
-    --accent: 215 28% 17%;
+ 
+    --accent: 217 33% 17%;
     --accent-foreground: 210 40% 98%;
+ 
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 215 28% 17%;
-    --chart-1: 210 40% 98%;
-    --chart-2: 215 28% 27%;
+ 
+    --border: 217 33% 22%;
+    --input: 217 33% 22%;
+    --ring: 262 82% 70%;
+
+    --radius: 0.5rem;
+
+    --chart-1: 262 82% 70%; /* #A78BFA */
+    --chart-2: 48 96% 61%; /* #FACC15 */
   }
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
