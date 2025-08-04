@@ -212,15 +212,15 @@ export function DataTable<TData extends Customer, TValue>({
                            <dl className="text-sm text-muted-foreground space-y-1">
                                 <div className="flex items-start">
                                     <dt className="w-16 font-semibold text-foreground shrink-0">Address</dt>
-                                    <dd className="flex-1">: {customer.address}</dd>
+                                    <dd className="flex-1 font-semibold">: {customer.address}</dd>
                                 </div>
                                 <div className="flex items-start">
                                     <dt className="w-16 font-semibold text-foreground shrink-0">Email</dt>
-                                    <dd className="flex-1">: {customer.email}</dd>
+                                    <dd className="flex-1 font-semibold">: {customer.email}</dd>
                                 </div>
                                 <div className="flex items-start">
                                     <dt className="w-16 font-semibold text-foreground shrink-0">Phone</dt>
-                                    <dd className="flex-1">: {customer.phone}</dd>
+                                    <dd className="flex-1 font-semibold">: {customer.phone}</dd>
                                 </div>
                            </dl>
                         </CardContent>
