@@ -54,7 +54,10 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.text('Kepada Yth:', 15, infoY);
   doc.setFont('helvetica', 'normal');
   doc.text(delivery.customerName, 15, infoY + 5);
-  doc.text(customer?.address || 'Alamat tidak ditemukan', 15, infoY + 10, { maxWidth: 80 });
+  const addressText = doc.splitTextToSize(customer?.address || '', 80);
+  doc.text(addressText, 15, infoY + 10);
+  const addressHeight = doc.getTextDimensions(addressText).h;
+  doc.text(customer?.phone || '', 15, infoY + 10 + addressHeight);
   
   // Right column - Aligned colons
   doc.setFont('helvetica', 'bold');
@@ -99,7 +102,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.autoTable({
     head: [tableColumn],
     body: tableRows,
-    startY: infoY + 25, // Start table after info section
+    startY: infoY + 30, // Start table after info section
     theme: 'grid',
     headStyles: { fillColor: [22, 163, 74] },
     columnStyles: {

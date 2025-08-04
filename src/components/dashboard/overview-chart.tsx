@@ -62,7 +62,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 
-export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
+function OverviewChartComponent({ orders, deliveries }: OverviewChartProps) {
     const currentYear = new Date().getFullYear();
     const data = processChartData(orders, deliveries, currentYear);
     
@@ -98,3 +98,5 @@ export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
         </ChartContainer>
     );
 }
+
+export { OverviewChartComponent as OverviewChart };
