@@ -40,20 +40,21 @@ export function AppearanceForm() {
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues: {
-      theme: theme === "light" || theme === "dark" ? theme : "dark",
+      theme: "dark",
       font: "inter",
       fontSize: "base",
     },
   })
 
   useEffect(() => {
+    form.setValue("theme", theme === "light" || theme === "dark" ? theme : "dark");
     const currentFont = localStorage.getItem("font") || "inter";
     const currentFontSize = localStorage.getItem("fontSize") || "base";
     form.setValue("font", currentFont as "inter" | "roboto" | "poppins");
     form.setValue("fontSize", currentFontSize as "sm" | "base" | "lg");
-  }, [form]);
+  }, [theme, form]);
 
-  function applyAppearance(data: AppearanceFormValues) {
+  function onSubmit(data: AppearanceFormValues) {
     setTheme(data.theme);
     
     localStorage.setItem("font", data.font);
@@ -64,10 +65,7 @@ export function AppearanceForm() {
     if(data.fontSize === 'sm') root.style.setProperty("--font-size-base", '14px');
     if(data.fontSize === 'base') root.style.setProperty("--font-size-base", '16px');
     if(data.fontSize === 'lg') root.style.setProperty("--font-size-base", '18px');
-  }
 
-  function onSubmit(data: AppearanceFormValues) {
-    applyAppearance(data);
     toast({
       title: "Appearance updated!",
       description: `Theme, font, and font size have been updated.`,

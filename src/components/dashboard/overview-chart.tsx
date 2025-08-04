@@ -51,18 +51,18 @@ const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[], year:
 };
 
 export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
-    const [data, setData] = useState<any[]>([]);
-    
+    const [year, setYear] = useState<number | null>(null);
+
     useEffect(() => {
-        const currentYear = new Date().getFullYear();
-        setData(processChartData(orders, deliveries, currentYear));
-    }, [orders, deliveries]);
-    
-    // Render a placeholder if data is not yet processed to avoid layout shifts
-    if (data.length === 0) {
+        setYear(new Date().getFullYear());
+    }, []);
+
+    if (year === null) {
         return <div className="w-full h-[350px] bg-muted animate-pulse rounded-lg" />;
     }
 
+    const data = processChartData(orders, deliveries, year);
+    
     return (
         <ResponsiveContainer width="100%" height={350}>
             <BarChart data={data}>

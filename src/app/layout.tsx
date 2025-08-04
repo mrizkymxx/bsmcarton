@@ -28,7 +28,7 @@ const poppins = Poppins({
 
 
 export const metadata: Metadata = {
-  title: 'CartonFlow',
+  title: 'BSMcarton',
   description: 'Cardboard carton production management system',
 };
 
