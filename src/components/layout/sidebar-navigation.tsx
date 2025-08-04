@@ -17,7 +17,7 @@ export function SidebarNavigation() {
   const pathname = usePathname();
 
   return (
-    <>
+    <div className="flex items-center space-x-6">
         {navItems.map((item) => (
             <Link 
                 key={item.href} 
@@ -30,6 +30,6 @@ export function SidebarNavigation() {
                 {item.label}
             </Link>
       ))}
-    </>
+    </div>
   )
 }
