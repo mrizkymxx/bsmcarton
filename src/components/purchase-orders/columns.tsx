@@ -49,14 +49,14 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
     try {
       await deletePurchaseOrder(po.id);
       toast({
-        title: "Sukses",
-        description: "Purchase Order berhasil dihapus.",
+        title: "Success",
+        description: "Purchase Order has been successfully deleted.",
       });
       router.refresh();
     } catch (error) {
        toast({
         title: "Error",
-        description: "Gagal menghapus purchase order.",
+        description: "Failed to delete purchase order.",
         variant: "destructive",
       });
     }
@@ -70,7 +70,7 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
           <DialogHeader>
             <DialogTitle>Edit Purchase Order</DialogTitle>
             <DialogDescription>
-              Lakukan perubahan pada detail PO di bawah ini. Klik simpan jika sudah selesai.
+              Make changes to the PO details below. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
           <PurchaseOrderForm
@@ -86,15 +86,15 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Anda yakin ingin menghapus?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data PO secara permanen.
+              This action cannot be undone. This will permanently delete the PO data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
-              Hapus
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -103,18 +103,18 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Buka menu</span>
+            <span className="sr-only">Open menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit</DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setIsDeleteDialogOpen(true)}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
-            Hapus
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -132,14 +132,14 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Pilih semua"
+        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Pilih baris"
+        aria-label="Select row"
       />
     ),
     enableSorting: false,
@@ -153,7 +153,7 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nomor PO
+          PO Number
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -161,14 +161,14 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
   },
   {
     accessorKey: "customerName",
-    header: "Nama Pelanggan",
+    header: "Customer Name",
   },
   {
     accessorKey: "orderDate",
-    header: "Tanggal Pesan",
+    header: "Order Date",
      cell: ({ row }) => {
       const date = new Date(row.getValue("orderDate"))
-      const formatted = date.toLocaleDateString('id-ID', {
+      const formatted = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -188,7 +188,7 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
   },
     {
     accessorKey: "items",
-    header: "Detail Item",
+    header: "Item Details",
     cell: ({ row }) => {
       const items = row.original.items;
       if (!items || items.length === 0) {
@@ -198,18 +198,18 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
         <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="p-0 hover:no-underline">
-                   {items.length} Item
+                   {items.length} Items
                 </AccordionTrigger>
                 <AccordionContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Jenis</TableHead>
-                                <TableHead>Nama Style</TableHead>
-                                <TableHead>Uk. Jadi (cm)</TableHead>
-                                <TableHead>Uk. Bahan (mm)</TableHead>
-                                <TableHead>Jumlah</TableHead>
-                                <TableHead>Catatan</TableHead>
+                                <TableHead>Type</TableHead>
+                                <TableHead>Style Name</TableHead>
+                                <TableHead>Finished (cm)</TableHead>
+                                <TableHead>Material (mm)</TableHead>
+                                <TableHead>Qty</TableHead>
+                                <TableHead>Notes</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

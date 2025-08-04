@@ -155,7 +155,7 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
           item.delivered = (item.delivered || 0) + deliveryItem.quantity;
           
           if (item.delivered >= item.total) {
-            item.status = 'Dikirim';
+            item.status = 'Shipped';
           }
         }
       });
@@ -194,7 +194,7 @@ export async function deleteDelivery(id: string) {
   try {
     const deliveryDoc = await getDoc(deliveryRef);
     if (!deliveryDoc.exists()) {
-      throw new Error("Surat Jalan tidak ditemukan.");
+      throw new Error("Delivery Note not found.");
     }
     const deliveryData = deliveryDoc.data() as Delivery;
 
@@ -226,10 +226,10 @@ export async function deleteDelivery(id: string) {
           item.delivered = originalDelivered - deliveryItem.quantity;
           if (item.delivered < 0) item.delivered = 0;
 
-           if (item.status === 'Dikirim' && item.delivered < item.total) {
+           if (item.status === 'Shipped' && item.delivered < item.total) {
               const produced = item.produced || 0;
-              // If fully produced, it's ready to ship again. Otherwise it's 'Diproduksi'
-              item.status = produced >= item.total ? 'Siap Kirim' : 'Diproduksi';
+              // If fully produced, it's ready to ship again. Otherwise it's 'In Production'
+              item.status = produced >= item.total ? 'Ready to Ship' : 'In Production';
            }
         }
       });
@@ -250,6 +250,6 @@ export async function deleteDelivery(id: string) {
     revalidatePath("/");
   } catch (error) {
     console.error("Error deleting delivery: ", error);
-    throw new Error(error instanceof Error ? error.message : "Gagal menghapus Surat Jalan.");
+    throw new Error(error instanceof Error ? error.message : "Failed to delete Delivery Note.");
   }
 }

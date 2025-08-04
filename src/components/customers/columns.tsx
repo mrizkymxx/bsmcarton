@@ -48,15 +48,15 @@ function ActionsCell({ customer }: { customer: Customer }) {
     try {
       await deleteCustomer(customer.id);
       toast({
-        title: "Sukses",
-        description: "Pelanggan berhasil dihapus.",
+        title: "Success",
+        description: "Customer has been successfully deleted.",
       });
       // Refresh data by reloading the page or using router.refresh()
       router.refresh();
     } catch (error) {
        toast({
         title: "Error",
-        description: "Gagal menghapus pelanggan.",
+        description: "Failed to delete customer.",
         variant: "destructive",
       });
     }
@@ -68,9 +68,9 @@ function ActionsCell({ customer }: { customer: Customer }) {
        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Pelanggan</DialogTitle>
+            <DialogTitle>Edit Customer</DialogTitle>
             <DialogDescription>
-              Lakukan perubahan pada detail pelanggan di bawah ini. Klik simpan jika sudah selesai.
+              Make changes to the customer details below. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
           <CustomerForm 
@@ -86,15 +86,15 @@ function ActionsCell({ customer }: { customer: Customer }) {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Anda yakin ingin menghapus?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data pelanggan secara permanen dari server kami.
+              This action cannot be undone. This will permanently delete the customer data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
-              Hapus
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -103,18 +103,18 @@ function ActionsCell({ customer }: { customer: Customer }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Buka menu</span>
+            <span className="sr-only">Open menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit</DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setIsDeleteDialogOpen(true)}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
-            Hapus
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -133,14 +133,14 @@ export const columns: ColumnDef<Customer>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Pilih semua"
+        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Pilih baris"
+        aria-label="Select row"
       />
     ),
     enableSorting: false,
@@ -154,7 +154,7 @@ export const columns: ColumnDef<Customer>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nama Pelanggan
+          Customer Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -172,11 +172,11 @@ export const columns: ColumnDef<Customer>[] = [
   },
   {
     accessorKey: "phone",
-    header: "Telepon",
+    header: "Phone",
   },
   {
     accessorKey: "address",
-    header: "Alamat",
+    header: "Address",
     cell: ({ row }) => <div className="truncate max-w-xs">{row.getValue("address")}</div>
   },
   {

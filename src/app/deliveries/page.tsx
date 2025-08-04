@@ -10,9 +10,9 @@ export default async function DeliveriesPage() {
     <div className="h-full flex-1 flex-col space-y-8 p-4 md:p-8 flex">
        <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Pengiriman</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Deliveries</h2>
           <p className="text-muted-foreground">
-            Daftar surat jalan yang telah dibuat.
+            List of all created delivery notes.
           </p>
         </div>
       </div>

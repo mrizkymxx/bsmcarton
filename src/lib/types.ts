@@ -9,7 +9,7 @@ export interface Customer {
   registered: string; // ISO date string
 }
 
-export type OrderItemStatus = 'Draft' | 'Diproduksi' | 'Siap Kirim' | 'Dikirim';
+export type OrderItemStatus = 'Draft' | 'In Production' | 'Ready to Ship' | 'Shipped';
 export type OrderItemType = 'Box' | 'Layer';
 
 export interface OrderItem {

@@ -116,7 +116,8 @@ export function DataTable<TData extends Delivery, TValue>({
     },
   })
   
-  const mainColumn = columns.find(c => c.accessorKey === 'deliveryNoteNumber');
+  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
+  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'deliveryNoteNumber') || getVisibleColumns()[0];
   const itemsColumn = columns.find(c => c.accessorKey === 'items');
   const actionsColumn = columns.find(c => c.id === 'actions');
 
@@ -124,7 +125,7 @@ export function DataTable<TData extends Delivery, TValue>({
     <div>
         <div className="flex items-center justify-between py-4">
             <Input
-            placeholder="Cari no. surat jalan, pelanggan, no. PO, ukuran..."
+            placeholder="Search by note no, customer, PO no, size..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="max-w-sm"
@@ -134,14 +135,14 @@ export function DataTable<TData extends Delivery, TValue>({
               <DialogTrigger asChild>
                 <Button className="btn-primary-glow">
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Buat Surat Jalan
+                  Create Delivery Note
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-4xl">
                   <DialogHeader>
-                  <DialogTitle>Buat Surat Jalan Baru</DialogTitle>
+                  <DialogTitle>Create New Delivery Note</DialogTitle>
                   <DialogDescription>
-                      Isi detail surat jalan di bawah ini. Item yang tersedia adalah item yang berstatus 'Siap Kirim'.
+                      Fill in the delivery note details below. Available items are those with 'Ready to Ship' status.
                   </DialogDescription>
                   </DialogHeader>
                   <DeliveryForm onSuccess={() => {
@@ -153,7 +154,7 @@ export function DataTable<TData extends Delivery, TValue>({
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto hidden sm:flex">
-                Tampilkan Kolom
+                Show Columns
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -164,11 +165,11 @@ export function DataTable<TData extends Delivery, TValue>({
                 )
                 .map((column) => {
                     const columnMap: Record<string, string> = {
-                        deliveryNoteNumber: "No. Surat Jalan",
-                        customerName: "Nama Pelanggan",
-                        deliveryDate: "Tanggal Kirim",
-                        vehicleNumber: "No. Kendaraan",
-                        items: "Detail Item",
+                        deliveryNoteNumber: "Delivery Note No.",
+                        customerName: "Customer Name",
+                        deliveryDate: "Delivery Date",
+                        vehicleNumber: "Vehicle No.",
+                        items: "Item Details",
                     }
                     return (
                     <DropdownMenuCheckboxItem
@@ -224,7 +225,7 @@ export function DataTable<TData extends Delivery, TValue>({
             ) : (
                 <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                    Tidak ada data pengiriman.
+                    No delivery data.
                 </TableCell>
                 </TableRow>
             )}
@@ -250,7 +251,7 @@ export function DataTable<TData extends Delivery, TValue>({
                     </Card>
                 ))
             ) : (
-                 <div className="text-center py-10 text-muted-foreground">Tidak ada data pengiriman.</div>
+                 <div className="text-center py-10 text-muted-foreground">No delivery data.</div>
             )}
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
@@ -260,7 +261,7 @@ export function DataTable<TData extends Delivery, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             >
-            Sebelumnya
+            Previous
             </Button>
             <Button
             variant="outline"
@@ -268,7 +269,7 @@ export function DataTable<TData extends Delivery, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             >
-            Berikutnya
+            Next
             </Button>
       </div>
     </div>

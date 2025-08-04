@@ -10,7 +10,7 @@ import { Progress } from "../ui/progress"
 export const columns: ColumnDef<ProductionItem>[] = [
   {
     accessorKey: "name",
-    header: "Nama Item",
+    header: "Item Name",
     cell: ({row}) => {
         const item = row.original;
         return (
@@ -25,7 +25,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
   },
   {
     accessorKey: "customerName",
-    header: "Pelanggan",
+    header: "Customer",
      cell: ({row}) => {
         const item = row.original;
         return (
@@ -38,7 +38,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
   },
   {
     accessorKey: "total",
-    header: "Jumlah Pesan",
+    header: "Order Qty",
     cell: ({row}) => {
       const item = row.original;
       return <span>{item.total.toLocaleString()}</span>
@@ -46,7 +46,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
   },
   {
     accessorKey: "produced",
-    header: "Progres Produksi",
+    header: "Production Progress",
     cell: ({ row }) => {
       const item = row.original;
       const delivered = item.delivered || 0;
@@ -57,8 +57,8 @@ export const columns: ColumnDef<ProductionItem>[] = [
         <div className="flex flex-col gap-1.5 w-48">
            <Progress value={progress} className="h-2" />
            <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Belum Dikirim: {notDelivered.toLocaleString()}</span>
-                <span>Terkirim: {delivered.toLocaleString()}</span>
+                <span>Not Shipped: {notDelivered.toLocaleString()}</span>
+                <span>Shipped: {delivered.toLocaleString()}</span>
            </div>
         </div>
       )
@@ -72,7 +72,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
       const delivered = item.delivered || 0;
       
       const isCompleted = delivered >= item.total;
-      const status = isCompleted ? "Selesai" : "Belum Selesai";
+      const status = isCompleted ? "Completed" : "In Progress";
       const variant = isCompleted ? "default" : "secondary";
 
       return <Badge variant={variant}>{status}</Badge>

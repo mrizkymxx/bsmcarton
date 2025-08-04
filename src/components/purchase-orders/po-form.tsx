@@ -35,9 +35,9 @@ import { getCustomers } from "@/lib/actions/customers"
 import { Separator } from "@/components/ui/separator"
 
 const finishedSizeSchema = z.object({
-  length: z.coerce.number({invalid_type_error: "Panjang harus berupa angka."}).positive("P harus lebih dari 0."),
-  width: z.coerce.number({invalid_type_error: "Lebar harus berupa angka."}).positive("L harus lebih dari 0."),
-  height: z.coerce.number({invalid_type_error: "Tinggi harus berupa angka."}),
+  length: z.coerce.number({invalid_type_error: "Length must be a number."}).positive("L must be greater than 0."),
+  width: z.coerce.number({invalid_type_error: "Width must be a number."}).positive("W must be greater than 0."),
+  height: z.coerce.number({invalid_type_error: "Height must be a number."}),
 })
 
 const materialSizeSchema = z.object({
@@ -47,11 +47,11 @@ const materialSizeSchema = z.object({
 
 const orderItemSchema = z.object({
   id: z.string().optional(),
-  type: z.enum(["Box", "Layer"], { required_error: "Jenis item harus dipilih." }),
-  name: z.string().min(3, "Nama item minimal 3 karakter."),
+  type: z.enum(["Box", "Layer"], { required_error: "Item type must be selected." }),
+  name: z.string().min(3, "Item name must be at least 3 characters."),
   finishedSize: finishedSizeSchema,
   materialSize: materialSizeSchema.optional(),
-  total: z.coerce.number().min(1, "Jumlah harus lebih dari 0."),
+  total: z.coerce.number().min(1, "Quantity must be greater than 0."),
   notes: z.string().optional(),
 }).refine(data => {
     if (data.type === 'Box') {
@@ -59,18 +59,18 @@ const orderItemSchema = z.object({
     }
     return true;
 }, {
-    message: "Tinggi harus lebih dari 0 untuk jenis 'Box'.",
+    message: "Height must be greater than 0 for 'Box' type.",
     path: ["finishedSize", "height"],
 });
 
 
 const formSchema = z.object({
-  poNumber: z.string().min(3, "Nomor PO minimal 3 karakter."),
-  customerId: z.string().min(1, "Pelanggan harus dipilih."),
+  poNumber: z.string().min(3, "PO number must be at least 3 characters."),
+  customerId: z.string().min(1, "Customer must be selected."),
   customerName: z.string(), // This will be set based on customerId
-  orderDate: z.date({ required_error: "Tanggal pesan harus diisi." }),
+  orderDate: z.date({ required_error: "Order date is required." }),
   status: z.enum(["Open", "Completed", "Cancelled"]),
-  items: z.array(orderItemSchema).min(1, "Minimal harus ada 1 item dalam PO."),
+  items: z.array(orderItemSchema).min(1, "At least one item is required in the PO."),
 })
 
 type POFormValues = z.infer<typeof formSchema>
@@ -125,7 +125,7 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     name={`items.${index}.type`}
                     render={({ field }) => (
                     <FormItem className="md:col-span-4">
-                        <FormLabel>Jenis Item</FormLabel>
+                        <FormLabel>Item Type</FormLabel>
                          <Select 
                             onValueChange={(value) => {
                                 field.onChange(value);
@@ -138,7 +138,7 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                          >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Pilih jenis" />
+                                <SelectValue placeholder="Select type" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -155,9 +155,9 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     name={`items.${index}.name`}
                     render={({ field }) => (
                     <FormItem className="md:col-span-8">
-                        <FormLabel>Nama Style</FormLabel>
+                        <FormLabel>Style Name</FormLabel>
                         <FormControl>
-                        <Input placeholder="cth: Box Standar / Layer Polos" {...field} />
+                        <Input placeholder="e.g., Standard Box / Plain Layer" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -168,9 +168,9 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     name={`items.${index}.finishedSize.length`}
                     render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                        <FormLabel>Panjang (cm)</FormLabel>
+                        <FormLabel>Length (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="P" {...field} step="0.01" />
+                            <Input type="number" placeholder="L" {...field} step="0.01" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -181,9 +181,9 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     name={`items.${index}.finishedSize.width`}
                     render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                        <FormLabel>Lebar (cm)</FormLabel>
+                        <FormLabel>Width (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="L" {...field} step="0.01" />
+                            <Input type="number" placeholder="W" {...field} step="0.01" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -195,9 +195,9 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                         name={`items.${index}.finishedSize.height`}
                         render={({ field }) => (
                         <FormItem className="md:col-span-2">
-                            <FormLabel>Tinggi (cm)</FormLabel>
+                            <FormLabel>Height (cm)</FormLabel>
                             <FormControl>
-                                <Input type="number" placeholder="T" {...field} step="0.01" />
+                                <Input type="number" placeholder="H" {...field} step="0.01" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -209,9 +209,9 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     name={`items.${index}.total`}
                     render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                        <FormLabel>Jumlah</FormLabel>
+                        <FormLabel>Quantity</FormLabel>
                         <FormControl>
-                        <Input type="number" placeholder="cth: 1000" {...field} />
+                        <Input type="number" placeholder="e.g., 1000" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -220,7 +220,7 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                 <div className="md:col-span-4 flex items-end">
                      {panjangBahan > 0 && lebarBahan > 0 && (
                         <p className="text-sm text-muted-foreground">
-                            Ukuran Bahan: {formatNumber(panjangBahan)} x {formatNumber(lebarBahan)} mm
+                            Material Size: {formatNumber(panjangBahan)} x {formatNumber(lebarBahan)} mm
                         </p>
                     )}
                 </div>
@@ -229,9 +229,9 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     name={`items.${index}.notes`}
                     render={({ field }) => (
                     <FormItem className="md:col-span-12">
-                        <FormLabel>Catatan</FormLabel>
+                        <FormLabel>Notes</FormLabel>
                         <FormControl>
-                        <Textarea placeholder="Opsional" className="resize-none" {...field} />
+                        <Textarea placeholder="Optional" className="resize-none" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -264,7 +264,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
         setCustomers(fetchedCustomers);
       } catch (error) {
         console.error("Failed to fetch customers", error);
-        toast({ title: "Error", description: "Gagal memuat data pelanggan.", variant: "destructive" });
+        toast({ title: "Error", description: "Failed to load customer data.", variant: "destructive" });
       } finally {
         setIsLoadingCustomers(false);
       }
@@ -310,7 +310,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     try {
       const selectedCustomer = customers.find(c => c.id === values.customerId);
       if (!selectedCustomer) {
-        throw new Error("Pelanggan tidak valid.");
+        throw new Error("Invalid customer.");
       }
       
        const processedItems = values.items.map(item => {
@@ -363,8 +363,8 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
       await upsertPurchaseOrder(isEditMode ? purchaseOrder.id : null, poData);
 
       toast({
-        title: "Sukses!",
-        description: `Purchase Order berhasil ${isEditMode ? 'diperbarui' : 'ditambahkan'}.`,
+        title: "Success!",
+        description: `Purchase Order has been successfully ${isEditMode ? 'updated' : 'added'}.`,
       });
       if (onSuccess) {
         onSuccess();
@@ -373,7 +373,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || `Gagal ${isEditMode ? 'memperbarui' : 'menambahkan'} PO. Silakan coba lagi.`,
+        description: error.message || `Failed to ${isEditMode ? 'update' : 'add'} PO. Please try again.`,
         variant: "destructive",
       });
     }
@@ -388,9 +388,9 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
             name="poNumber"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nomor PO</FormLabel>
+                <FormLabel>PO Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="cth: PO/2024/001" {...field} />
+                  <Input placeholder="e.g., PO/2024/001" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -401,11 +401,11 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
             name="customerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Pelanggan</FormLabel>
+                <FormLabel>Customer</FormLabel>
                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoadingCustomers}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={isLoadingCustomers ? "Memuat..." : "Pilih pelanggan"} />
+                        <SelectValue placeholder={isLoadingCustomers ? "Loading..." : "Select customer"} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -423,7 +423,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
             name="orderDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Tanggal Pesan</FormLabel>
+                <FormLabel>Order Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -437,7 +437,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
-                          <span>Pilih tanggal</span>
+                          <span>Pick a date</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -464,7 +464,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
         <Separator />
         
         <div>
-           <h3 className="text-lg font-medium mb-2">Item Pesanan</h3>
+           <h3 className="text-lg font-medium mb-2">Order Items</h3>
           <div className="space-y-4">
             {fields.map((field, index) => (
               <ItemRow key={field.id} control={form.control} index={index} remove={remove} form={form} />
@@ -484,7 +484,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
                 })}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
-              Tambah Item
+              Add Item
             </Button>
             <FormMessage>{form.formState.errors.items?.message}</FormMessage>
             <FormMessage>{form.formState.errors.items?.root?.message}</FormMessage>
@@ -500,7 +500,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pilih status PO" />
+                          <SelectValue placeholder="Select PO status" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -513,7 +513,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
               )}
             />
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+              {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
         </div>
       </form>

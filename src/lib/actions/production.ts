@@ -95,9 +95,9 @@ export async function updateProductionItem(
     if (newStatus) {
        currentItem.status = newStatus;
     } else if (currentItem.produced >= currentItem.total) {
-        currentItem.status = 'Siap Kirim';
+        currentItem.status = 'Ready to Ship';
     } else if (currentItem.produced > (currentItem.delivered || 0)) {
-        currentItem.status = 'Diproduksi';
+        currentItem.status = 'In Production';
     }
 
 

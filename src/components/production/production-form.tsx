@@ -27,8 +27,8 @@ import {
 
 
 const formSchema = z.object({
-  produced: z.coerce.number().min(0, "Jumlah tidak boleh negatif."),
-  status: z.enum(["Draft", "Diproduksi", "Siap Kirim", "Dikirim"]),
+  produced: z.coerce.number().min(0, "Quantity cannot be negative."),
+  status: z.enum(["Draft", "In Production", "Ready to Ship", "Shipped"]),
 })
 
 type ProductionFormValues = z.infer<typeof formSchema>
@@ -54,14 +54,14 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
     if (values.produced > item.total) {
         form.setError("produced", {
             type: "manual",
-            message: `Jumlah produksi tidak boleh melebihi jumlah pesanan (${item.total} pcs).`
+            message: `Production quantity cannot exceed the ordered quantity (${item.total} pcs).`
         });
         return;
     }
      if (values.produced < (item.delivered || 0)) {
         form.setError("produced", {
             type: "manual",
-            message: `Jumlah produksi tidak boleh kurang dari yang sudah terkirim (${item.delivered || 0} pcs).`
+            message: `Production quantity cannot be less than the already shipped quantity (${item.delivered || 0} pcs).`
         });
         return;
     }
@@ -69,8 +69,8 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
     try {
         await updateProductionItem(item.poId, item.id, values.produced, values.status as OrderItemStatus);
         toast({
-            title: "Sukses!",
-            description: `Progres produksi untuk item "${item.name}" berhasil diperbarui.`,
+            title: "Success!",
+            description: `Production progress for item "${item.name}" has been successfully updated.`,
         });
         if (onSuccess) {
             onSuccess();
@@ -78,7 +78,7 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
     } catch (error) {
       toast({
         title: "Error",
-        description: `Gagal memperbarui progres. Silakan coba lagi.`,
+        description: `Failed to update progress. Please try again.`,
         variant: "destructive",
       });
     }
@@ -92,7 +92,7 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
           name="produced"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Jumlah Sudah Produksi (pcs)</FormLabel>
+              <FormLabel>Quantity Produced (pcs)</FormLabel>
               <FormControl>
                 <Input type="number" {...field} />
               </FormControl>
@@ -105,17 +105,17 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
           name="status"
           render={({ field }) => (
              <FormItem>
-                <FormLabel>Status Item</FormLabel>
+                <FormLabel>Item Status</FormLabel>
                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Pilih status" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                         <SelectItem value="Draft">Draft</SelectItem>
-                        <SelectItem value="Diproduksi">Diproduksi</SelectItem>
-                        <SelectItem value="Siap Kirim">Siap Kirim</SelectItem>
+                        <SelectItem value="In Production">In Production</SelectItem>
+                        <SelectItem value="Ready to Ship">Ready to Ship</SelectItem>
                     </SelectContent>
                   </Select>
                 <FormMessage />
@@ -123,12 +123,12 @@ export function ProductionForm({ item, onSuccess }: ProductionFormProps) {
           )}
         />
         <p className="text-sm text-muted-foreground">
-            Total Dipesan: {item.total.toLocaleString()} pcs <br />
-            Total Terkirim: {(item.delivered || 0).toLocaleString()} pcs
+            Total Ordered: {item.total.toLocaleString()} pcs <br />
+            Total Shipped: {(item.delivered || 0).toLocaleString()} pcs
         </p>
         <div className="flex justify-end">
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+              {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
         </div>
       </form>

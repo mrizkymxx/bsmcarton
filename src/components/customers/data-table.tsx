@@ -83,7 +83,7 @@ export function DataTable<TData extends Customer, TValue>({
   })
   
   const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
-  const mainColumn = columns.find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
+  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
   const actionsColumn = columns.find(c => c.id === 'actions');
 
 
@@ -91,7 +91,7 @@ export function DataTable<TData extends Customer, TValue>({
     <div>
         <div className="flex items-center justify-between py-4">
             <Input
-            placeholder="Cari berdasarkan nama..."
+            placeholder="Search by name..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
@@ -103,14 +103,14 @@ export function DataTable<TData extends Customer, TValue>({
               <DialogTrigger asChild>
                 <Button className="btn-primary-glow">
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Tambah Pelanggan
+                  Add Customer
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
-                  <DialogTitle>Tambah Pelanggan Baru</DialogTitle>
+                  <DialogTitle>Add New Customer</DialogTitle>
                   <DialogDescription>
-                      Isi detail pelanggan di bawah ini. Klik simpan jika sudah selesai.
+                      Fill in the customer details below. Click save when you're done.
                   </DialogDescription>
                   </DialogHeader>
                   <CustomerForm onSuccess={() => {
@@ -122,7 +122,7 @@ export function DataTable<TData extends Customer, TValue>({
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto hidden sm:flex">
-                Tampilkan Kolom
+                Show Columns
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -141,7 +141,7 @@ export function DataTable<TData extends Customer, TValue>({
                         column.toggleVisibility(!!value)
                         }
                     >
-                        {column.id === 'name' ? 'Nama Pelanggan' : column.id}
+                        {column.id === 'name' ? 'Customer Name' : column.id}
                     </DropdownMenuCheckboxItem>
                     )
                 })}
@@ -186,7 +186,7 @@ export function DataTable<TData extends Customer, TValue>({
             ) : (
                 <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                    Tidak ada data pelanggan.
+                    No customer data.
                 </TableCell>
                 </TableRow>
             )}
@@ -214,11 +214,11 @@ export function DataTable<TData extends Customer, TValue>({
                                     <dd>{row.original.email}</dd>
                                 </div>
                                 <div className="flex gap-2">
-                                    <dt className="w-16 font-semibold text-foreground">Telepon</dt>
+                                    <dt className="w-16 font-semibold text-foreground">Phone</dt>
                                     <dd>{row.original.phone}</dd>
                                 </div>
                                 <div className="flex gap-2">
-                                    <dt className="w-16 font-semibold text-foreground">Alamat</dt>
+                                    <dt className="w-16 font-semibold text-foreground">Address</dt>
                                     <dd className="truncate">{row.original.address}</dd>
                                 </div>
                             </dl>
@@ -226,7 +226,7 @@ export function DataTable<TData extends Customer, TValue>({
                     </Card>
                 ))
             ) : (
-                <div className="text-center py-10 text-muted-foreground">Tidak ada data pelanggan.</div>
+                <div className="text-center py-10 text-muted-foreground">No customer data.</div>
             )}
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
@@ -236,7 +236,7 @@ export function DataTable<TData extends Customer, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             >
-            Sebelumnya
+            Previous
             </Button>
             <Button
             variant="outline"
@@ -244,7 +244,7 @@ export function DataTable<TData extends Customer, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             >
-            Berikutnya
+            Next
             </Button>
       </div>
     </div>

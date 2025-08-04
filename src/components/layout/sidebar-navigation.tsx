@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -19,11 +20,11 @@ import {
 
 const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard, color: "text-sky-500" },
-    { href: "/customers", label: "Pelanggan", icon: Users, color: "text-violet-500" },
+    { href: "/customers", label: "Customers", icon: Users, color: "text-violet-500" },
     { href: "/purchase-orders", label: "Purchase Orders", icon: FileText, color: "text-amber-500" },
-    { href: "/production", label: "Produksi", icon: Boxes, color: "text-rose-500" },
-    { href: "/deliveries", label: "Pengiriman", icon: Truck, color: "text-teal-500" },
-    { href: "/settings", label: "Pengaturan", icon: Settings, color: "text-slate-500" },
+    { href: "/production", label: "Production", icon: Boxes, color: "text-rose-500" },
+    { href: "/deliveries", label: "Deliveries", icon: Truck, color: "text-teal-500" },
+    { href: "/settings", label: "Settings", icon: Settings, color: "text-slate-500" },
 ]
 
 export function SidebarNavigation() {

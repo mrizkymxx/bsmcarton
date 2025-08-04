@@ -68,7 +68,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
   })
   
   const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
-  const mainColumn = columns.find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
+  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'name') || getVisibleColumns()[0];
   const statusColumn = columns.find(c => c.accessorKey === 'status');
   const customerColumn = columns.find(c => c.accessorKey === 'customerName');
   const progressColumn = columns.find(c => c.accessorKey === 'produced');
@@ -78,7 +78,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
     <div>
         <div className="flex items-center justify-between py-4">
             <Input
-            placeholder="Cari berdasarkan nama item..."
+            placeholder="Search by item name..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
@@ -89,7 +89,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto hidden sm:flex">
-                Tampilkan Kolom
+                Show Columns
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -100,10 +100,10 @@ export function DataTable<TData extends ProductionItem, TValue>({
                 )
                 .map((column) => {
                      const columnMap: Record<string, string> = {
-                        name: "Nama Item",
-                        customerName: "Pelanggan",
-                        total: "Jumlah Pesan",
-                        produced: "Progres Produksi",
+                        name: "Item Name",
+                        customerName: "Customer",
+                        total: "Order Qty",
+                        produced: "Production Progress",
                         status: "Status",
                     }
                     return (
@@ -160,7 +160,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
             ) : (
                 <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                    Tidak ada item untuk diproduksi.
+                    No items to produce.
                 </TableCell>
                 </TableRow>
             )}
@@ -190,7 +190,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
               </Card>
             ))
           ) : (
-            <div className="text-center py-10 text-muted-foreground">Tidak ada item untuk diproduksi.</div>
+            <div className="text-center py-10 text-muted-foreground">No items to produce.</div>
           )}
         </div>
 
@@ -202,7 +202,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             >
-            Sebelumnya
+            Previous
             </Button>
             <Button
             variant="outline"
@@ -210,7 +210,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             >
-            Berikutnya
+            Next
             </Button>
       </div>
     </div>

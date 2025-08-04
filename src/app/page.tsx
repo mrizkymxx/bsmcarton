@@ -24,7 +24,7 @@ import { FileText, Truck } from 'lucide-react';
 
 type RecentActivity = {
     id: string;
-    type: 'PO' | 'Pengiriman';
+    type: 'PO' | 'Delivery';
     date: string;
     title: string;
     description: string;
@@ -55,16 +55,16 @@ export default async function Dashboard() {
     id: `po-${po.id}`,
     type: 'PO',
     date: po.orderDate,
-    title: `PO Baru: ${po.poNumber}`,
-    description: `Dari: ${po.customerName}`,
+    title: `New PO: ${po.poNumber}`,
+    description: `From: ${po.customerName}`,
   }));
 
   const deliveryActivities: RecentActivity[] = deliveries.map(d => ({
     id: `delivery-${d.id}`,
-    type: 'Pengiriman',
+    type: 'Delivery',
     date: d.deliveryDate,
-    title: `Surat Jalan Dibuat: ${d.deliveryNoteNumber}`,
-    description: `Tujuan: ${d.customerName}`,
+    title: `Delivery Note Created: ${d.deliveryNoteNumber}`,
+    description: `To: ${d.customerName}`,
   }));
 
   const recentActivities = [...poActivities, ...deliveryActivities]
@@ -87,7 +87,7 @@ export default async function Dashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
             <CardHeader>
-              <CardTitle>Ringkasan Produksi</CardTitle>
+              <CardTitle>Production Summary</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
               <OverviewChart orders={purchaseOrders} deliveries={deliveries} />
@@ -95,17 +95,17 @@ export default async function Dashboard() {
           </Card>
           <Card className="col-span-4 lg:col-span-3">
             <CardHeader>
-              <CardTitle>Update Terbaru</CardTitle>
+              <CardTitle>Recent Updates</CardTitle>
               <CardDescription>
-                Daftar 5 aktivitas terakhir (PO & Pengiriman).
+                List of the last 5 activities (POs & Deliveries).
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Aktivitas</TableHead>
-                    <TableHead>Tanggal</TableHead>
+                    <TableHead>Activity</TableHead>
+                    <TableHead>Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -126,7 +126,7 @@ export default async function Dashboard() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {new Date(activity.date).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'})}
+                        {new Date(activity.date).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}
                       </TableCell>
                     </TableRow>
                   ))}

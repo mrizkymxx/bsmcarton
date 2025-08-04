@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -36,11 +37,11 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            Profil
+            Profile
             <DropdownMenuShortcut>⇧P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            Pengaturan
+            Settings
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>

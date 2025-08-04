@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: 'CartonFlow',
-  description: 'Sistem manajemen produksi kardus karton',
+  description: 'Cardboard carton production management system',
 };
 
 export default function RootLayout({

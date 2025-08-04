@@ -46,18 +46,18 @@ const deliveryItemSchema = z.object({
     width: z.coerce.number(),
     height: z.coerce.number().optional(),
   }).nullable(),
-  quantity: z.coerce.number().min(1, "Jumlah harus minimal 1."),
+  quantity: z.coerce.number().min(1, "Quantity must be at least 1."),
   availableToShip: z.coerce.number(),
 });
 
 const formSchema = z.object({
-  deliveryNoteNumber: z.string().min(3, "Nomor surat jalan minimal 3 karakter."),
-  customerId: z.string().min(1, "Pelanggan harus dipilih."),
-  deliveryDate: z.date({ required_error: "Tanggal pengiriman harus diisi." }),
+  deliveryNoteNumber: z.string().min(3, "Delivery note number must be at least 3 characters."),
+  customerId: z.string().min(1, "Customer must be selected."),
+  deliveryDate: z.date({ required_error: "Delivery date is required." }),
   expedition: z.string().optional(),
   vehicleNumber: z.string().optional(),
   driverName: z.string().optional(),
-  items: z.array(deliveryItemSchema).min(1, "Minimal harus ada 1 item untuk dikirim."),
+  items: z.array(deliveryItemSchema).min(1, "At least one item must be selected for delivery."),
 });
 
 type DeliveryFormValues = z.infer<typeof formSchema>
@@ -96,7 +96,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
             const fetchedCustomers = await getCustomers();
             setCustomers(fetchedCustomers);
         } catch (error) {
-            toast({ title: "Error", description: "Gagal memuat data pelanggan.", variant: "destructive" });
+            toast({ title: "Error", description: "Failed to load customer data.", variant: "destructive" });
         }
     };
     fetchCustomers();
@@ -115,7 +115,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                const items = await getReadyToShipItems(selectedCustomerId);
                setReadyItems(items);
            } catch(error) {
-                toast({ title: "Error", description: "Gagal memuat item siap kirim.", variant: "destructive" });
+                toast({ title: "Error", description: "Failed to load ready-to-ship items.", variant: "destructive" });
            }
         });
       };
@@ -155,7 +155,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
   const onSubmit = async (values: DeliveryFormValues) => {
     try {
       const selectedCustomer = customers.find(c => c.id === values.customerId);
-      if (!selectedCustomer) throw new Error("Pelanggan tidak valid.");
+      if (!selectedCustomer) throw new Error("Invalid customer.");
 
       const deliveryData: Omit<Delivery, "id"> = {
         ...values,
@@ -166,8 +166,8 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
       await createDelivery(deliveryData);
 
       toast({
-        title: "Sukses!",
-        description: `Surat Jalan berhasil dibuat.`,
+        title: "Success!",
+        description: `Delivery Note has been successfully created.`,
       });
       if (onSuccess) {
         onSuccess();
@@ -176,7 +176,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || `Gagal membuat surat jalan. Silakan coba lagi.`,
+        description: error.message || `Failed to create delivery note. Please try again.`,
         variant: "destructive",
       });
     }
@@ -191,9 +191,9 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                 name="deliveryNoteNumber"
                 render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Nomor Surat Jalan</FormLabel>
+                    <FormLabel>Delivery Note Number</FormLabel>
                     <FormControl>
-                    <Input placeholder="cth: SJ/2024/001" {...field} />
+                    <Input placeholder="e.g., SJ/2024/001" {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -204,11 +204,11 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                 name="customerId"
                 render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Pelanggan</FormLabel>
+                    <FormLabel>Customer</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
                         <FormControl>
                         <SelectTrigger>
-                            <SelectValue placeholder={isPending ? "Memuat..." : "Pilih pelanggan"} />
+                            <SelectValue placeholder={isPending ? "Loading..." : "Select customer"} />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -226,7 +226,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                 name="deliveryDate"
                 render={({ field }) => (
                 <FormItem className="flex flex-col">
-                    <FormLabel>Tanggal Pengiriman</FormLabel>
+                    <FormLabel>Delivery Date</FormLabel>
                     <Popover>
                     <PopoverTrigger asChild>
                         <FormControl>
@@ -240,7 +240,7 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
                             {field.value ? (
                             format(field.value, "PPP")
                             ) : (
-                            <span>Pilih tanggal</span>
+                            <span>Pick a date</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
@@ -262,27 +262,27 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <FormField control={form.control} name="expedition" render={({ field }) => (<FormItem><FormLabel>Ekspedisi</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
-            <FormField control={form.control} name="vehicleNumber" render={({ field }) => (<FormItem><FormLabel>No. Kendaraan</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
-            <FormField control={form.control} name="driverName" render={({ field }) => (<FormItem><FormLabel>Nama Supir</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
+            <FormField control={form.control} name="expedition" render={({ field }) => (<FormItem><FormLabel>Expedition</FormLabel><FormControl><Input placeholder="(Optional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
+            <FormField control={form.control} name="vehicleNumber" render={({ field }) => (<FormItem><FormLabel>Vehicle No.</FormLabel><FormControl><Input placeholder="(Optional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
+            <FormField control={form.control} name="driverName" render={({ field }) => (<FormItem><FormLabel>Driver's Name</FormLabel><FormControl><Input placeholder="(Optional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
         </div>
         
         <Separator />
         
         <div>
-           <h3 className="text-lg font-medium mb-2">Pilih Item untuk Dikirim</h3>
-            {isPending && <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Memuat item...</div>}
-            {!isPending && readyItems.length === 0 && selectedCustomerId && <p className="text-sm text-muted-foreground">Tidak ada item yang siap dikirim untuk pelanggan ini.</p>}
+           <h3 className="text-lg font-medium mb-2">Select Items for Delivery</h3>
+            {isPending && <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Loading items...</div>}
+            {!isPending && readyItems.length === 0 && selectedCustomerId && <p className="text-sm text-muted-foreground">No items are ready to ship for this customer.</p>}
             {!isPending && readyItems.length > 0 && (
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-10"></TableHead>
-                                <TableHead>Nama Item</TableHead>
-                                <TableHead>No. PO</TableHead>
-                                <TableHead>Siap Kirim</TableHead>
-                                <TableHead className="w-40">Jumlah Kirim</TableHead>
+                                <TableHead>Item Name</TableHead>
+                                <TableHead>PO No.</TableHead>
+                                <TableHead>Ready to Ship</TableHead>
+                                <TableHead className="w-40">Delivery Qty</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -331,12 +331,10 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
 
         <div className="flex justify-end gap-4">
             <Button type="submit" disabled={form.formState.isSubmitting || isPending || !form.formState.isValid}>
-              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan & Buat Surat Jalan'}
+              {form.formState.isSubmitting ? 'Saving...' : 'Save & Create Delivery Note'}
             </Button>
         </div>
       </form>
     </Form>
   )
 }
-
-    

@@ -82,7 +82,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
   })
   
   const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
-  const mainColumn = columns.find(c => c.accessorKey === 'poNumber') || getVisibleColumns()[0];
+  const mainColumn = getVisibleColumns().find(c => c.accessorKey === 'poNumber') || getVisibleColumns()[0];
   const orderDateColumn = columns.find(c => c.accessorKey === 'orderDate');
   const statusColumn = columns.find(c => c.accessorKey === 'status');
   const itemsColumn = columns.find(c => c.accessorKey === 'items');
@@ -92,7 +92,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
     <div>
         <div className="flex items-center justify-between py-4">
             <Input
-            placeholder="Cari berdasarkan No. PO..."
+            placeholder="Search by PO number..."
             value={(table.getColumn("poNumber")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
                 table.getColumn("poNumber")?.setFilterValue(event.target.value)
@@ -104,14 +104,14 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
               <DialogTrigger asChild>
                 <Button className="btn-primary-glow">
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Tambah PO
+                  Add PO
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-4xl">
                   <DialogHeader>
-                  <DialogTitle>Tambah Purchase Order Baru</DialogTitle>
+                  <DialogTitle>Add New Purchase Order</DialogTitle>
                   <DialogDescription>
-                      Isi detail PO di bawah ini. Klik simpan jika sudah selesai.
+                      Fill in the PO details below. Click save when you're done.
                   </DialogDescription>
                   </DialogHeader>
                   <PurchaseOrderForm onSuccess={() => {
@@ -123,7 +123,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto hidden sm:flex">
-                Tampilkan Kolom
+                Show Columns
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -134,11 +134,11 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
                 )
                 .map((column) => {
                     const columnMap: Record<string, string> = {
-                        poNumber: "Nomor PO",
-                        customerName: "Nama Pelanggan",
-                        orderDate: "Tanggal Pesan",
+                        poNumber: "PO Number",
+                        customerName: "Customer Name",
+                        orderDate: "Order Date",
                         status: "Status",
-                        items: "Detail Item",
+                        items: "Item Details",
                     }
                     return (
                     <DropdownMenuCheckboxItem
@@ -194,7 +194,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
             ) : (
                 <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                    Tidak ada data purchase order.
+                    No purchase order data.
                 </TableCell>
                 </TableRow>
             )}
@@ -225,7 +225,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
                     </Card>
                 ))
             ) : (
-                 <div className="text-center py-10 text-muted-foreground">Tidak ada data purchase order.</div>
+                 <div className="text-center py-10 text-muted-foreground">No purchase order data.</div>
             )}
         </div>
 
@@ -236,7 +236,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             >
-            Sebelumnya
+            Previous
             </Button>
             <Button
             variant="outline"
@@ -244,7 +244,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             >
-            Berikutnya
+            Next
             </Button>
       </div>
     </div>

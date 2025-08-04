@@ -12,7 +12,7 @@ export default async function PurchaseOrdersPage() {
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Purchase Orders</h2>
           <p className="text-muted-foreground">
-            Berikut adalah daftar semua purchase order yang masuk.
+            Here is a list of all incoming purchase orders.
           </p>
         </div>
       </div>

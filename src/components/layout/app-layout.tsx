@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -16,11 +17,11 @@ import { usePathname } from "next/navigation";
 
 const pageTitles: { [key: string]: string } = {
   "/": "Dashboard",
-  "/customers": "Pelanggan",
+  "/customers": "Customers",
   "/purchase-orders": "Purchase Orders",
-  "/production": "Produksi",
-  "/deliveries": "Pengiriman",
-  "/settings": "Pengaturan",
+  "/production": "Production",
+  "/deliveries": "Deliveries",
+  "/settings": "Settings",
 };
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

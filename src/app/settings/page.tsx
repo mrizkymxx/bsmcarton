@@ -14,13 +14,13 @@ export default function SettingsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Profil</CardTitle>
+            <CardTitle>Profile</CardTitle>
             <CardDescription>
-              Pengaturan dasar untuk akun Anda. (Segera Hadir)
+              Basic settings for your account. (Coming Soon)
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>Fitur untuk mengubah profil akan tersedia di sini.</p>
+            <p>Features to change the profile will be available here.</p>
           </CardContent>
         </Card>
       </div>

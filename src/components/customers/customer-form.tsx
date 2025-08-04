@@ -21,16 +21,16 @@ import { Customer } from "@/lib/types"
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Nama pelanggan minimal 2 karakter.",
+    message: "Customer name must be at least 2 characters.",
   }),
   email: z.string().email({
-    message: "Format email tidak valid.",
+    message: "Invalid email format.",
   }),
   phone: z.string().min(10, {
-    message: "Nomor telepon minimal 10 digit.",
+    message: "Phone number must be at least 10 digits.",
   }),
   address: z.string().min(10, {
-    message: "Alamat minimal 10 karakter.",
+    message: "Address must be at least 10 characters.",
   }),
 })
 
@@ -65,8 +65,8 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
       await upsertCustomer(isEditMode ? customer.id : null, customerData);
 
       toast({
-        title: "Sukses!",
-        description: `Data pelanggan berhasil ${isEditMode ? 'diperbarui' : 'ditambahkan'}.`,
+        title: "Success!",
+        description: `Customer data has been successfully ${isEditMode ? 'updated' : 'added'}.`,
       });
       if (onSuccess) {
         onSuccess();
@@ -75,7 +75,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
     } catch (error) {
       toast({
         title: "Error",
-        description: `Gagal ${isEditMode ? 'memperbarui' : 'menambahkan'} data pelanggan. Silakan coba lagi.`,
+        description: `Failed to ${isEditMode ? 'update' : 'add'} customer data. Please try again.`,
         variant: "destructive",
       });
     }
@@ -89,9 +89,9 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nama Pelanggan</FormLabel>
+              <FormLabel>Customer Name</FormLabel>
               <FormControl>
-                <Input placeholder="cth: PT. Jaya Abadi" {...field} />
+                <Input placeholder="e.g., PT. Jaya Abadi" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,7 +104,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="cth: admin@jayaabadi.com" {...field} />
+                <Input placeholder="e.g., admin@jayaabadi.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,9 +115,9 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nomor Telepon</FormLabel>
+              <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <Input placeholder="cth: 081234567890" {...field} />
+                <Input placeholder="e.g., 081234567890" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -128,10 +128,10 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Alamat</FormLabel>
+              <FormLabel>Address</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="cth: Jl. Industri Raya No. 123, Jakarta Barat"
+                  placeholder="e.g., Jl. Industri Raya No. 123, West Jakarta"
                   className="resize-none"
                   {...field}
                 />
@@ -142,7 +142,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
         />
         <div className="flex justify-end">
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+              {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
         </div>
       </form>

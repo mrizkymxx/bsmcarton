@@ -51,14 +51,14 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
     try {
       await deleteDelivery(delivery.id);
       toast({
-        title: "Sukses",
-        description: "Surat Jalan berhasil dihapus.",
+        title: "Success",
+        description: "Delivery Note has been successfully deleted.",
       });
       router.refresh();
     } catch (error: any) {
        toast({
         title: "Error",
-        description: error.message || "Gagal menghapus Surat Jalan.",
+        description: error.message || "Failed to delete Delivery Note.",
         variant: "destructive",
       });
     }
@@ -70,15 +70,15 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Anda yakin ingin menghapus?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus Surat Jalan dan mengembalikan jumlah item ke stok produksi.
+              This action cannot be undone. This will delete the Delivery Note and return the item quantity to the production stock.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
-              Hapus
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -87,18 +87,18 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Buka menu</span>
+            <span className="sr-only">Open menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem disabled>Edit</DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setIsDeleteDialogOpen(true)}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
-            Hapus
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -115,7 +115,7 @@ const renderItems = (items: DeliveryItem[]) => {
         <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="py-1 hover:no-underline text-left flex flex-col items-start">
-                   <span className="font-medium">{items.length} Tipe Item</span>
+                   <span className="font-medium">{items.length} Item Types</span>
                    <span className="text-muted-foreground font-normal text-xs">
                        Total: {items.reduce((sum, item) => sum + item.quantity, 0).toLocaleString()} pcs
                    </span>
@@ -124,9 +124,9 @@ const renderItems = (items: DeliveryItem[]) => {
                     <Table className="my-2">
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Nama Item</TableHead>
-                                <TableHead>No. PO</TableHead>
-                                <TableHead className="text-right">Jumlah</TableHead>
+                                <TableHead>Item Name</TableHead>
+                                <TableHead>PO No.</TableHead>
+                                <TableHead className="text-right">Quantity</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -192,14 +192,14 @@ export const columns: ColumnDef<Delivery>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Pilih semua"
+        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Pilih baris"
+        aria-label="Select row"
       />
     ),
     enableSorting: false,
@@ -212,9 +212,9 @@ export const columns: ColumnDef<Delivery>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="pl-0"
+          className="pl-2"
         >
-          No. Surat Jalan
+          Delivery Note No.
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -223,14 +223,14 @@ export const columns: ColumnDef<Delivery>[] = [
   },
   {
     accessorKey: "customerName",
-    header: "Nama Pelanggan",
+    header: "Customer Name",
   },
   {
     accessorKey: "deliveryDate",
-    header: "Tanggal Kirim",
+    header: "Delivery Date",
      cell: ({ row }) => {
       const date = new Date(row.getValue("deliveryDate"))
-      const formatted = date.toLocaleDateString('id-ID', {
+      const formatted = date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -240,11 +240,11 @@ export const columns: ColumnDef<Delivery>[] = [
   },
   {
     accessorKey: "vehicleNumber",
-    header: "No. Kendaraan"
+    header: "Vehicle No."
   },
   {
     accessorKey: "items",
-    header: "Detail Item",
+    header: "Item Details",
     cell: ({ row }) => renderItems(row.original.items),
   },
   {
