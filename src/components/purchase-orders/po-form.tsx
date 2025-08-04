@@ -72,28 +72,18 @@ interface POFormProps {
   onSuccess?: () => void;
 }
 
-const ItemRow = ({ control, index, remove, setValue }: { control: any, index: number, remove: (index: number) => void, setValue: any }) => {
+const ItemRow = ({ control, index, remove }: { control: any, index: number, remove: (index: number) => void }) => {
     const itemValues = useWatch({
         control,
         name: `items.${index}`
     });
 
-    const P = parseFloat(itemValues.finishedSize?.length) || 0;
-    const L = parseFloat(itemValues.finishedSize?.width) || 0;
-    const T = parseFloat(itemValues.finishedSize?.height) || 0;
-    
-    const [panjangBahan, setPanjangBahan] = useState(0);
-    const [lebarBahan, setLebarBahan] = useState(0);
+    const P = itemValues.finishedSize?.length || 0;
+    const L = itemValues.finishedSize?.width || 0;
+    const T = itemValues.finishedSize?.height || 0;
 
-    useEffect(() => {
-        const pb = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
-        const lb = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
-        setPanjangBahan(pb);
-        setLebarBahan(lb);
-        setValue(`items.${index}.materialSize.length`, pb, { shouldValidate: true });
-        setValue(`items.${index}.materialSize.width`, lb, { shouldValidate: true });
-    }, [P, L, T, index, setValue]);
-
+    const panjangBahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
+    const lebarBahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
 
     return (
         <div className="flex items-start gap-4 p-4 border rounded-md relative">
@@ -244,18 +234,24 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
       }
       
       const processedItems = values.items.map(item => {
-        // The materialSize is already calculated and set in the form state by the ItemRow component.
-        // We just need to ensure it's passed through correctly.
+        const P = item.finishedSize.length;
+        const L = item.finishedSize.width;
+        const T = item.finishedSize.height;
+
+        const panjangBahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
+        const lebarBahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
+
         return {
            ...item,
            id: item.id || crypto.randomUUID(),
            produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
            status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
-           // No need to recalculate, just use the value from the form
-           materialSize: item.materialSize 
+           materialSize: {
+             length: panjangBahan,
+             width: lebarBahan,
+           } 
        }
      });
-
 
       const poData: Omit<PurchaseOrder, "id"> = {
         ...values,
@@ -371,7 +367,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
            <h3 className="text-lg font-medium mb-2">Item Pesanan</h3>
           <div className="space-y-4">
             {fields.map((field, index) => (
-              <ItemRow key={field.id} control={form.control} index={index} remove={remove} setValue={form.setValue} />
+              <ItemRow key={field.id} control={form.control} index={index} remove={remove} />
             ))}
           </div>
            <Button
@@ -424,6 +420,8 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     </Form>
   )
 }
+
+    
 
     
 
