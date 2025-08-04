@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
@@ -9,21 +10,20 @@ interface OverviewChartProps {
     deliveries: Delivery[];
 }
 
-const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[]) => {
+const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[], year: number) => {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     const dataByMonth: { [key: string]: { ordered: number, delivered: number } } = {};
 
     // Initialize all months of the current year
-    const currentYear = new Date().getFullYear();
     for (let i = 0; i < 12; i++) {
-        const date = new Date(currentYear, i, 1);
+        const date = new Date(year, i, 1);
         const monthName = monthNames[date.getMonth()];
         dataByMonth[monthName] = { ordered: 0, delivered: 0 };
     }
 
     orders.forEach(order => {
         const orderDate = new Date(order.orderDate);
-        if (orderDate.getFullYear() === currentYear) {
+        if (orderDate.getFullYear() === year) {
             const month = monthNames[orderDate.getMonth()];
             const totalItems = order.items.reduce((sum, item) => sum + item.total, 0);
             if (dataByMonth[month]) {
@@ -34,7 +34,7 @@ const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[]) => {
 
     deliveries.forEach(delivery => {
         const deliveryDate = new Date(delivery.deliveryDate);
-        if (deliveryDate.getFullYear() === currentYear) {
+        if (deliveryDate.getFullYear() === year) {
             const month = monthNames[deliveryDate.getMonth()];
             const totalItems = delivery.items.reduce((sum, item) => sum + item.quantity, 0);
              if (dataByMonth[month]) {
@@ -54,7 +54,8 @@ export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
     const [data, setData] = useState<any[]>([]);
     
     useEffect(() => {
-        setData(processChartData(orders, deliveries));
+        const currentYear = new Date().getFullYear();
+        setData(processChartData(orders, deliveries, currentYear));
     }, [orders, deliveries]);
     
     // Render a placeholder if data is not yet processed to avoid layout shifts
