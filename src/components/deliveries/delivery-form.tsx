@@ -45,9 +45,9 @@ const deliveryItemSchema = z.object({
   availableToShip: z.coerce.number(),
   type: z.enum(["Box", "Layer"]),
   finishedSize: z.object({
-    length: z.number(),
-    width: z.number(),
-    height: z.number().optional(),
+    length: z.coerce.number(),
+    width: z.coerce.number(),
+    height: z.coerce.number().optional(),
   }),
 });
 
@@ -145,9 +145,9 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
             availableToShip: item.availableToShip,
             type: item.type,
             finishedSize: {
-                length: item.finishedSize?.length || 0,
-                width: item.finishedSize?.width || 0,
-                height: item.finishedSize?.height || 0,
+                length: item.finishedSize?.length ?? 0,
+                width: item.finishedSize?.width ?? 0,
+                height: item.finishedSize?.height ?? 0,
             },
         }));
       
@@ -351,5 +351,3 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
     </Form>
   )
 }
-
-    
