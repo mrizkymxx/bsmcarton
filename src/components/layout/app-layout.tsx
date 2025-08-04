@@ -25,7 +25,7 @@ const pageTitles: { [key: string]: string } = {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const title = pageTitles[pathname] ?? "CartonFlow";
+  const title = pageTitles[pathname] ?? "BSMcarton";
 
   return (
     <SidebarProvider>
@@ -36,18 +36,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    fill="currentColor"
                     className="h-8 w-8 text-primary"
                 >
-                    <path d="M21 8.32V15.7c0 1.2-1.03 2.18-2.23 2.05l-5.63-.59c-.54-.06-1.06.15-1.42.52l-2.03 2.03c-.9.9-2.35.9-3.25 0l-2.03-2.03c-.36-.36-.88-.58-1.42-.52L3.23 17.75C2.03 17.88 1 16.9 1 15.7V8.32c0-1.2 1.03-2.18 2.23-2.05l5.63.59c.54.06 1.06-.15 1.42-.52L12.31 4.3c.9-.9 2.35.9 3.25 0l2.03 2.03c.36.36.88.58 1.42.52l5.63-.59C21.97 6.14 23 7.12 23 8.32v0Z" />
-                    <path d="M12 12H7"/>
-                    <path d="M17 12h-2"/>
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                 </svg>
-                <h1 className="text-xl font-bold">CartonFlow</h1>
+                <h1 className="text-xl font-bold">BSMcarton</h1>
             </div>
           </SidebarHeader>
           <SidebarContent>
