@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import jsPDF from 'jspdf';
@@ -16,13 +17,8 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   
-  // Main Title
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN / DELIVERY NOTE', pageWidth / 2, 10, { align: 'center' });
-  
   // 1. Header
-  const headerYStart = 20; // Adjusted to be below the new main title
+  const headerYStart = 15;
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.text('PT. BINTANG SUKSES MULIA', pageWidth / 2, headerYStart, { align: 'center' });
@@ -38,14 +34,14 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.setLineWidth(0.5);
   doc.line(15, lineY, pageWidth - 15, lineY);
 
+  // Main Title (Moved below header)
+  const titleY = lineY + 10;
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SURAT JALAN / DELIVERY NOTE', pageWidth / 2, titleY, { align: 'center' });
+
 
   // 2. Delivery Info
-  const titleY = lineY + 10;
-  doc.setFontSize(12); // Slightly smaller title as there is a main title now
-  doc.setFont('helvetica', 'bold');
-  doc.text('No. Surat Jalan:', pageWidth / 2, titleY, { align: 'center' });
-  doc.text(delivery.deliveryNoteNumber, pageWidth / 2, titleY + 5, { align: 'center' });
-
   const infoY = titleY + 15;
   doc.setFontSize(10);
   
@@ -63,9 +59,14 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.text(new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }), pageWidth - 15, infoY, { align: 'right' });
   
   doc.setFont('helvetica', 'bold');
-  doc.text('No. Kendaraan:', pageWidth - 70, infoY + 5);
+  doc.text('No. Surat Jalan:', pageWidth - 70, infoY + 5);
   doc.setFont('helvetica', 'normal');
-  doc.text(delivery.vehicleNumber || '-', pageWidth - 15, infoY + 5, { align: 'right' });
+  doc.text(delivery.deliveryNoteNumber, pageWidth - 15, infoY + 5, { align: 'right' });
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('No. Kendaraan:', pageWidth - 70, infoY + 10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(delivery.vehicleNumber || '-', pageWidth - 15, infoY + 10, { align: 'right' });
   
 
   // 3. Table of Items
