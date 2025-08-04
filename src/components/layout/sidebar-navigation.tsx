@@ -1,8 +1,10 @@
+
 "use client"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react"
 
 const navItems = [
     { href: "/", label: "Dashboard" },
@@ -15,6 +17,11 @@ const navItems = [
 
 export function SidebarNavigation() {
   const pathname = usePathname();
+  const [activePath, setActivePath] = useState(pathname)
+
+  useEffect(() => {
+    setActivePath(pathname)
+  }, [pathname])
 
   return (
     <>
@@ -33,7 +40,7 @@ export function SidebarNavigation() {
           <path d="m3.3 7 8.7 5 8.7-5" />
           <path d="M12 22V12" />
         </svg>
-        <span className="font-bold">CartonFlow</span>
+        <span className="font-bold">BSMcarton</span>
       </Link>
       {navItems.map((item) => (
         <Link
@@ -41,7 +48,7 @@ export function SidebarNavigation() {
           href={item.href}
           className={cn(
             "transition-colors hover:text-foreground/80",
-            pathname === item.href ? "text-foreground" : "text-foreground/60"
+            activePath === item.href ? "text-foreground" : "text-foreground/60"
           )}
         >
           {item.label}
