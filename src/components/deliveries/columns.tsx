@@ -156,12 +156,31 @@ const renderItems = (items: DeliveryItem[]) => {
     )
 }
 
-const poFilterFn: FilterFn<Delivery> = (row, columnId, filterValue) => {
-    if (!filterValue) return true;
+const customGlobalFilterFn: FilterFn<Delivery> = (row, columnId, filterValue) => {
+    const searchTerm = String(filterValue).toLowerCase();
+
+    const deliveryNoteNumber = row.original.deliveryNoteNumber?.toLowerCase() || '';
+    const customerName = row.original.customerName?.toLowerCase() || '';
+    
+    if (deliveryNoteNumber.includes(searchTerm) || customerName.includes(searchTerm)) {
+        return true;
+    }
+
     const items = row.original.items;
-    return items.some(item => 
-        item.poNumber.toLowerCase().includes(String(filterValue).toLowerCase())
-    );
+    if (items && items.length > 0) {
+        return items.some(item => {
+            const poNumber = item.poNumber.toLowerCase();
+            const sizeString = item.finishedSize
+                ? item.type === 'Box'
+                    ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height}`
+                    : `${item.finishedSize.length}x${item.finishedSize.width}`
+                : '';
+            
+            return poNumber.includes(searchTerm) || sizeString.includes(searchTerm);
+        });
+    }
+
+    return false;
 };
 
 
@@ -227,12 +246,9 @@ export const columns: ColumnDef<Delivery>[] = [
     accessorKey: "items",
     header: "Detail Item",
     cell: ({ row }) => renderItems(row.original.items),
-    filterFn: poFilterFn,
   },
   {
     id: "actions",
     cell: ({ row }) => <ActionsCell delivery={row.original} />,
   },
 ]
-
-    

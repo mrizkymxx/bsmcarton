@@ -4,6 +4,7 @@
 import * as React from "react"
 import {
   ColumnDef,
+  FilterFn,
   SortingState,
   VisibilityState,
   flexRender,
@@ -41,12 +42,42 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { DeliveryForm } from "./delivery-form"
+import { Delivery } from "@/lib/types"
 
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
+
+const customGlobalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+    const searchTerm = String(filterValue).toLowerCase();
+
+    // Check top-level properties
+    const deliveryNoteNumber = row.original.deliveryNoteNumber?.toLowerCase() || '';
+    const customerName = row.original.customerName?.toLowerCase() || '';
+    if (deliveryNoteNumber.includes(searchTerm) || customerName.includes(searchTerm)) {
+        return true;
+    }
+
+    // Check nested items
+    const items = row.original.items;
+    if (items && items.length > 0) {
+        return items.some((item: any) => {
+            const poNumber = item.poNumber?.toLowerCase() || '';
+            const sizeString = item.finishedSize
+                ? item.type === 'Box'
+                    ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height}`.toLowerCase()
+                    : `${item.finishedSize.length}x${item.finishedSize.width}`.toLowerCase()
+                : '';
+            
+            return poNumber.includes(searchTerm) || sizeString.includes(searchTerm);
+        });
+    }
+
+    return false;
+};
+
 
 export function DataTable<TData, TValue>({
   columns,
@@ -64,6 +95,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    globalFilterFn: customGlobalFilterFn,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -82,7 +114,7 @@ export function DataTable<TData, TValue>({
     <div>
         <div className="flex items-center justify-between py-4">
             <Input
-            placeholder="Cari no. surat jalan, pelanggan, atau no. PO..."
+            placeholder="Cari no. surat jalan, pelanggan, no. PO, ukuran..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="max-w-sm"
