@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -22,5 +21,3 @@ interface OverviewChartProps {
 export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
     return <OverviewChartClient orders={orders} deliveries={deliveries} />;
 }
-
-
