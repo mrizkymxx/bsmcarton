@@ -57,11 +57,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <ThemeToggle />
             <UserNav />
           </header>
-          <SidebarInset>
-            <main className="flex-1 p-4 md:p-8">
-              {children}
-            </main>
-          </SidebarInset>
+          <main className="flex flex-1 p-4 md:p-8">
+            {children}
+          </main>
         </div>
       </div>
     </SidebarProvider>

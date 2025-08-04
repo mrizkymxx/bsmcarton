@@ -66,15 +66,9 @@ export function DataTable<TData extends ProductionItem, TValue>({
       columnVisibility,
     },
   })
-  
-  const mainColumn = columns.find(c => c.accessorKey === 'name') || columns[0];
-  const statusColumn = columns.find(c => c.accessorKey === 'status');
-  const customerColumn = columns.find(c => c.accessorKey === 'customerName');
-  const progressColumn = columns.find(c => c.accessorKey === 'produced');
-
 
   return (
-    <div>
+    <div className="w-full">
         <div className="flex items-center justify-between py-4">
             <Input
             placeholder="Search by item name..."
@@ -169,25 +163,32 @@ export function DataTable<TData extends ProductionItem, TValue>({
 
         <div className="grid gap-4 md:hidden">
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+            table.getRowModel().rows.map((row) => {
+              const item = row.original;
+              const NameCell = columns.find(c => c.accessorKey === 'name')?.cell;
+              const CustomerCell = columns.find(c => c.accessorKey === 'customerName')?.cell;
+              const ProgressCell = columns.find(c => c.accessorKey === 'produced')?.cell;
+              const StatusCell = columns.find(c => c.accessorKey === 'status')?.cell;
+
+              return (
               <Card key={row.id}>
                 <CardContent className="p-4 flex flex-col gap-3">
                   <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      {mainColumn && flexRender(mainColumn.cell, { row } as any)}
+                    <div className="flex-1 text-primary font-semibold">
+                      {NameCell && flexRender(NameCell, { row } as any)}
                     </div>
-                    {statusColumn && flexRender(statusColumn.cell, { row } as any)}
+                    {StatusCell && flexRender(StatusCell, { row } as any)}
                   </div>
                   <div>
-                    {customerColumn && flexRender(customerColumn.cell, { row } as any)}
+                    {CustomerCell && flexRender(CustomerCell, { row } as any)}
                   </div>
                   <div>
                     <div className="text-sm font-medium mb-1">Progress</div>
-                     {progressColumn && flexRender(progressColumn.cell, { row } as any)}
+                     {ProgressCell && flexRender(ProgressCell, { row } as any)}
                   </div>
                 </CardContent>
               </Card>
-            ))
+            )})
           ) : (
             <div className="text-center py-10 text-muted-foreground">No items to produce.</div>
           )}

@@ -84,13 +84,9 @@ export function DataTable<TData extends Customer, TValue>({
       columnVisibility,
     },
   })
-  
-  const nameColumn = columns.find(c => c.accessorKey === 'name');
-  const addressColumn = columns.find(c => c.accessorKey === 'address');
-  const actionsColumn = columns.find(c => c.id === 'actions');
 
   return (
-    <div>
+    <div className="w-full">
         <div className="flex items-center justify-between py-4">
             <Input
             placeholder="Search by name..."
@@ -201,32 +197,36 @@ export function DataTable<TData extends Customer, TValue>({
         {/* Mobile View */}
         <div className="grid gap-4 md:hidden">
             {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map(row => (
+                table.getRowModel().rows.map(row => {
+                  const customer = row.original;
+                  const ActionsCell = columns.find(c => c.id === 'actions')?.cell;
+                  return (
                     <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
                         <CardContent className="p-4 flex flex-col gap-2">
                            <div className="flex justify-between items-start">
-                                <div className="font-medium">
-                                     {nameColumn && flexRender(nameColumn.cell, { row, getValue: row.getValue } as any)}
+                                <div className="font-medium text-primary">
+                                     {customer.name}
                                 </div>
-                                {actionsColumn && flexRender(actionsColumn.cell, { row } as any)}
+                                {ActionsCell && flexRender(ActionsCell, { row } as any)}
                            </div>
                            <dl className="text-sm text-muted-foreground space-y-1">
                                 <div className="flex items-start">
                                     <dt className="w-16 font-semibold text-foreground shrink-0">Address</dt>
-                                    <dd className="flex-1">: {row.original.address}</dd>
+                                    <dd className="flex-1">: {customer.address}</dd>
                                 </div>
                                 <div className="flex items-start">
                                     <dt className="w-16 font-semibold text-foreground shrink-0">Email</dt>
-                                    <dd className="flex-1">: {row.original.email}</dd>
+                                    <dd className="flex-1">: {customer.email}</dd>
                                 </div>
                                 <div className="flex items-start">
                                     <dt className="w-16 font-semibold text-foreground shrink-0">Phone</dt>
-                                    <dd className="flex-1">: {row.original.phone}</dd>
+                                    <dd className="flex-1">: {customer.phone}</dd>
                                 </div>
                            </dl>
                         </CardContent>
                     </Card>
-                ))
+                  )
+                })
             ) : (
                 <div className="text-center py-10 text-muted-foreground">No customer data.</div>
             )}

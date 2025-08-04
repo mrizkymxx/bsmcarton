@@ -115,14 +115,9 @@ export function DataTable<TData extends Delivery, TValue>({
       globalFilter,
     },
   })
-  
-  const mainColumn = columns.find(c => c.accessorKey === 'deliveryNoteNumber') || columns[0];
-  const itemsColumn = columns.find(c => c.accessorKey === 'items');
-  const actionsColumn = columns.find(c => c.id === 'actions');
-  const dateColumn = columns.find(c => c.accessorKey === 'deliveryDate');
 
   return (
-    <div>
+    <div className="w-full">
         <div className="flex items-center justify-between py-4">
             <Input
             placeholder="Search by note no, customer, PO no, size..."
@@ -238,25 +233,31 @@ export function DataTable<TData extends Delivery, TValue>({
         {/* Mobile View */}
         <div className="grid gap-4 md:hidden">
             {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map(row => (
+                table.getRowModel().rows.map(row => {
+                  const delivery = row.original;
+                  const ItemsCell = columns.find(c => c.accessorKey === 'items')?.cell;
+                  const DateCell = columns.find(c => c.accessorKey === 'deliveryDate')?.cell;
+                  const ActionsCell = columns.find(c => c.id === 'actions')?.cell;
+                  return (
                     <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
                         <CardContent className="p-4 flex flex-col gap-2">
                            <div className="flex justify-between items-start">
                                 <div className="space-y-1">
-                                    {mainColumn && flexRender(mainColumn.cell, { row } as any)}
-                                    <div className="text-sm text-muted-foreground">{row.original.customerName}</div>
+                                    <div className="font-mono text-primary font-semibold">{delivery.deliveryNoteNumber}</div>
+                                    <div className="text-sm text-muted-foreground">{delivery.customerName}</div>
                                 </div>
-                                {actionsColumn && flexRender(actionsColumn.cell, { row } as any)}
+                                {ActionsCell && flexRender(ActionsCell, { row } as any)}
                            </div>
                             <div className="text-sm text-muted-foreground">
-                                {dateColumn && flexRender(dateColumn.cell, { row } as any)}
+                                {DateCell && flexRender(DateCell, { row } as any)}
                            </div>
                            <div>
-                            {itemsColumn && flexRender(itemsColumn.cell, { row } as any)}
+                            {ItemsCell && flexRender(ItemsCell, { row } as any)}
                            </div>
                         </CardContent>
                     </Card>
-                ))
+                  )
+                })
             ) : (
                  <div className="text-center py-10 text-muted-foreground">No delivery data.</div>
             )}
