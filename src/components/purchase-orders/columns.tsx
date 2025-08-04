@@ -15,6 +15,13 @@ import {
 import { PurchaseOrder } from "@/lib/types"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -28,10 +35,10 @@ import { deletePurchaseOrder } from "@/lib/actions/purchase-orders"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
+import { PurchaseOrderForm } from "./po-form"
 
-// We won't implement the edit functionality for now to keep it simple.
-// A proper edit would require a complex form.
 function ActionsCell({ po }: { po: PurchaseOrder }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
@@ -56,6 +63,24 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
   
   return (
     <>
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Edit Purchase Order</DialogTitle>
+            <DialogDescription>
+              Lakukan perubahan pada detail PO di bawah ini. Klik simpan jika sudah selesai.
+            </DialogDescription>
+          </DialogHeader>
+          <PurchaseOrderForm
+            purchaseOrder={po}
+            onSuccess={() => {
+              setIsEditDialogOpen(false);
+              router.refresh();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -82,7 +107,7 @@ function ActionsCell({ po }: { po: PurchaseOrder }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => alert("Fitur edit belum tersedia.")}>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit</DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setIsDeleteDialogOpen(true)}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
@@ -154,7 +179,9 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-      return <Badge variant={status === 'Completed' ? 'secondary' : 'outline'}>{status}</Badge>
+      const variant = status === 'Completed' ? 'secondary' : status === 'Cancelled' ? 'destructive' : 'outline';
+      // @ts-ignore
+      return <Badge variant={variant}>{status}</Badge>
     }
   },
     {

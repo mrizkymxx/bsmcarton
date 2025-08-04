@@ -57,6 +57,7 @@ export async function upsertPurchaseOrder(
 ) {
   try {
     const { orderDate, ...restData } = data;
+    // Firestore expects a Date object for Timestamp fields
     const dataToSave: any = {
       ...restData,
       orderDate: orderDate ? new Date(orderDate) : serverTimestamp(),

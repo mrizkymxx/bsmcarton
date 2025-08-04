@@ -33,6 +33,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { PlusCircle } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { PurchaseOrderForm } from "./po-form"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -50,6 +59,7 @@ export function DataTable<TData, TValue>({
    const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
     
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
   const router = useRouter();
 
   const table = useReactTable({
@@ -81,10 +91,26 @@ export function DataTable<TData, TValue>({
             className="max-w-sm"
             />
             <div className="flex items-center gap-2">
-           <Button onClick={() => alert("Fitur tambah PO belum tersedia.")}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Tambah PO
-            </Button>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Tambah PO
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-4xl">
+                  <DialogHeader>
+                  <DialogTitle>Tambah Purchase Order Baru</DialogTitle>
+                  <DialogDescription>
+                      Isi detail PO di bawah ini. Klik simpan jika sudah selesai.
+                  </DialogDescription>
+                  </DialogHeader>
+                  <PurchaseOrderForm onSuccess={() => {
+                    setIsCreateDialogOpen(false);
+                    router.refresh();
+                  }} />
+              </DialogContent>
+            </Dialog>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
