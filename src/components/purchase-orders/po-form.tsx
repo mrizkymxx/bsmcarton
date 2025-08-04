@@ -78,9 +78,9 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
         name: `items.${index}`
     });
 
-    const P = itemValues.finishedSize?.length || 0;
-    const L = itemValues.finishedSize?.width || 0;
-    const T = itemValues.finishedSize?.height || 0;
+    const P = parseFloat(itemValues.finishedSize?.length) || 0;
+    const L = parseFloat(itemValues.finishedSize?.width) || 0;
+    const T = parseFloat(itemValues.finishedSize?.height) || 0;
 
     const panjangBahan = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
     const lebarBahan = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
@@ -117,7 +117,7 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     <FormItem className="md:col-span-2">
                         <FormLabel>Panjang (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="P" {...field} step="0.1" />
+                            <Input type="number" placeholder="P" {...field} step="0.01" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -130,7 +130,7 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     <FormItem className="md:col-span-2">
                         <FormLabel>Lebar (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="L" {...field} step="0.1" />
+                            <Input type="number" placeholder="L" {...field} step="0.01" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -143,7 +143,7 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     <FormItem className="md:col-span-2">
                         <FormLabel>Tinggi (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="T" {...field} step="0.1" />
+                            <Input type="number" placeholder="T" {...field} step="0.01" />
                         </FormControl>
                          <FormMessage />
                     </FormItem>
@@ -257,9 +257,9 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
       }
       
       const processedItems = values.items.map(item => {
-        const P = item.finishedSize.length;
-        const L = item.finishedSize.width;
-        const T = item.finishedSize.height;
+        const P = parseFloat(String(item.finishedSize.length)) || 0;
+        const L = parseFloat(String(item.finishedSize.width)) || 0;
+        const T = parseFloat(String(item.finishedSize.height)) || 0;
 
         const panjangBahan = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
         const lebarBahan = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
