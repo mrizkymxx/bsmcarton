@@ -53,6 +53,8 @@ export interface DeliveryItem {
     name: string;
     poNumber: string;
     quantity: number;
+    type: OrderItemType;
+    finishedSize: { length: number; width: number; height: number };
 }
 
 export interface Delivery {

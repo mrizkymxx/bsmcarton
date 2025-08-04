@@ -43,6 +43,12 @@ const deliveryItemSchema = z.object({
   poNumber: z.string(),
   quantity: z.coerce.number().min(1, "Jumlah harus minimal 1."),
   availableToShip: z.coerce.number(),
+  type: z.enum(["Box", "Layer"]),
+  finishedSize: z.object({
+    length: z.number(),
+    width: z.number(),
+    height: z.number(),
+  }),
 });
 
 const formSchema = z.object({
@@ -148,6 +154,8 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
             poNumber: item.poNumber,
             quantity: item.availableToShip, // Default to max available
             availableToShip: item.availableToShip,
+            type: item.type,
+            finishedSize: item.finishedSize,
         }));
       
       replace(formItems);
