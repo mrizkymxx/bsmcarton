@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -7,103 +6,45 @@ import { PanelLeft } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet"
 
-const SIDEBAR_WIDTH = "14rem" // 224px or 56 in tailwind units
-
-type SidebarContext = {
-  openMobile: boolean
-  setOpenMobile: (open: boolean) => void
-  isMobile: boolean
-  toggleSidebar: () => void
+interface SidebarProps extends React.ComponentProps<"div"> {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  side?: "left" | "right"
 }
 
-const SidebarContext = React.createContext<SidebarContext | null>(null)
-
-function useSidebar() {
-  const context = React.useContext(SidebarContext)
-  if (!context) {
-    throw new Error("useSidebar must be used within a SidebarProvider.")
-  }
-
-  return context
-}
-
-const SidebarProvider = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div">
->(
-  (
-    {
-      className,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const isMobile = useIsMobile()
-    const [openMobile, setOpenMobile] = React.useState(false)
-
-    const toggleSidebar = React.useCallback(() => {
-        setOpenMobile((open) => !open)
-    }, [setOpenMobile])
-
-
-    const contextValue = React.useMemo<SidebarContext>(
-      () => ({
-        isMobile,
-        openMobile,
-        setOpenMobile,
-        toggleSidebar,
-      }),
-      [isMobile, openMobile, setOpenMobile, toggleSidebar]
-    )
-
-    return (
-      <SidebarContext.Provider value={contextValue}>
-          <div
-            ref={ref}
-            className={cn("group/sidebar-wrapper", className)}
-            {...props}
-          >
-            {children}
-          </div>
-      </SidebarContext.Provider>
-    )
-  }
-)
-SidebarProvider.displayName = "SidebarProvider"
-
-const Sidebar = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> & {
-    side?: "left" | "right"
-  }
->(
+const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   (
     {
       side = "left",
       className,
       children,
+      open,
+      onOpenChange,
       ...props
     },
     ref
   ) => {
-    const { isMobile, openMobile, setOpenMobile } = useSidebar()
+    const isMobile = useIsMobile()
 
     if (isMobile) {
       return (
-        <Sheet open={openMobile} onOpenChange={setOpenMobile}>
-          <SheetContent
-            data-sidebar="sidebar"
-            data-mobile="true"
-            className="w-72 bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-            side={side}
-          >
-            <SheetTitle className="sr-only">Navigation</SheetTitle>
-            <div className="flex h-full w-full flex-col">{children}</div>
-          </SheetContent>
-        </Sheet>
+          <Sheet open={open} onOpenChange={onOpenChange}>
+            <SheetContent
+              data-sidebar="sidebar"
+              data-mobile="true"
+              className="w-72 bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+              side={side}
+            >
+              <SheetTitle className="sr-only">Navigation</SheetTitle>
+              <div className="flex h-full w-full flex-col">{children}</div>
+            </SheetContent>
+          </Sheet>
       )
     }
 
@@ -130,7 +71,6 @@ const SidebarTrigger = React.forwardRef<
   React.ComponentProps<typeof Button>
 >(({ className, ...props }, ref) => {
   return (
-    <SheetTrigger asChild>
       <Button
         ref={ref}
         data-sidebar="trigger"
@@ -142,7 +82,6 @@ const SidebarTrigger = React.forwardRef<
         <PanelLeft />
         <span className="sr-only">Toggle Sidebar</span>
       </Button>
-    </SheetTrigger>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"
@@ -250,7 +189,5 @@ export {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
   SidebarTrigger,
-  useSidebar,
 }

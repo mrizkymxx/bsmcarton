@@ -1,98 +1,23 @@
 
 'use client';
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { Delivery, PurchaseOrder } from '@/lib/types';
-import { useEffect, useState } from 'react';
+import { PurchaseOrder, Delivery } from '@/lib/types';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const OverviewChartClient = dynamic(
+  () => import('./overview-chart-client').then((mod) => mod.OverviewChartClient),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[350px] w-full" />,
+  }
+);
 
 interface OverviewChartProps {
-    orders: PurchaseOrder[];
-    deliveries: Delivery[];
+  orders: PurchaseOrder[];
+  deliveries: Delivery[];
 }
 
-const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[]) => {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-    const dataByMonth: { [key: string]: { ordered: number, delivered: number } } = {};
-
-    // Initialize all months
-    for (const month of monthNames) {
-        dataByMonth[month] = { ordered: 0, delivered: 0 };
-    }
-
-    const currentYear = new Date().getFullYear();
-
-    orders.forEach(order => {
-        const orderDate = new Date(order.orderDate);
-        if (orderDate.getFullYear() === currentYear) {
-            const month = monthNames[orderDate.getMonth()];
-            const totalItems = order.items.reduce((sum, item) => sum + item.total, 0);
-            if (dataByMonth[month]) {
-                dataByMonth[month].ordered += totalItems;
-            }
-        }
-    });
-
-    deliveries.forEach(delivery => {
-        const deliveryDate = new Date(delivery.deliveryDate);
-        if (deliveryDate.getFullYear() === currentYear) {
-            const month = monthNames[deliveryDate.getMonth()];
-            const totalItems = delivery.items.reduce((sum, item) => sum + item.quantity, 0);
-             if (dataByMonth[month]) {
-                dataByMonth[month].delivered += totalItems;
-            }
-        }
-    });
-
-    return Object.entries(dataByMonth).map(([name, values]) => ({
-        name,
-        Dipesan: values.ordered,
-        Terkirim: values.delivered,
-    }));
-};
-
 export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
-    const [data, setData] = useState<any[]>([]);
-    
-    useEffect(() => {
-        // Process data on the client side to avoid hydration mismatch
-        setData(processChartData(orders, deliveries));
-    }, [orders, deliveries]);
-    
-    if (data.length === 0) {
-        // Return a placeholder or null while data is being processed to avoid rendering differences
-        return <div style={{width: '100%', height: 350}} />;
-    }
-
-    return (
-        <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis
-                    dataKey="name"
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                />
-                <YAxis
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `${value / 1000}K`}
-                />
-                <Tooltip
-                    cursor={{ fill: 'hsl(var(--card))' }}
-                    contentStyle={{
-                        backgroundColor: 'hsl(var(--background))',
-                        borderColor: 'hsl(var(--border))',
-                        borderRadius: 'var(--radius)'
-                    }}
-                    labelStyle={{ color: 'hsl(var(--foreground))' }}
-                />
-                <Bar dataKey="Dipesan" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Terkirim" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-            </BarChart>
-        </ResponsiveContainer>
-    );
+  return <OverviewChartClient orders={orders} deliveries={deliveries} />;
 }

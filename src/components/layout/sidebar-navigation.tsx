@@ -7,7 +7,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  useSidebar,
 } from "@/components/ui/sidebar"
 import {
   LayoutDashboard,
@@ -18,6 +17,7 @@ import {
   Settings,
   Boxes
 } from "lucide-react"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard, color: "text-sky-500" },
@@ -28,13 +28,13 @@ const navItems = [
     { href: "/settings", label: "Settings", icon: Settings, color: "text-slate-500" },
 ]
 
-export function SidebarNavigation() {
-  const pathname = usePathname()
-  const { isMobile, setOpenMobile } = useSidebar();
+export function SidebarNavigation({ onNavigate }: { onNavigate?: () => void }) {
+  const pathname = usePathname();
+  const isMobile = useIsMobile();
 
   const handleLinkClick = () => {
-    if (isMobile) {
-      setOpenMobile(false);
+    if (isMobile && onNavigate) {
+      onNavigate();
     }
   }
 
