@@ -70,7 +70,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
     cell: ({ row }) => {
       const item = row.original;
       const delivered = item.delivered || 0;
-      let status:any = item.status;
+      let status:string = item.status;
       
       if (delivered >= item.total) {
         status = "Dikirim";
