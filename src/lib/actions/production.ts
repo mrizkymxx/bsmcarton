@@ -30,25 +30,19 @@ export async function getProductionItems(): Promise<ProductionItem[]> {
 
     const productionItems: ProductionItem[] = [];
     snapshot.docs.forEach((doc) => {
-      const po = doc.data() as Omit<PurchaseOrder, "id">;
+      const poData = doc.data();
+      const po = {
+        ...poData,
+        orderDate: poData.orderDate instanceof Timestamp ? poData.orderDate.toDate().toISOString() : poData.orderDate,
+      } as Omit<PurchaseOrder, "id">;
+      
       po.items.forEach((item) => {
-        
-        let isoOrderDate: string;
-        const orderDate = po.orderDate as any;
-        if (orderDate && typeof orderDate.toDate === 'function') {
-          isoOrderDate = orderDate.toDate().toISOString();
-        } else if (typeof orderDate === 'string') {
-          isoOrderDate = orderDate;
-        } else {
-          isoOrderDate = new Date().toISOString(); // Fallback
-        }
-
         productionItems.push({
           ...item,
           poId: doc.id,
           poNumber: po.poNumber,
           customerName: po.customerName,
-          orderDate: isoOrderDate,
+          orderDate: po.orderDate,
         });
       });
     });
