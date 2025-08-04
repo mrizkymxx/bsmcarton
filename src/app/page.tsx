@@ -16,9 +16,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { recentPOs } from '@/lib/data';
+import { getPurchaseOrders } from '@/lib/actions/purchase-orders';
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const recentPOs = (await getPurchaseOrders()).slice(0, 5);
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">

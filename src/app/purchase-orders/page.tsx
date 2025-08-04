@@ -1,25 +1,22 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 
-export default function PurchaseOrdersPage() {
+import { getPurchaseOrders } from "@/lib/actions/purchase-orders";
+import { columns } from "@/components/purchase-orders/columns";
+import { DataTable } from "@/components/purchase-orders/data-table";
+
+export default async function PurchaseOrdersPage() {
+  const purchaseOrders = await getPurchaseOrders();
+
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Purchase Orders</CardTitle>
-          <CardDescription>
-            This page is under construction.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p>Fitur untuk mengelola Purchase Order (PO) akan tersedia di sini.</p>
-        </CardContent>
-      </Card>
+    <div className="h-full flex-1 flex-col space-y-8 p-4 md:p-8 flex">
+       <div className="flex items-center justify-between space-y-2">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Purchase Orders</h2>
+          <p className="text-muted-foreground">
+            Berikut adalah daftar semua purchase order yang masuk.
+          </p>
+        </div>
+      </div>
+      <DataTable data={purchaseOrders} columns={columns} />
     </div>
-  )
+  );
 }
