@@ -1,3 +1,4 @@
+
 "use client";
 
 import jsPDF from 'jspdf';
@@ -40,7 +41,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
 
   // 2. Delivery Info
-  const infoY = titleY + 15;
+  const infoY = titleY + 20; // Increased this value to move it down
   const labelX = pageWidth - 70;
   const colonX = labelX + 30;
   const valueX = colonX + 2;
@@ -85,7 +86,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
       ? (item.type === 'Box' 
           ? `${item.finishedSize.length} x ${item.finishedSize.width} x ${item.finishedSize.height} cm`
           : `${item.finishedSize.length} x ${item.finishedSize.width} cm`)
-      : '-';
+      : '';
 
     const itemData = [
       index + 1,
@@ -100,7 +101,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.autoTable({
     head: [tableColumn],
     body: tableRows,
-    startY: infoY + 30, // Start table after info section
+    startY: infoY + 35, // Increased this value to move the table down
     theme: 'grid',
     headStyles: { fillColor: [22, 163, 74] },
     columnStyles: {
