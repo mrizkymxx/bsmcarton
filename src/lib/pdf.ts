@@ -43,6 +43,10 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
   // 2. Delivery Info
   const infoY = titleY + 15;
+  const labelX = pageWidth - 70;
+  const colonX = labelX + 30;
+  const valueX = colonX + 2;
+
   doc.setFontSize(10);
   
   // Left column
@@ -52,21 +56,20 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.text(delivery.customerName, 15, infoY + 5);
   doc.text(customer?.address || 'Alamat tidak ditemukan', 15, infoY + 10, { maxWidth: 80 });
   
-  // Right column
+  // Right column - Aligned colons
   doc.setFont('helvetica', 'bold');
-  doc.text('Tanggal Kirim:', pageWidth - 70, infoY);
-  doc.setFont('helvetica', 'normal');
-  doc.text(new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }), pageWidth - 15, infoY, { align: 'right' });
+  doc.text('Tanggal Kirim', labelX, infoY);
+  doc.text('No. Surat Jalan', labelX, infoY + 5);
+  doc.text('No. Kendaraan', labelX, infoY + 10);
   
-  doc.setFont('helvetica', 'bold');
-  doc.text('No. Surat Jalan:', pageWidth - 70, infoY + 5);
-  doc.setFont('helvetica', 'normal');
-  doc.text(delivery.deliveryNoteNumber, pageWidth - 15, infoY + 5, { align: 'right' });
+  doc.text(':', colonX, infoY);
+  doc.text(':', colonX, infoY + 5);
+  doc.text(':', colonX, infoY + 10);
 
-  doc.setFont('helvetica', 'bold');
-  doc.text('No. Kendaraan:', pageWidth - 70, infoY + 10);
   doc.setFont('helvetica', 'normal');
-  doc.text(delivery.vehicleNumber || '-', pageWidth - 15, infoY + 10, { align: 'right' });
+  doc.text(new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }), valueX, infoY);
+  doc.text(delivery.deliveryNoteNumber, valueX, infoY + 5);
+  doc.text(delivery.vehicleNumber || '-', valueX, infoY + 10);
   
 
   // 3. Table of Items
