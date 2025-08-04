@@ -1,17 +1,17 @@
+import { Separator } from "@/components/ui/separator"
+import { AppearanceForm } from "./_components/appearance-form"
 
 export default function SettingsPage() {
   return (
-    <div className="w-full space-y-4">
-       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
-          <p className="text-muted-foreground">
-            Manage your account and settings.
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium">Appearance</h3>
+        <p className="text-sm text-muted-foreground">
+          Customize the appearance of the app. Switch between light and dark themes.
+        </p>
       </div>
-      {/* Settings content will go here */}
-      <p>This is where your general settings will be.</p>
+      <Separator />
+      <AppearanceForm />
     </div>
   )
 }
