@@ -106,7 +106,6 @@ body {
   }
   
   [data-sidebar="sidebar"] > * {
-    @apply bg-sidebar/80 backdrop-blur-sm;
+    @apply bg-sidebar/80;
   }
-
 }
