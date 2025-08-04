@@ -36,9 +36,9 @@ import { getCustomers } from "@/lib/actions/customers"
 import { Separator } from "@/components/ui/separator"
 
 const finishedSizeSchema = z.object({
-  length: z.coerce.number().positive("P harus lebih dari 0."),
-  width: z.coerce.number().positive("L harus lebih dari 0."),
-  height: z.coerce.number().positive("T harus lebih dari 0."),
+  length: z.coerce.number({invalid_type_error: "Panjang harus berupa angka."}).positive("P harus lebih dari 0."),
+  width: z.coerce.number({invalid_type_error: "Lebar harus berupa angka."}).positive("L harus lebih dari 0."),
+  height: z.coerce.number({invalid_type_error: "Tinggi harus berupa angka."}).positive("T harus lebih dari 0."),
 })
 
 const materialSizeSchema = z.object({
@@ -78,12 +78,12 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
         name: `items.${index}`
     });
 
-    const P = itemValues.finishedSize?.length || 0;
-    const L = itemValues.finishedSize?.width || 0;
-    const T = itemValues.finishedSize?.height || 0;
+    const P = parseFloat(itemValues.finishedSize?.length) || 0;
+    const L = parseFloat(itemValues.finishedSize?.width) || 0;
+    const T = parseFloat(itemValues.finishedSize?.height) || 0;
     
-    const panjang_bahan = Math.floor(((P + L) * 2 + 3) * 10);
-    const lebar_bahan = Math.floor((L + T + 0.2) * 10);
+    const panjang_bahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
+    const lebar_bahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
 
     return (
         <div className="flex items-start gap-4 p-4 border rounded-md relative">
@@ -108,7 +108,7 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
                     <FormItem className="md:col-span-2">
                         <FormLabel>Panjang (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="P" {...field} />
+                            <Input type="number" placeholder="P" {...field} step="0.1" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -121,7 +121,7 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
                     <FormItem className="md:col-span-2">
                         <FormLabel>Lebar (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="L" {...field} />
+                            <Input type="number" placeholder="L" {...field} step="0.1" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -134,7 +134,7 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
                     <FormItem className="md:col-span-2">
                         <FormLabel>Tinggi (cm)</FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder="T" {...field} />
+                            <Input type="number" placeholder="T" {...field} step="0.1" />
                         </FormControl>
                          <FormMessage />
                     </FormItem>
