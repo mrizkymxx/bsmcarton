@@ -263,9 +263,9 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <FormField control={form.control} name="expedition" render={({ field }) => (<FormItem><FormLabel>Ekspedisi</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} /></FormControl></FormItem>)}/>
-            <FormField control={form.control} name="vehicleNumber" render={({ field }) => (<FormItem><FormLabel>No. Kendaraan</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} /></FormControl></FormItem>)}/>
-            <FormField control={form.control} name="driverName" render={({ field }) => (<FormItem><FormLabel>Nama Supir</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} /></FormControl></FormItem>)}/>
+            <FormField control={form.control} name="expedition" render={({ field }) => (<FormItem><FormLabel>Ekspedisi</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
+            <FormField control={form.control} name="vehicleNumber" render={({ field }) => (<FormItem><FormLabel>No. Kendaraan</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
+            <FormField control={form.control} name="driverName" render={({ field }) => (<FormItem><FormLabel>Nama Supir</FormLabel><FormControl><Input placeholder="(Opsional)" {...field} value={field.value ?? ""} /></FormControl></FormItem>)}/>
         </div>
         
         <Separator />
