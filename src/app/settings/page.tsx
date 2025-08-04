@@ -38,7 +38,22 @@ const FlagChina = () => (
       <path fill="#E13A43" d="M0 0h24v16H0z"/>
       <g fill="#FFDE00">
         <path d="m4.4 4.8 1.487-1.088-.567 1.727 1.487 1.088-1.838-.001L4.4 8l-.568-1.475-1.838.001 1.488-1.088-.567-1.727z"/>
-        <path d="M8.8 2.4l.744-.544-.283.863.744.544-.919 0L8.8 4l-.284-.637-.919 0 .744-.544-.283-.863zM11.2 4.8l.744-.544-.283.863.744.544-.919 0L11.2 6.4l-.284-.637-.919 0 .744-.544-.283-.863zM11.2 8l.744-.544-.283.863.744.544-.919 0L11.2 9.6l-.284-.637-.919 0 .744-.544-.283-.863zM8.8 9.6l.744-.544-.283.863.744.544-.919 0L8.8 11.2l-.284-.637-.919 0 .744-.544-.283-.863z"/>
+        <g transform="matrix(.744 -.544 .544 .744 8.8 2.4)">
+           <path d="M0 1.4L-1 .4h2z" transform="rotate(18)"/>
+           <path d="M0 1.4L-1 .4h2z" transform="rotate(90)"/>
+        </g>
+         <g transform="matrix(.744 -.544 .544 .744 11.2 4.8)">
+           <path d="M0 1.4L-1 .4h2z" transform="rotate(-18)"/>
+           <path d="M0 1.4L-1 .4h2z" transform="rotate(54)"/>
+        </g>
+         <g transform="matrix(.744 -.544 .544 .744 11.2 8)">
+           <path d="M0 1.4L-1 .4h2z"/>
+           <path d="M0 1.4L-1 .4h2z" transform="rotate(72)"/>
+        </g>
+         <g transform="matrix(.744 -.544 .544 .744 8.8 9.6)">
+           <path d="M0 1.4L-1 .4h2z" transform="rotate(18)"/>
+           <path d="M0 1.4L-1 .4h2z" transform="rotate(-54)"/>
+        </g>
       </g>
     </svg>
 );
@@ -67,7 +82,7 @@ export default function SettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-             <RadioGroup defaultValue="id">
+             <RadioGroup defaultValue="id" className="gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="id" id="r-id" />
                 <Label htmlFor="r-id" className="flex items-center cursor-pointer">
@@ -83,10 +98,17 @@ export default function SettingsPage() {
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="cn" id="r-cn" />
-                <Label htmlFor="r-cn" className="flex items-center cursor-pointer">
+                <RadioGroupItem value="cn-simplified" id="r-cn-s" />
+                <Label htmlFor="r-cn-s" className="flex items-center cursor-pointer">
                   <FlagChina />
-                  中文
+                  中文 (简体)
+                </Label>
+              </div>
+               <div className="flex items-center space-x-2">
+                <RadioGroupItem value="cn-traditional" id="r-cn-t" />
+                <Label htmlFor="r-cn-t" className="flex items-center cursor-pointer">
+                  <FlagChina />
+                  中文 (繁體)
                 </Label>
               </div>
             </RadioGroup>
