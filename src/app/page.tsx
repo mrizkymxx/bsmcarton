@@ -1,4 +1,5 @@
 
+
 import { StatsCards } from '@/components/dashboard/stats-cards';
 import {
   Card,
@@ -20,7 +21,7 @@ import { getPurchaseOrders } from '@/lib/actions/purchase-orders';
 import { getCustomers } from '@/lib/actions/customers';
 import { getDeliveries } from '@/lib/actions/deliveries';
 import { FileText, Truck } from 'lucide-react';
-import { OverviewChart } from '@/components/dashboard/overview-chart';
+import OverviewChart from '@/components/dashboard/overview-chart';
 
 
 type RecentActivity = {

@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
@@ -62,7 +63,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 
-function OverviewChartComponent({ orders, deliveries }: OverviewChartProps) {
+const OverviewChart = ({ orders, deliveries }: OverviewChartProps) => {
     const currentYear = new Date().getFullYear();
     const data = processChartData(orders, deliveries, currentYear);
     
@@ -99,4 +100,4 @@ function OverviewChartComponent({ orders, deliveries }: OverviewChartProps) {
     );
 }
 
-export { OverviewChartComponent as OverviewChart };
+export default OverviewChart;

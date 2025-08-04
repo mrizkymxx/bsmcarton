@@ -37,11 +37,11 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   const titleY = lineY + 10;
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN / DELIVERY NOTE', pageWidth / 2, titleY, { align: 'center' });
+  doc.text('SURAT JALAN', pageWidth / 2, titleY, { align: 'center' });
 
 
   // 2. Delivery Info
-  const infoY = titleY + 20; // Increased this value to move it down
+  const infoY = titleY + 25; // Increased this value to move it down
   const labelX = pageWidth - 70;
   const colonX = labelX + 30;
   const valueX = colonX + 2;
@@ -56,7 +56,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   const addressText = doc.splitTextToSize(customer?.address || '', 80);
   doc.text(addressText, 15, infoY + 10);
   const addressHeight = doc.getTextDimensions(addressText).h;
-  doc.text(customer?.phone || '', 15, infoY + 12 + addressHeight);
+  doc.text(customer?.phone || '', 15, infoY + 10 + addressHeight + 2);
   
   // Right column - Aligned colons
   doc.setFont('helvetica', 'bold');
