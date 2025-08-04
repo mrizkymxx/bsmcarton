@@ -109,12 +109,13 @@ export const columns: ColumnDef<ProductionItem>[] = [
     cell: ({ row }) => {
       const item = row.original;
       const delivered = item.delivered || 0;
+      const notDelivered = item.produced - delivered;
       const progress = item.total > 0 ? (delivered / item.total) * 100 : 0;
       return (
-        <div className="flex flex-col gap-1.5 w-40">
+        <div className="flex flex-col gap-1.5 w-48">
            <Progress value={progress} className="h-2" />
            <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Produksi: {item.produced.toLocaleString()}</span>
+                <span>Belum Dikirim: {notDelivered.toLocaleString()}</span>
                 <span>Terkirim: {delivered.toLocaleString()}</span>
            </div>
         </div>
