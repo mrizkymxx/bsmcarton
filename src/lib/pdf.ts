@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import jsPDF from 'jspdf';
@@ -41,7 +42,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
 
   // 2. Delivery Info
-  const infoY = titleY + 25; // Increased this value to move it down
+  const infoY = titleY + 15; // Decreased this value to move it up
   const labelX = pageWidth - 70;
   const colonX = labelX + 30;
   const valueX = colonX + 2;
