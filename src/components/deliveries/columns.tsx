@@ -114,29 +114,27 @@ const renderItems = (items: DeliveryItem[]) => {
     return (
         <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
-                <AccordionTrigger className="p-0 hover:no-underline text-left">
-                   {items.length} Item
-                   <br />
-                   <span className="text-muted-foreground font-normal">
+                <AccordionTrigger className="py-1 hover:no-underline text-left flex flex-col items-start">
+                   <span className="font-medium">{items.length} Tipe Item</span>
+                   <span className="text-muted-foreground font-normal text-xs">
                        Total: {items.reduce((sum, item) => sum + item.quantity, 0).toLocaleString()} pcs
                    </span>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <Table>
+                    <Table className="my-2">
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Nama Item</TableHead>
                                 <TableHead>No. PO</TableHead>
-                                <TableHead>Jumlah</TableHead>
+                                <TableHead className="text-right">Jumlah</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {items.map((item, index) => (
                                 <TableRow key={`${item.orderItemId}-${index}`}>
-                                    <TableCell>
+                                    <TableCell className="py-2">
                                       <div className="font-medium">{item.name}</div>
                                       <div className="text-xs text-muted-foreground">
-                                          {/* **CRITICAL FIX**: Safely access finishedSize */}
                                           {item.finishedSize
                                             ? item.type === 'Box'
                                               ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm`
@@ -144,8 +142,8 @@ const renderItems = (items: DeliveryItem[]) => {
                                             : '-'}
                                       </div>
                                     </TableCell>
-                                    <TableCell>{item.poNumber}</TableCell>
-                                    <TableCell>{item.quantity.toLocaleString()}</TableCell>
+                                    <TableCell className="py-2">{item.poNumber}</TableCell>
+                                    <TableCell className="py-2 text-right">{item.quantity.toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -220,6 +218,7 @@ export const columns: ColumnDef<Delivery>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => <div className="font-mono">{row.getValue("deliveryNoteNumber")}</div>,
   },
   {
     accessorKey: "customerName",
@@ -235,7 +234,7 @@ export const columns: ColumnDef<Delivery>[] = [
         month: 'long',
         day: 'numeric',
       })
-      return <div className="font-medium">{formatted}</div>
+      return <div className="font-medium whitespace-nowrap">{formatted}</div>
     },
   },
   {
