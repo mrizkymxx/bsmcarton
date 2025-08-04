@@ -14,6 +14,7 @@ const processChartData = (orders: PurchaseOrder[], deliveries: Delivery[]) => {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     const dataByMonth: { [key: string]: { ordered: number, delivered: number } } = {};
 
+    // Initialize all months
     for (const month of monthNames) {
         dataByMonth[month] = { ordered: 0, delivered: 0 };
     }
@@ -53,10 +54,12 @@ export function OverviewChart({ orders, deliveries }: OverviewChartProps) {
     const [data, setData] = useState<any[]>([]);
     
     useEffect(() => {
+        // Process data on the client side to avoid hydration mismatch
         setData(processChartData(orders, deliveries));
     }, [orders, deliveries]);
     
     if (data.length === 0) {
+        // Return a placeholder or null while data is being processed to avoid rendering differences
         return null;
     }
 
