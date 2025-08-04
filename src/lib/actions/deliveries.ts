@@ -80,7 +80,6 @@ export async function getReadyToShipItems(
         const produced = item.produced || 0;
         const availableToShip = produced - delivered;
         
-        // **CRITICAL FIX**: Only return items that are ready AND have stock > 0
         if (item.status === 'Siap Kirim' && availableToShip > 0) {
           items.push({
             ...item,
@@ -110,7 +109,7 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
 
   try {
     // 1. Create the new delivery note document
-    // **CRITICAL FIX**: Ensure all required fields from the form are saved.
+    // **CRITICAL FIX**: Clean up the items to ensure only valid properties are saved.
     const deliveryData = {
       ...data,
       deliveryDate: new Date(data.deliveryDate),
@@ -121,7 +120,7 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
         poNumber: item.poNumber,
         quantity: item.quantity,
         type: item.type,
-        finishedSize: item.finishedSize || null, // Handle potentially missing size
+        finishedSize: item.finishedSize || null,
       })),
     };
     const deliveryRef = doc(collection(db, "deliveries"));
@@ -253,5 +252,3 @@ export async function deleteDelivery(id: string) {
     throw new Error(error instanceof Error ? error.message : "Gagal menghapus Surat Jalan.");
   }
 }
-
-    
