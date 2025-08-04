@@ -18,9 +18,31 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { getPurchaseOrders } from '@/lib/actions/purchase-orders';
+import { getCustomers } from '@/lib/actions/customers';
+import { getDeliveries } from '@/lib/actions/deliveries';
 
 export default async function Dashboard() {
-  const recentPOs = (await getPurchaseOrders()).slice(0, 5);
+  const purchaseOrders = await getPurchaseOrders();
+  const customers = await getCustomers();
+  const deliveries = await getDeliveries();
+
+  const activePOCount = purchaseOrders.filter(po => po.status === 'Open').length;
+  
+  const readyToShipCount = purchaseOrders
+    .filter(po => po.status === 'Open')
+    .flatMap(po => po.items)
+    .reduce((sum, item) => {
+        const available = (item.produced || 0) - (item.delivered || 0);
+        return sum + (available > 0 ? available : 0);
+    }, 0);
+
+  const deliveriesThisMonth = deliveries.filter(d => {
+    const deliveryDate = new Date(d.deliveryDate);
+    const now = new Date();
+    return deliveryDate.getMonth() === now.getMonth() && deliveryDate.getFullYear() === now.getFullYear();
+  }).length;
+  
+  const recentPOs = purchaseOrders.slice(0, 5);
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -28,14 +50,19 @@ export default async function Dashboard() {
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
       <div className="space-y-4">
-        <StatsCards />
+        <StatsCards 
+          totalCustomers={customers.length}
+          activePOCount={activePOCount}
+          readyToShipCount={readyToShipCount}
+          deliveriesThisMonth={deliveriesThisMonth}
+        />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
             <CardHeader>
               <CardTitle>Ringkasan Produksi</CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-              <OverviewChart />
+              <OverviewChart orders={purchaseOrders} deliveries={deliveries} />
             </CardContent>
           </Card>
           <Card className="col-span-4 lg:col-span-3">
