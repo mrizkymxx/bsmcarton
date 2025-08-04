@@ -57,7 +57,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   const addressText = doc.splitTextToSize(customer?.address || '', 80);
   doc.text(addressText, 15, infoY + 10);
   const addressHeight = doc.getTextDimensions(addressText).h;
-  doc.text(customer?.phone || '', 15, infoY + 10 + addressHeight);
+  doc.text(customer?.phone || '', 15, infoY + 10 + addressHeight + 2); // Add more space here
   
   // Right column - Aligned colons
   doc.setFont('helvetica', 'bold');
