@@ -42,13 +42,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { CustomerForm } from "./customer-form"
+import { Card, CardContent } from "../ui/card"
+import { Customer } from "@/lib/types"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends Customer, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends Customer, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -79,6 +81,9 @@ export function DataTable<TData, TValue>({
       columnVisibility,
     },
   })
+  
+  const getVisibleColumns = () => columns.filter(c => c.id !== 'select' && c.id !== 'actions');
+
 
   return (
     <div>
@@ -99,7 +104,7 @@ export function DataTable<TData, TValue>({
                   Tambah Pelanggan
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[425px] w-full max-w-md">
                   <DialogHeader>
                   <DialogTitle>Tambah Pelanggan Baru</DialogTitle>
                   <DialogDescription>
@@ -114,7 +119,7 @@ export function DataTable<TData, TValue>({
             </Dialog>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
+                <Button variant="outline" className="ml-auto hidden sm:flex">
                 Tampilkan Kolom
                 </Button>
             </DropdownMenuTrigger>
@@ -142,7 +147,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenu>
             </div>
         </div>
-        <div className="rounded-md border">
+        <div className="rounded-md border hidden sm:block">
         <Table>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -185,6 +190,42 @@ export function DataTable<TData, TValue>({
             )}
             </TableBody>
         </Table>
+        </div>
+        <div className="space-y-4 sm:hidden">
+            {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map(row => (
+                    <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
+                        <CardContent className="p-4 space-y-2">
+                            <div className="flex justify-between items-start">
+                                {flexRender(
+                                    columns.find(c => c.id === 'name')!.cell!,
+                                    { row } as any
+                                )}
+                                {flexRender(
+                                    columns.find(c => c.id === 'actions')!.cell!,
+                                    { row } as any
+                                )}
+                            </div>
+                            <dl className="text-sm text-muted-foreground">
+                                <div className="flex gap-2">
+                                    <dt className="w-16 font-semibold text-foreground">Email</dt>
+                                    <dd>{row.original.email}</dd>
+                                </div>
+                                <div className="flex gap-2">
+                                    <dt className="w-16 font-semibold text-foreground">Telepon</dt>
+                                    <dd>{row.original.phone}</dd>
+                                </div>
+                                <div className="flex gap-2">
+                                    <dt className="w-16 font-semibold text-foreground">Alamat</dt>
+                                    <dd className="truncate">{row.original.address}</dd>
+                                </div>
+                            </dl>
+                        </CardContent>
+                    </Card>
+                ))
+            ) : (
+                <div className="text-center py-10 text-muted-foreground">Tidak ada data pelanggan.</div>
+            )}
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
             <Button

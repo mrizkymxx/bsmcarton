@@ -31,13 +31,15 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Card, CardContent } from "../ui/card"
+import { ProductionItem } from "@/lib/types"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends ProductionItem, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends ProductionItem, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -79,7 +81,7 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center gap-2">
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
+                <Button variant="outline" className="ml-auto hidden sm:flex">
                 Tampilkan Kolom
                 </Button>
             </DropdownMenuTrigger>
@@ -114,7 +116,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenu>
             </div>
         </div>
-        <div className="rounded-md border">
+        <div className="rounded-md border hidden sm:block">
         <Table>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -158,6 +160,34 @@ export function DataTable<TData, TValue>({
             </TableBody>
         </Table>
         </div>
+
+        <div className="space-y-4 sm:hidden">
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <Card key={row.id}>
+                <CardContent className="p-4 space-y-2">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      {flexRender(columns.find(c => c.accessorKey === 'name')!.cell!, { row } as any)}
+                    </div>
+                    {flexRender(columns.find(c => c.accessorKey === 'status')!.cell!, { row } as any)}
+                  </div>
+                  <div>
+                    {flexRender(columns.find(c => c.accessorKey === 'customerName')!.cell!, { row } as any)}
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium mt-2 mb-1">Progress</div>
+                     {flexRender(columns.find(c => c.accessorKey === 'produced')!.cell!, { row } as any)}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="text-center py-10 text-muted-foreground">Tidak ada item untuk diproduksi.</div>
+          )}
+        </div>
+
+
         <div className="flex items-center justify-end space-x-2 py-4">
             <Button
             variant="outline"

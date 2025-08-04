@@ -43,9 +43,10 @@ import {
 } from "@/components/ui/dialog"
 import { DeliveryForm } from "./delivery-form"
 import { Delivery } from "@/lib/types"
+import { Card, CardContent } from "../ui/card"
 
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends Delivery, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
@@ -79,7 +80,7 @@ const customGlobalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
 };
 
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends Delivery, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -132,7 +133,7 @@ export function DataTable<TData, TValue>({
                   Buat Surat Jalan
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-4xl">
+              <DialogContent className="sm:max-w-4xl w-full max-w-4xl">
                   <DialogHeader>
                   <DialogTitle>Buat Surat Jalan Baru</DialogTitle>
                   <DialogDescription>
@@ -147,7 +148,7 @@ export function DataTable<TData, TValue>({
             </Dialog>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
+                <Button variant="outline" className="ml-auto hidden sm:flex">
                 Tampilkan Kolom
                 </Button>
             </DropdownMenuTrigger>
@@ -182,7 +183,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenu>
             </div>
         </div>
-        <div className="rounded-md border">
+        <div className="rounded-md border hidden sm:block">
         <Table>
             <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -225,6 +226,28 @@ export function DataTable<TData, TValue>({
             )}
             </TableBody>
         </Table>
+        </div>
+        <div className="space-y-4 sm:hidden">
+            {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map(row => (
+                    <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
+                        <CardContent className="p-4 space-y-2">
+                           <div className="flex justify-between items-start">
+                                <div className="space-y-1">
+                                    {flexRender(columns.find(c => c.accessorKey === 'deliveryNoteNumber')!.cell!, { row } as any)}
+                                    <div className="text-sm text-muted-foreground">{row.original.customerName}</div>
+                                </div>
+                                {flexRender(columns.find(c => c.id === 'actions')!.cell!, { row } as any)}
+                           </div>
+                           <div>
+                            {flexRender(columns.find(c => c.accessorKey === 'items')!.cell!, { row } as any)}
+                           </div>
+                        </CardContent>
+                    </Card>
+                ))
+            ) : (
+                 <div className="text-center py-10 text-muted-foreground">Tidak ada data pengiriman.</div>
+            )}
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
             <Button
