@@ -40,7 +40,7 @@ export function SidebarNavigation() {
           <path d="m3.3 7 8.7 5 8.7-5" />
           <path d="M12 22V12" />
         </svg>
-        <span className="font-bold">BSMcarton</span>
+        <span className="font-bold text-lg">BSMcarton</span>
       </Link>
       {navItems.map((item) => (
         <Link
