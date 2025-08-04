@@ -7,8 +7,8 @@ export default async function CustomersPage() {
   const customers = await getCustomers();
 
   return (
-    <div className="flex flex-col w-full">
-       <div className="flex items-center justify-between space-y-2 mb-4">
+    <div className="flex flex-col gap-4 w-full">
+       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Customer List</h2>
           <p className="text-muted-foreground">
