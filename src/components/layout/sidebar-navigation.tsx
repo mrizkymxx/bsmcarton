@@ -48,7 +48,7 @@ export function SidebarNavigation() {
             isActive={pathname === item.href}
             onClick={handleLinkClick}
           >
-            <Link href={item.href}>
+            <Link href={item.href} prefetch={true}>
               <item.icon className={item.color} />
               <span>{item.label}</span>
             </Link>
