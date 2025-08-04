@@ -21,7 +21,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           ref={ref} 
           data-sidebar="sidebar"
           className={cn(
-            "h-full w-full flex-col border-r bg-sidebar text-sidebar-foreground",
+            "h-full w-full flex-col border-r bg-background text-foreground",
             className
           )}
           {...props}
@@ -41,7 +41,7 @@ const SidebarHeader = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex items-center gap-2 p-3", className)}
+      className={cn("flex items-center gap-2 p-4", className)}
       {...props}
     />
   )
@@ -114,8 +114,8 @@ const SidebarMenuButton = React.forwardRef<
         data-sidebar="menu-button"
         data-active={isActive}
         className={cn(
-          "flex w-full items-center gap-3 overflow-hidden rounded-md px-3 py-2 text-left text-sm outline-none ring-sidebar-ring transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50",
-          "data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground",
+          "flex w-full items-center gap-3 overflow-hidden rounded-md px-3 py-2 text-left text-sm font-medium outline-none ring-ring transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 active:bg-accent active:text-accent-foreground disabled:pointer-events-none disabled:opacity-50",
+          "data-[active=true]:bg-accent data-[active=true]:text-accent-foreground",
            "[&>svg]:size-5 [&>svg]:shrink-0",
           className
         )}
