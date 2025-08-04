@@ -77,12 +77,12 @@ export const columns: ColumnDef<ProductionItem>[] = [
       }
 
       if (status === 'Siap Kirim') {
-        status = 'Belum di kirim';
+        status = 'Belum Selesai';
       }
 
       let variant: "default" | "secondary" | "outline" | "destructive" = "outline";
         switch (status) {
-            case 'Belum di kirim':
+            case 'Belum Selesai':
                 variant = 'secondary';
                 break;
             case 'Dikirim':
