@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -22,7 +23,7 @@ export function SidebarNavigation() {
   }, [pathname])
 
   return (
-    <div className="flex h-full flex-col p-4 md:flex-row md:items-center md:space-x-6 md:p-0">
+    <div className="flex h-full flex-col p-4 md:p-0 md:flex-row md:items-center md:space-x-6">
       <Link href="/" className="mb-4 flex items-center space-x-2 md:mb-0 md:mr-6">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -40,14 +41,14 @@ export function SidebarNavigation() {
         </svg>
         <span className="font-bold text-lg">CartonFlow</span>
       </Link>
-      <nav className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-4">
+      <nav className="flex flex-col gap-1 md:flex-row md:gap-0 md:space-x-4">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
-              "transition-colors hover:text-foreground/80 text-lg md:text-sm",
-              activePath === item.href ? "text-foreground" : "text-foreground/60"
+              "transition-colors hover:bg-accent hover:text-accent-foreground rounded-md px-3 py-2 text-lg md:text-sm",
+              activePath === item.href ? "bg-accent text-accent-foreground" : "text-foreground/60"
             )}
           >
             {item.label}
