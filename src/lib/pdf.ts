@@ -16,8 +16,13 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   
+  // Main Title
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SURAT JALAN / DELIVERY NOTE', pageWidth / 2, 10, { align: 'center' });
+  
   // 1. Header
-  const headerYStart = 15;
+  const headerYStart = 20; // Adjusted to be below the new main title
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.text('PT. BINTANG SUKSES MULIA', pageWidth / 2, headerYStart, { align: 'center' });
@@ -36,11 +41,12 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
   // 2. Delivery Info
   const titleY = lineY + 10;
-  doc.setFontSize(16);
+  doc.setFontSize(12); // Slightly smaller title as there is a main title now
   doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN', pageWidth / 2, titleY, { align: 'center' });
-  
-  const infoY = titleY + 10;
+  doc.text('No. Surat Jalan:', pageWidth / 2, titleY, { align: 'center' });
+  doc.text(delivery.deliveryNoteNumber, pageWidth / 2, titleY + 5, { align: 'center' });
+
+  const infoY = titleY + 15;
   doc.setFontSize(10);
   
   // Left column
@@ -52,19 +58,14 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   
   // Right column
   doc.setFont('helvetica', 'bold');
-  doc.text('No. Surat Jalan:', pageWidth - 70, infoY);
+  doc.text('Tanggal Kirim:', pageWidth - 70, infoY);
   doc.setFont('helvetica', 'normal');
-  doc.text(delivery.deliveryNoteNumber, pageWidth - 15, infoY, { align: 'right' });
+  doc.text(new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }), pageWidth - 15, infoY, { align: 'right' });
   
   doc.setFont('helvetica', 'bold');
-  doc.text('Tanggal Kirim:', pageWidth - 70, infoY + 5);
+  doc.text('No. Kendaraan:', pageWidth - 70, infoY + 5);
   doc.setFont('helvetica', 'normal');
-  doc.text(new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }), pageWidth - 15, infoY + 5, { align: 'right' });
-  
-  doc.setFont('helvetica', 'bold');
-  doc.text('No. Kendaraan:', pageWidth - 70, infoY + 10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(delivery.vehicleNumber || '-', pageWidth - 15, infoY + 10, { align: 'right' });
+  doc.text(delivery.vehicleNumber || '-', pageWidth - 15, infoY + 5, { align: 'right' });
   
 
   // 3. Table of Items
@@ -91,7 +92,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.autoTable({
     head: [tableColumn],
     body: tableRows,
-    startY: infoY + 25,
+    startY: infoY + 25, // Start table after info section
     theme: 'grid',
     headStyles: { fillColor: [22, 163, 74] },
     columnStyles: {
@@ -103,7 +104,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   let finalY = (doc as any).lastAutoTable.finalY || 100;
 
   // 4. Footer & Signature
-  const signatureY = finalY + 20;
+  const signatureY = finalY + 15;
   const signatureX = {
       sender: 30,
       driver: pageWidth / 2,
@@ -115,9 +116,10 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.text('Pengirim,', signatureX.driver, signatureY, { align: 'center' });
   doc.text('Penerima,', signatureX.receiver, signatureY, { align: 'center' });
 
-  doc.text('(_________________)', signatureX.sender, signatureY + 20, { align: 'center' });
-  doc.text(`(${delivery.driverName || '_________________'})`, signatureX.driver, signatureY + 20, { align: 'center' });
-  doc.text('(_________________)', signatureX.receiver, signatureY + 20, { align: 'center' });
+  const signatureLineY = signatureY + 20;
+  doc.text('(_________________)', signatureX.sender, signatureLineY, { align: 'center' });
+  doc.text(`(${delivery.driverName || '_________________'})`, signatureX.driver, signatureLineY, { align: 'center' });
+  doc.text('(_________________)', signatureX.receiver, signatureLineY, { align: 'center' });
 
 
   // Return the PDF as a data URI
