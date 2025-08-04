@@ -14,6 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { useRouter } from "next/navigation"
 
 import {
   Table,
@@ -33,11 +34,47 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Card, CardContent } from "../ui/card"
 import { ProductionItem } from "@/lib/types"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { ProductionForm } from "./production-form"
+import { Pencil } from "lucide-react"
 
 interface DataTableProps<TData extends ProductionItem, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
 }
+
+function UpdateProductionDialog({ item, onUpdate }: { item: ProductionItem; onUpdate: () => void }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Pencil className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Update Production Progress</DialogTitle>
+          <DialogDescription>
+            Update the production quantity for &quot;{item.name}&quot;.
+          </DialogDescription>
+        </DialogHeader>
+        <ProductionForm item={item} onSuccess={() => {
+          setIsOpen(false);
+          onUpdate();
+        }} />
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 
 export function DataTable<TData extends ProductionItem, TValue>({
   columns,
@@ -49,6 +86,8 @@ export function DataTable<TData extends ProductionItem, TValue>({
   )
    const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
+  
+  const router = useRouter();
     
   const table = useReactTable({
     data,
@@ -148,6 +187,9 @@ export function DataTable<TData extends ProductionItem, TValue>({
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                     ))}
+                    <TableCell>
+                      <UpdateProductionDialog item={row.original} onUpdate={() => router.refresh()} />
+                    </TableCell>
                 </TableRow>
                 ))
             ) : (
@@ -177,7 +219,10 @@ export function DataTable<TData extends ProductionItem, TValue>({
                     <div className="flex-1 text-primary font-semibold">
                       {NameCell && flexRender(NameCell, { row } as any)}
                     </div>
-                    {StatusCell && flexRender(StatusCell, { row } as any)}
+                     <div className="flex items-center">
+                        {StatusCell && flexRender(StatusCell, { row } as any)}
+                        <UpdateProductionDialog item={row.original} onUpdate={() => router.refresh()} />
+                    </div>
                   </div>
                   <div>
                     {CustomerCell && flexRender(CustomerCell, { row } as any)}
