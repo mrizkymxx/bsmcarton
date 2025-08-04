@@ -118,4 +118,10 @@ body {
   [data-sidebar="menu-button"][data-active="true"]:hover {
     @apply bg-sidebar-accent;
   }
+
+  [data-mobile="true"] [data-sidebar="menu-button"][data-active="true"] {
+    background-color: transparent !important;
+    @apply shadow-[inset_0_-2px_0_hsl(var(--primary))];
+    border-radius: 0;
+  }
 }
