@@ -109,7 +109,6 @@ export async function createDelivery(data: Omit<Delivery, "id">) {
 
   try {
     // 1. Create the new delivery note document
-    // **CRITICAL FIX**: Clean up the items to ensure only valid properties are saved.
     const deliveryData = {
       ...data,
       deliveryDate: new Date(data.deliveryDate),
@@ -225,10 +224,10 @@ export async function deleteDelivery(id: string) {
           item.delivered = originalDelivered - deliveryItem.quantity;
           if (item.delivered < 0) item.delivered = 0;
 
-          // If item is now not fully delivered, revert status
-          if ((item.produced || 0) > item.delivered) {
+          // **REVISED LOGIC**: If item was 'Dikirim' or 'Siap Kirim', and now is not fully delivered, revert status
+           if (item.status === 'Dikirim' && item.delivered < item.total) {
              item.status = 'Siap Kirim';
-          }
+           }
         }
       });
       
