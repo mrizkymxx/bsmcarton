@@ -27,7 +27,7 @@ const pageTitles: { [key: string]: string } = {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const title = pageTitles[pathname] ?? "BSMcarton";
+  const title = pageTitles[pathname] ?? "CartonFlow";
 
   return (
     <SidebarProvider>
@@ -38,7 +38,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <span className="flex items-center justify-center h-8 w-8 text-primary">
                   <Star className="h-6 w-6" />
                 </span>
-                <h1 className="text-xl font-bold">BSMcarton</h1>
+                <h1 className="text-xl font-bold">CartonFlow</h1>
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -58,10 +58,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <UserNav />
           </header>
           <SidebarInset>
-            <main className="flex-1">
-              <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                {children}
-              </div>
+            <main className="flex-1 p-4 md:p-8">
+              {children}
             </main>
           </SidebarInset>
         </div>

@@ -73,68 +73,66 @@ export default async function Dashboard() {
 
 
   return (
-    <div className="flex-1 space-y-4">
-      <div className="flex items-center justify-between space-y-2">
+    <div className="flex flex-col gap-8">
+      <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
-      <div className="space-y-4">
-        <StatsCards 
-          totalCustomers={customers.length}
-          activePOCount={activePOCount}
-          readyToShipCount={readyToShipCount}
-          deliveriesThisMonth={deliveriesThisMonth}
-        />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
-            <CardHeader>
-              <CardTitle>Production Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="pl-2">
-              <OverviewChart orders={purchaseOrders} deliveries={deliveries} />
-            </CardContent>
-          </Card>
-          <Card className="col-span-4 lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Recent Updates</CardTitle>
-              <CardDescription>
-                List of the last 5 activities (POs & Deliveries).
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Activity</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentActivities.map((activity) => (
-                    <TableRow key={activity.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {activity.type === 'PO' ? 
-                            <FileText className="h-4 w-4 text-muted-foreground" /> : 
-                            <Truck className="h-4 w-4 text-muted-foreground" />
-                          }
-                          <div>
-                            <div className="font-medium">{activity.title}</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                              {activity.description}
-                            </div>
+      <StatsCards 
+        totalCustomers={customers.length}
+        activePOCount={activePOCount}
+        readyToShipCount={readyToShipCount}
+        deliveriesThisMonth={deliveriesThisMonth}
+      />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Production Summary</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <OverviewChart orders={purchaseOrders} deliveries={deliveries} />
+          </CardContent>
+        </Card>
+        <Card className="col-span-4 lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Recent Updates</CardTitle>
+            <CardDescription>
+              List of the last 5 activities (POs & Deliveries).
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Activity</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentActivities.map((activity) => (
+                  <TableRow key={activity.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {activity.type === 'PO' ? 
+                          <FileText className="h-4 w-4 text-muted-foreground" /> : 
+                          <Truck className="h-4 w-4 text-muted-foreground" />
+                        }
+                        <div>
+                          <div className="font-medium">{activity.title}</div>
+                          <div className="hidden text-sm text-muted-foreground md:inline">
+                            {activity.description}
                           </div>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(activity.date).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(activity.date).toLocaleDateString('en-US', {day: '2-digit', month: 'short', year: 'numeric'})}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
