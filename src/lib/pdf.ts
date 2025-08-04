@@ -71,8 +71,8 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.setFont('helvetica', 'normal');
   doc.text(new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }), valueX, infoY);
   doc.text(delivery.deliveryNoteNumber, valueX, infoY + 5);
-  doc.text(delivery.vehicleNumber || '-', valueX, infoY + 10);
-  doc.text('-', valueX, infoY + 15);
+  doc.text(delivery.vehicleNumber || '', valueX, infoY + 10);
+  doc.text('', valueX, infoY + 15);
   
 
   // 3. Table of Items
