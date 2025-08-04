@@ -70,30 +70,11 @@ export const columns: ColumnDef<ProductionItem>[] = [
     cell: ({ row }) => {
       const item = row.original;
       const delivered = item.delivered || 0;
-      let status:string = item.status;
       
-      if (delivered >= item.total) {
-        status = "Dikirim";
-      }
+      const isCompleted = delivered >= item.total;
+      const status = isCompleted ? "Selesai" : "Belum Selesai";
+      const variant = isCompleted ? "default" : "secondary";
 
-      if (status === 'Siap Kirim') {
-        status = 'Belum Selesai';
-      }
-
-      let variant: "default" | "secondary" | "outline" | "destructive" = "outline";
-        switch (status) {
-            case 'Belum Selesai':
-                variant = 'secondary';
-                break;
-            case 'Dikirim':
-                variant = 'default';
-                break;
-             case 'Diproduksi':
-                variant = 'default';
-                break;
-            default:
-                variant = 'outline';
-        }
       return <Badge variant={variant}>{status}</Badge>
     }
   },
