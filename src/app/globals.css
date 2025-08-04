@@ -102,8 +102,8 @@ body {
   [data-sidebar="sidebar"] {
     background-image: linear-gradient(
         to bottom,
-        hsl(var(--sidebar-background) / 0.7),
-        hsl(var(--sidebar-background) / 0.9)
+        hsl(var(--sidebar-background) / 0.4),
+        hsl(var(--sidebar-background) / 0.6)
       ),
       url('https://i.pinimg.com/736x/bb/da/08/bbda08b6c9b1343044675e319440a6f8.jpg');
     background-blend-mode: multiply;
