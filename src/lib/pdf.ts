@@ -20,26 +20,26 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   // 1. Header
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
-  doc.text('PT. BINTANG SUKSES MULIA', 15, 20);
+  doc.text('PT. BINTANG SUKSES MULIA', 15, 15);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', 15, 26);
-  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', 15, 31);
-  doc.text('Phone : 082 352 181 830', 15, 36);
-  doc.text(`Jepara, ${today.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, pageWidth - 15, 31, { align: 'right' });
-  doc.text('E-mail : bintangsuksesmulia@hotmail.com', 15, 41);
+  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', 15, 21);
+  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', 15, 26);
+  doc.text('Phone : 082 352 181 830', 15, 31);
+  doc.text(`Jepara, ${today.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, pageWidth - 15, 26, { align: 'right' });
+  doc.text('E-mail : bintangsuksesmulia@hotmail.com', 15, 36);
   
   // Add a line separator
   doc.setLineWidth(0.5);
-  doc.line(15, 45, pageWidth - 15, 45);
+  doc.line(15, 40, pageWidth - 15, 40);
 
 
   // 2. Delivery Info
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN', pageWidth / 2, 55, { align: 'center' });
+  doc.text('SURAT JALAN', pageWidth / 2, 50, { align: 'center' });
   
-  const infoY = 65;
+  const infoY = 60;
   doc.setFontSize(10);
   
   // Left column
