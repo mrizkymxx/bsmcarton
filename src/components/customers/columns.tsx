@@ -162,7 +162,7 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => {
         const customer = row.original
         return (
-          <div className="font-medium max-w-[200px] truncate">{customer.name}</div>
+          <div className="font-medium">{customer.name}</div>
         )
     }
   },

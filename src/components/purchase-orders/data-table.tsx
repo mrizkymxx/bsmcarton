@@ -121,7 +121,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
             </Dialog>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto hidden md:flex">
+                <Button variant="outline" className="ml-auto hidden sm:flex">
                 Show Columns
                 </Button>
             </DropdownMenuTrigger>
@@ -156,69 +156,72 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
             </DropdownMenu>
             </div>
         </div>
+
+        {/* Desktop View */}
         <div className="rounded-md border hidden md:block">
-        <Table>
-            <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                    return (
-                    <TableHead key={header.id}>
-                        {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                            )}
-                    </TableHead>
-                    )
-                })}
-                </TableRow>
-            ))}
-            </TableHeader>
-            <TableBody>
-            {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                >
-                    {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            <Table>
+                <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                        return (
+                        <TableHead key={header.id}>
+                            {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                                )}
+                        </TableHead>
+                        )
+                    })}
+                    </TableRow>
+                ))}
+                </TableHeader>
+                <TableBody>
+                {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                    <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                    >
+                        {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                        ))}
+                    </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                        No purchase order data.
                     </TableCell>
-                    ))}
-                </TableRow>
-                ))
-            ) : (
-                <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No purchase order data.
-                </TableCell>
-                </TableRow>
-            )}
-            </TableBody>
-        </Table>
+                    </TableRow>
+                )}
+                </TableBody>
+            </Table>
         </div>
         
-        <div className="space-y-4 md:hidden">
+        {/* Mobile View */}
+        <div className="grid gap-4 md:hidden">
             {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map(row => (
                     <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
-                        <CardContent className="p-4 space-y-2">
+                        <CardContent className="p-4 flex flex-col gap-2">
                             <div className="flex justify-between items-start">
                                 <div className="space-y-1">
                                     <div className="font-semibold">{row.original.poNumber}</div>
                                     <div className="text-sm text-muted-foreground">{row.original.customerName}</div>
                                 </div>
-                                {actionsColumn && actionsColumn.cell && flexRender(actionsColumn.cell, { row } as any)}
+                                {actionsColumn && flexRender(actionsColumn.cell, { row } as any)}
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                {orderDateColumn && orderDateColumn.cell && flexRender(orderDateColumn.cell, { row } as any)}
-                                {statusColumn && statusColumn.cell && flexRender(statusColumn.cell, { row } as any)}
+                                {orderDateColumn && flexRender(orderDateColumn.cell, { row } as any)}
+                                {statusColumn && flexRender(statusColumn.cell, { row } as any)}
                             </div>
                             <div>
-                                {itemsColumn && itemsColumn.cell && flexRender(itemsColumn.cell, { row } as any)}
+                                {itemsColumn && flexRender(itemsColumn.cell, { row } as any)}
                             </div>
                         </CardContent>
                     </Card>

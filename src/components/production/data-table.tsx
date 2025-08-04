@@ -87,7 +87,7 @@ export function DataTable<TData extends ProductionItem, TValue>({
             <div className="flex items-center gap-2">
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto hidden md:flex">
+                <Button variant="outline" className="ml-auto hidden sm:flex">
                 Show Columns
                 </Button>
             </DropdownMenuTrigger>
@@ -167,23 +167,23 @@ export function DataTable<TData extends ProductionItem, TValue>({
         </Table>
         </div>
 
-        <div className="space-y-4 md:hidden">
+        <div className="grid gap-4 md:hidden">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <Card key={row.id}>
-                <CardContent className="p-4 space-y-2">
+                <CardContent className="p-4 flex flex-col gap-3">
                   <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      {mainColumn && mainColumn.cell && flexRender(mainColumn.cell, { row } as any)}
+                    <div className="flex-1">
+                      {mainColumn && flexRender(mainColumn.cell, { row } as any)}
                     </div>
-                    {statusColumn && statusColumn.cell && flexRender(statusColumn.cell, { row } as any)}
+                    {statusColumn && flexRender(statusColumn.cell, { row } as any)}
                   </div>
                   <div>
-                    {customerColumn && customerColumn.cell && flexRender(customerColumn.cell, { row } as any)}
+                    {customerColumn && flexRender(customerColumn.cell, { row } as any)}
                   </div>
                   <div>
-                    <div className="text-sm font-medium mt-2 mb-1">Progress</div>
-                     {progressColumn && progressColumn.cell && flexRender(progressColumn.cell, { row } as any)}
+                    <div className="text-sm font-medium mb-1">Progress</div>
+                     {progressColumn && flexRender(progressColumn.cell, { row } as any)}
                   </div>
                 </CardContent>
               </Card>

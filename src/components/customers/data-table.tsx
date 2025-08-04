@@ -85,6 +85,10 @@ export function DataTable<TData extends Customer, TValue>({
     },
   })
   
+  const nameColumn = columns.find(c => c.accessorKey === 'name');
+  const addressColumn = columns.find(c => c.accessorKey === 'address');
+  const actionsColumn = columns.find(c => c.id === 'actions');
+
   return (
     <div>
         <div className="flex items-center justify-between py-4">
@@ -119,7 +123,7 @@ export function DataTable<TData extends Customer, TValue>({
             </Dialog>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto hidden md:flex">
+                <Button variant="outline" className="ml-auto hidden sm:flex">
                 Show Columns
                 </Button>
             </DropdownMenuTrigger>
@@ -147,79 +151,79 @@ export function DataTable<TData extends Customer, TValue>({
             </DropdownMenu>
             </div>
         </div>
+        
+        {/* Desktop View */}
         <div className="rounded-md border hidden md:block">
-        <Table>
-            <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                    return (
-                    <TableHead key={header.id}>
-                        {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                            )}
-                    </TableHead>
-                    )
-                })}
-                </TableRow>
-            ))}
-            </TableHeader>
-            <TableBody>
-            {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                >
-                    {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            <Table>
+                <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                        return (
+                        <TableHead key={header.id}>
+                            {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                                )}
+                        </TableHead>
+                        )
+                    })}
+                    </TableRow>
+                ))}
+                </TableHeader>
+                <TableBody>
+                {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                    <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                    >
+                        {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                        ))}
+                    </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                        No customer data.
                     </TableCell>
-                    ))}
-                </TableRow>
-                ))
-            ) : (
-                <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No customer data.
-                </TableCell>
-                </TableRow>
-            )}
-            </TableBody>
-        </Table>
+                    </TableRow>
+                )}
+                </TableBody>
+            </Table>
         </div>
-        <div className="space-y-4 md:hidden">
+
+        {/* Mobile View */}
+        <div className="grid gap-4 md:hidden">
             {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map(row => (
                     <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
-                        <CardContent className="p-4 space-y-2">
-                            <div className="flex justify-between items-start">
-                                {flexRender(
-                                    columns.find(c => c.accessorKey === 'name')?.cell ?? <></>,
-                                    { row } as any
-                                )}
-                                {flexRender(
-                                    columns.find(c => c.id === 'actions')?.cell ?? <></>,
-                                    { row } as any
-                                )}
-                            </div>
-                            <dl className="text-sm text-muted-foreground">
-                                <div className="flex gap-2">
-                                    <dt className="w-16 font-semibold text-foreground">Email</dt>
-                                    <dd>{row.original.email}</dd>
+                        <CardContent className="p-4 flex flex-col gap-2">
+                           <div className="flex justify-between items-start">
+                                <div className="font-medium">
+                                     {nameColumn && flexRender(nameColumn.cell, { row, getValue: row.getValue } as any)}
                                 </div>
-                                <div className="flex gap-2">
-                                    <dt className="w-16 font-semibold text-foreground">Phone</dt>
-                                    <dd>{row.original.phone}</dd>
+                                {actionsColumn && flexRender(actionsColumn.cell, { row } as any)}
+                           </div>
+                           <dl className="text-sm text-muted-foreground space-y-1">
+                                <div className="flex items-start">
+                                    <dt className="w-16 font-semibold text-foreground shrink-0">Address</dt>
+                                    <dd className="flex-1">: {row.original.address}</dd>
                                 </div>
-                                <div className="flex gap-2">
-                                    <dt className="w-16 font-semibold text-foreground">Address</dt>
-                                    <dd className="truncate">{row.original.address}</dd>
+                                <div className="flex items-start">
+                                    <dt className="w-16 font-semibold text-foreground shrink-0">Email</dt>
+                                    <dd className="flex-1">: {row.original.email}</dd>
                                 </div>
-                            </dl>
+                                <div className="flex items-start">
+                                    <dt className="w-16 font-semibold text-foreground shrink-0">Phone</dt>
+                                    <dd className="flex-1">: {row.original.phone}</dd>
+                                </div>
+                           </dl>
                         </CardContent>
                     </Card>
                 ))
@@ -227,6 +231,7 @@ export function DataTable<TData extends Customer, TValue>({
                 <div className="text-center py-10 text-muted-foreground">No customer data.</div>
             )}
         </div>
+
         <div className="flex items-center justify-end space-x-2 py-4">
             <Button
             variant="outline"

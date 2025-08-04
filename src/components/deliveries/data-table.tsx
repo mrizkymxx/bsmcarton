@@ -119,6 +119,7 @@ export function DataTable<TData extends Delivery, TValue>({
   const mainColumn = columns.find(c => c.accessorKey === 'deliveryNoteNumber') || columns[0];
   const itemsColumn = columns.find(c => c.accessorKey === 'items');
   const actionsColumn = columns.find(c => c.id === 'actions');
+  const dateColumn = columns.find(c => c.accessorKey === 'deliveryDate');
 
   return (
     <div>
@@ -152,7 +153,7 @@ export function DataTable<TData extends Delivery, TValue>({
             </Dialog>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto hidden md:flex">
+                <Button variant="outline" className="ml-auto hidden sm:flex">
                 Show Columns
                 </Button>
             </DropdownMenuTrigger>
@@ -187,64 +188,71 @@ export function DataTable<TData extends Delivery, TValue>({
             </DropdownMenu>
             </div>
         </div>
+        
+        {/* Desktop View */}
         <div className="rounded-md border hidden md:block">
-        <Table>
-            <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                    return (
-                    <TableHead key={header.id}>
-                        {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                            )}
-                    </TableHead>
-                    )
-                })}
-                </TableRow>
-            ))}
-            </TableHeader>
-            <TableBody>
-            {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                >
-                    {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            <Table>
+                <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                        return (
+                        <TableHead key={header.id}>
+                            {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                                )}
+                        </TableHead>
+                        )
+                    })}
+                    </TableRow>
+                ))}
+                </TableHeader>
+                <TableBody>
+                {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                    <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                    >
+                        {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                        ))}
+                    </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                        No delivery data.
                     </TableCell>
-                    ))}
-                </TableRow>
-                ))
-            ) : (
-                <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No delivery data.
-                </TableCell>
-                </TableRow>
-            )}
-            </TableBody>
-        </Table>
+                    </TableRow>
+                )}
+                </TableBody>
+            </Table>
         </div>
-        <div className="space-y-4 md:hidden">
+
+        {/* Mobile View */}
+        <div className="grid gap-4 md:hidden">
             {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map(row => (
                     <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
-                        <CardContent className="p-4 space-y-2">
+                        <CardContent className="p-4 flex flex-col gap-2">
                            <div className="flex justify-between items-start">
                                 <div className="space-y-1">
-                                    {mainColumn && mainColumn.cell && flexRender(mainColumn.cell, { row } as any)}
+                                    {mainColumn && flexRender(mainColumn.cell, { row } as any)}
                                     <div className="text-sm text-muted-foreground">{row.original.customerName}</div>
                                 </div>
-                                {actionsColumn && actionsColumn.cell && flexRender(actionsColumn.cell, { row } as any)}
+                                {actionsColumn && flexRender(actionsColumn.cell, { row } as any)}
+                           </div>
+                            <div className="text-sm text-muted-foreground">
+                                {dateColumn && flexRender(dateColumn.cell, { row } as any)}
                            </div>
                            <div>
-                            {itemsColumn && itemsColumn.cell && flexRender(itemsColumn.cell, { row } as any)}
+                            {itemsColumn && flexRender(itemsColumn.cell, { row } as any)}
                            </div>
                         </CardContent>
                     </Card>
@@ -253,6 +261,7 @@ export function DataTable<TData extends Delivery, TValue>({
                  <div className="text-center py-10 text-muted-foreground">No delivery data.</div>
             )}
         </div>
+
         <div className="flex items-center justify-end space-x-2 py-4">
             <Button
             variant="outline"
