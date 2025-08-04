@@ -2,9 +2,9 @@
 "use client"
 
 import { ColumnDef, FilterFn } from "@tanstack/react-table"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
+import { MoreHorizontal, ArrowUpDown, Printer } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Delivery, DeliveryItem } from "@/lib/types"
+import { Delivery, DeliveryItem, Customer } from "@/lib/types"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Accordion,
@@ -37,13 +37,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { deleteDelivery } from "@/lib/actions/deliveries"
+import { generateDeliveryNotePDF } from "@/lib/pdf"
+import { getCustomers } from "@/lib/actions/customers"
 
 function ActionsCell({ delivery }: { delivery: Delivery }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPrinting, startPrinting] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -64,6 +67,29 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
     }
     setIsDeleteDialogOpen(false);
   };
+  
+  const handlePrint = async () => {
+    startPrinting(async () => {
+      try {
+        const allCustomers = await getCustomers();
+        const customer = allCustomers.find(c => c.id === delivery.customerId);
+        if (!customer) {
+            throw new Error("Customer data not found for this delivery.");
+        }
+        generateDeliveryNotePDF(delivery, customer);
+        toast({
+            title: "Printing...",
+            description: "Your PDF is being generated.",
+        });
+      } catch (error: any) {
+          toast({
+            title: "Error",
+            description: error.message || "Failed to generate PDF.",
+            variant: "destructive",
+          });
+      }
+    });
+  }
   
   return (
     <>
@@ -93,6 +119,10 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem onClick={handlePrint} disabled={isPrinting}>
+             <Printer className="mr-2 h-4 w-4" />
+            {isPrinting ? 'Printing...' : 'Print'}
+          </DropdownMenuItem>
           <DropdownMenuItem disabled>Edit</DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setIsDeleteDialogOpen(true)}
