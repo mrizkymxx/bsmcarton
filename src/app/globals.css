@@ -108,4 +108,13 @@ body {
   [data-sidebar="sidebar"] > * {
     @apply bg-sidebar/80;
   }
+  
+  [data-sidebar="menu-button"][data-active="true"] {
+    @apply bg-transparent shadow-[inset_0_-2px_0_hsl(var(--primary))];
+    border-radius: 0;
+  }
+
+  [data-sidebar="menu-button"][data-active="true"]:hover {
+    @apply bg-sidebar-accent;
+  }
 }
