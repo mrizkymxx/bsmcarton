@@ -20,6 +20,15 @@ import { Badge } from '@/components/ui/badge';
 import { getPurchaseOrders } from '@/lib/actions/purchase-orders';
 import { getCustomers } from '@/lib/actions/customers';
 import { getDeliveries } from '@/lib/actions/deliveries';
+import { FileText, Truck } from 'lucide-react';
+
+type RecentActivity = {
+    id: string;
+    type: 'PO' | 'Pengiriman';
+    date: string;
+    title: string;
+    description: string;
+};
 
 export default async function Dashboard() {
   const purchaseOrders = await getPurchaseOrders();
@@ -42,7 +51,26 @@ export default async function Dashboard() {
     return deliveryDate.getMonth() === now.getMonth() && deliveryDate.getFullYear() === now.getFullYear();
   }).length;
   
-  const recentPOs = purchaseOrders.slice(0, 5);
+  const poActivities: RecentActivity[] = purchaseOrders.map(po => ({
+    id: `po-${po.id}`,
+    type: 'PO',
+    date: po.orderDate,
+    title: `PO: ${po.poNumber}`,
+    description: `Dari: ${po.customerName}`,
+  }));
+
+  const deliveryActivities: RecentActivity[] = deliveries.map(d => ({
+    id: `delivery-${d.id}`,
+    type: 'Pengiriman',
+    date: d.deliveryDate,
+    title: `SJ: ${d.deliveryNoteNumber}`,
+    description: `Ke: ${d.customerName}`,
+  }));
+
+  const recentActivities = [...poActivities, ...deliveryActivities]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -67,34 +95,38 @@ export default async function Dashboard() {
           </Card>
           <Card className="col-span-4 lg:col-span-3">
             <CardHeader>
-              <CardTitle>Purchase Order Terbaru</CardTitle>
+              <CardTitle>Update Terbaru</CardTitle>
               <CardDescription>
-                Daftar 5 PO terakhir yang masuk.
+                Daftar 5 aktivitas terakhir (PO & Pengiriman).
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Pelanggan</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Aktivitas</TableHead>
                     <TableHead>Tanggal</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentPOs.map((po) => (
-                    <TableRow key={po.id}>
+                  {recentActivities.map((activity) => (
+                    <TableRow key={activity.id}>
                       <TableCell>
-                        <div className="font-medium">{po.customerName}</div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          {po.poNumber}
+                        <div className="flex items-center gap-2">
+                          {activity.type === 'PO' ? 
+                            <FileText className="h-4 w-4 text-muted-foreground" /> : 
+                            <Truck className="h-4 w-4 text-muted-foreground" />
+                          }
+                          <div>
+                            <div className="font-medium">{activity.title}</div>
+                            <div className="hidden text-sm text-muted-foreground md:inline">
+                              {activity.description}
+                            </div>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{po.status}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(po.orderDate).toLocaleDateString('id-ID')}
+                        {new Date(activity.date).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'})}
                       </TableCell>
                     </TableRow>
                   ))}
