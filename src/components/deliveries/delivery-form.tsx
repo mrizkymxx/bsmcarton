@@ -59,17 +59,11 @@ const formSchema = z.object({
   vehicleNumber: z.string().optional(),
   driverName: z.string().optional(),
   items: z.array(deliveryItemSchema).min(1, "Minimal harus ada 1 item untuk dikirim."),
-}).refine(data => {
-    // Custom validation to check if quantity exceeds availableToShip
-    for (const item of data.items) {
-        if (item.quantity > item.availableToShip) {
-            return false;
-        }
-    }
-    return true;
+}).refine((data) => {
+    return data.items.every(item => item.quantity <= item.availableToShip);
 }, {
     message: "Jumlah kirim tidak boleh melebihi stok yang tersedia.",
-    path: ['items'] // Point to the items array
+    path: ['items']
 });
 
 
@@ -349,3 +343,5 @@ export function DeliveryForm({ onSuccess }: DeliveryFormProps) {
     </Form>
   )
 }
+
+    
