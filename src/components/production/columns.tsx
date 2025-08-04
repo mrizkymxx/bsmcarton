@@ -15,7 +15,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
         const item = row.original;
         return (
             <div>
-                <div className="font-medium">{item.name}</div>
+                <div className="font-semibold">{item.name}</div>
                 <div className="text-xs text-muted-foreground">
                     {item.finishedSize ? (item.type === 'Box' ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height} cm` : `${item.finishedSize.length}x${item.finishedSize.width} cm`) : '-'}
                 </div>
@@ -30,7 +30,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
         const item = row.original;
         return (
             <div>
-                <div className="font-medium">{item.customerName}</div>
+                <div className="font-semibold">{item.customerName}</div>
                 <div className="text-xs text-muted-foreground">PO: {item.poNumber}</div>
             </div>
         )
@@ -41,7 +41,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
     header: "Order Qty",
     cell: ({row}) => {
       const item = row.original;
-      return <span>{item.total.toLocaleString()}</span>
+      return <span className="font-semibold">{item.total.toLocaleString()}</span>
     }
   },
   {
@@ -57,8 +57,8 @@ export const columns: ColumnDef<ProductionItem>[] = [
         <div className="flex flex-col gap-1.5 w-48">
            <Progress value={progress} className="h-2" />
            <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Not Shipped: {notDelivered.toLocaleString()}</span>
-                <span>Shipped: {delivered.toLocaleString()}</span>
+                <span className="font-semibold">Not Shipped: {notDelivered.toLocaleString()}</span>
+                <span className="font-semibold">Shipped: {delivered.toLocaleString()}</span>
            </div>
         </div>
       )

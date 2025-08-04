@@ -158,10 +158,12 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("poNumber")}</div>,
   },
   {
     accessorKey: "customerName",
     header: "Customer Name",
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("customerName")}</div>,
   },
   {
     accessorKey: "orderDate",
@@ -173,7 +175,7 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
         month: 'long',
         day: 'numeric',
       })
-      return <div className="font-medium">{formatted}</div>
+      return <div className="font-semibold">{formatted}</div>
     },
   },
   {
@@ -215,17 +217,17 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
                         <TableBody>
                             {items.map(item => (
                                 <TableRow key={item.id}>
-                                    <TableCell>{item.type}</TableCell>
-                                    <TableCell>{item.name}</TableCell>
-                                    <TableCell>
+                                    <TableCell className="font-semibold">{item.type}</TableCell>
+                                    <TableCell className="font-semibold">{item.name}</TableCell>
+                                    <TableCell className="font-semibold">
                                       {item.type === 'Box'
                                           ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height}`
                                           : `${item.finishedSize.length}x${item.finishedSize.width}`
                                       }
                                     </TableCell>
-                                    <TableCell>{`${item.materialSize.length}x${item.materialSize.width}`}</TableCell>
-                                    <TableCell>{item.total}</TableCell>
-                                    <TableCell className="max-w-[150px] truncate">{item.notes || '-'}</TableCell>
+                                    <TableCell className="font-semibold">{`${item.materialSize.length}x${item.materialSize.width}`}</TableCell>
+                                    <TableCell className="font-semibold">{item.total}</TableCell>
+                                    <TableCell className="max-w-[150px] truncate font-semibold">{item.notes || '-'}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

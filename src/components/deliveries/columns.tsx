@@ -115,7 +115,7 @@ const renderItems = (items: DeliveryItem[]) => {
         <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1" className="border-none">
                 <AccordionTrigger className="py-1 hover:no-underline text-left flex flex-col items-start">
-                   <span className="font-medium">{items.length} Item Types</span>
+                   <span className="font-semibold">{items.length} Item Types</span>
                    <span className="text-muted-foreground font-normal text-xs">
                        Total: {items.reduce((sum, item) => sum + item.quantity, 0).toLocaleString()} pcs
                    </span>
@@ -133,7 +133,7 @@ const renderItems = (items: DeliveryItem[]) => {
                             {items.map((item, index) => (
                                 <TableRow key={`${item.orderItemId}-${index}`}>
                                     <TableCell className="py-2">
-                                      <div className="font-medium">{item.name}</div>
+                                      <div className="font-semibold">{item.name}</div>
                                       <div className="text-xs text-muted-foreground">
                                           {item.finishedSize
                                             ? item.type === 'Box'
@@ -142,8 +142,8 @@ const renderItems = (items: DeliveryItem[]) => {
                                             : '-'}
                                       </div>
                                     </TableCell>
-                                    <TableCell className="py-2">{item.poNumber}</TableCell>
-                                    <TableCell className="py-2 text-right">{item.quantity.toLocaleString()}</TableCell>
+                                    <TableCell className="py-2 font-semibold">{item.poNumber}</TableCell>
+                                    <TableCell className="py-2 text-right font-semibold">{item.quantity.toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -219,11 +219,12 @@ export const columns: ColumnDef<Delivery>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="font-mono whitespace-nowrap">{row.getValue("deliveryNoteNumber")}</div>,
+    cell: ({ row }) => <div className="font-mono whitespace-nowrap font-semibold">{row.getValue("deliveryNoteNumber")}</div>,
   },
   {
     accessorKey: "customerName",
     header: "Customer Name",
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("customerName")}</div>,
   },
   {
     accessorKey: "deliveryDate",
@@ -235,12 +236,13 @@ export const columns: ColumnDef<Delivery>[] = [
         month: 'long',
         day: 'numeric',
       })
-      return <div className="font-medium whitespace-nowrap">{formatted}</div>
+      return <div className="font-semibold whitespace-nowrap">{formatted}</div>
     },
   },
   {
     accessorKey: "vehicleNumber",
-    header: "Vehicle No."
+    header: "Vehicle No.",
+    cell: ({ row }) => <div className="font-semibold">{row.getValue("vehicleNumber")}</div>
   },
   {
     accessorKey: "items",
