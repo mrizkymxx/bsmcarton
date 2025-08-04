@@ -20,12 +20,12 @@ import {
 } from "lucide-react"
 
 const navItems = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard, color: "text-sky-500" },
-    { href: "/customers", label: "Customers", icon: Users, color: "text-violet-500" },
-    { href: "/purchase-orders", label: "Purchase Orders", icon: FileText, color: "text-amber-500" },
-    { href: "/production", label: "Production", icon: Boxes, color: "text-rose-500" },
-    { href: "/deliveries", label: "Deliveries", icon: Truck, color: "text-teal-500" },
-    { href: "/settings", label: "Settings", icon: Settings, color: "text-slate-500" },
+    { href: "/", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/customers", label: "Customers", icon: Users },
+    { href: "/purchase-orders", label: "Purchase Orders", icon: FileText },
+    { href: "/production", label: "Production", icon: Boxes },
+    { href: "/deliveries", label: "Deliveries", icon: Truck },
+    { href: "/settings", label: "Settings", icon: Settings },
 ]
 
 export function SidebarNavigation() {
@@ -49,7 +49,7 @@ export function SidebarNavigation() {
             onClick={handleLinkClick}
           >
             <Link href={item.href} prefetch={true}>
-              <item.icon className={item.color} />
+              <item.icon />
               <span>{item.label}</span>
             </Link>
           </SidebarMenuButton>
