@@ -202,12 +202,12 @@ export function DataTable<TData extends Customer, TValue>({
                     <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
                         <CardContent className="p-4 space-y-2">
                             <div className="flex justify-between items-start">
-                                {mainColumn && mainColumn.cell && flexRender(
-                                    mainColumn.cell,
-                                    { row, getValue: () => row.original.name } as any
+                                {flexRender(
+                                    columns.find(c => c.accessorKey === 'name')?.cell ?? <></>,
+                                    { row } as any
                                 )}
-                                {actionsColumn && actionsColumn.cell && flexRender(
-                                    actionsColumn.cell,
+                                {flexRender(
+                                    columns.find(c => c.id === 'actions')?.cell ?? <></>,
                                     { row } as any
                                 )}
                             </div>

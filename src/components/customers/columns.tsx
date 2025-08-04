@@ -162,22 +162,24 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => {
         const customer = row.original
         return (
-          <div className="font-medium">{customer.name}</div>
+          <div className="font-medium max-w-[200px] truncate">{customer.name}</div>
         )
     }
   },
   {
     accessorKey: "email",
     header: "Email",
+    enableHiding: true,
   },
   {
     accessorKey: "phone",
     header: "Phone",
+    enableHiding: true,
   },
   {
     accessorKey: "address",
     header: "Address",
-    cell: ({ row }) => <div className="truncate max-w-xs">{row.getValue("address")}</div>
+    cell: ({ row }) => <div className="truncate max-w-[250px]">{row.getValue("address")}</div>
   },
   {
     id: "actions",
