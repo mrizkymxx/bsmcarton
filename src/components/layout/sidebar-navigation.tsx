@@ -49,7 +49,7 @@ export function SidebarNavigation() {
             onClick={handleLinkClick}
           >
             <Link href={item.href} prefetch={true}>
-              <item.icon color="currentColor" />
+              <item.icon />
               <span>{item.label}</span>
             </Link>
           </SidebarMenuButton>
