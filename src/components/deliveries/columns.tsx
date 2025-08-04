@@ -37,6 +37,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { useState, useTransition } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
@@ -47,6 +54,7 @@ import { getCustomers } from "@/lib/actions/customers"
 function ActionsCell({ delivery }: { delivery: Delivery }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPrinting, startPrinting] = useTransition();
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -76,11 +84,8 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
         if (!customer) {
             throw new Error("Customer data not found for this delivery.");
         }
-        generateDeliveryNotePDF(delivery, customer);
-        toast({
-            title: "Printing...",
-            description: "Your PDF is being generated.",
-        });
+        const pdfDataUri = await generateDeliveryNotePDF(delivery, customer);
+        setPdfUrl(pdfDataUri);
       } catch (error: any) {
           toast({
             title: "Error",
@@ -93,6 +98,15 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
   
   return (
     <>
+      <Dialog open={!!pdfUrl} onOpenChange={(isOpen) => !isOpen && setPdfUrl(null)}>
+        <DialogContent className="max-w-4xl h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>PDF Preview</DialogTitle>
+          </DialogHeader>
+          <iframe src={pdfUrl ?? ''} className="w-full h-full border rounded-md" />
+        </DialogContent>
+      </Dialog>
+      
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -121,7 +135,7 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onClick={handlePrint} disabled={isPrinting}>
              <Printer className="mr-2 h-4 w-4" />
-            {isPrinting ? 'Printing...' : 'Print'}
+            {isPrinting ? 'Generating...' : 'Print / Preview'}
           </DropdownMenuItem>
           <DropdownMenuItem disabled>Edit</DropdownMenuItem>
           <DropdownMenuItem 

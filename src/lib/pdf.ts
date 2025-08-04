@@ -12,22 +12,35 @@ declare module 'jspdf' {
   }
 }
 
-export const generateDeliveryNotePDF = (delivery: Delivery, customer: Customer) => {
+export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Customer): Promise<string> => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
+  const today = new Date();
 
   // 1. Header
-  doc.setFontSize(20);
+  doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN', pageWidth / 2, 20, { align: 'center' });
-  doc.setFontSize(12);
+  doc.text('PT. BINTANG SUKSES MULIA', 15, 20);
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text('PT. BSMcarton', pageWidth / 2, 27, { align: 'center' });
+  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', 15, 26);
+  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', 15, 31);
+  doc.text('Phone : 082 352 181 830', 15, 36);
+  doc.text(`Jepara, ${today.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, pageWidth - 15, 31, { align: 'right' });
+  doc.text('E-mail : bintangsuksesmulia@hotmail.com', 15, 41);
+  
+  // Add a line separator
+  doc.setLineWidth(0.5);
+  doc.line(15, 45, pageWidth - 15, 45);
 
 
   // 2. Delivery Info
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SURAT JALAN', pageWidth / 2, 55, { align: 'center' });
+  
+  const infoY = 65;
   doc.setFontSize(10);
-  const infoY = 40;
   
   // Left column
   doc.setFont('helvetica', 'bold');
@@ -52,16 +65,9 @@ export const generateDeliveryNotePDF = (delivery: Delivery, customer: Customer) 
   doc.setFont('helvetica', 'normal');
   doc.text(delivery.vehicleNumber || '-', pageWidth - 15, infoY + 10, { align: 'right' });
   
-  doc.setFont('helvetica', 'bold');
-  doc.text('No. PO:', pageWidth - 70, infoY + 15);
-  doc.setFont('helvetica', 'normal');
-  // Combine unique PO numbers
-  const poNumbers = [...new Set(delivery.items.map(item => item.poNumber))].join(', ');
-  doc.text(poNumbers, pageWidth - 15, infoY + 15, { align: 'right' });
-
 
   // 3. Table of Items
-  const tableColumn = ["No.", "Nama Barang", "Ukuran", "Jumlah"];
+  const tableColumn = ["No.", "Nama Barang", "No. PO", "Ukuran", "Jumlah"];
   const tableRows: any[][] = [];
 
   delivery.items.forEach((item, index) => {
@@ -74,6 +80,7 @@ export const generateDeliveryNotePDF = (delivery: Delivery, customer: Customer) 
     const itemData = [
       index + 1,
       item.name,
+      item.poNumber,
       size,
       `${item.quantity.toLocaleString()} pcs`,
     ];
@@ -88,7 +95,7 @@ export const generateDeliveryNotePDF = (delivery: Delivery, customer: Customer) 
     headStyles: { fillColor: [22, 163, 74] },
     columnStyles: {
         0: { cellWidth: 10, halign: 'center' },
-        3: { halign: 'right' },
+        4: { halign: 'right' },
     }
   });
   
@@ -112,6 +119,6 @@ export const generateDeliveryNotePDF = (delivery: Delivery, customer: Customer) 
   doc.text('(_________________)', signatureX.receiver, signatureY + 20, { align: 'center' });
 
 
-  // Save the PDF
-  doc.save(`surat-jalan-${delivery.deliveryNoteNumber}.pdf`);
+  // Return the PDF as a data URI
+  return doc.output('datauristring');
 };
