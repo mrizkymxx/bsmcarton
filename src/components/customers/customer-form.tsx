@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -65,15 +66,16 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
 
       toast({
         title: "Sukses!",
-        description: `Data pelanggan berhasil ${isEditMode ? 'diperbarui' : 'disimpan'}.`,
+        description: `Data pelanggan berhasil ${isEditMode ? 'diperbarui' : 'ditambahkan'}.`,
       });
       if (onSuccess) {
         onSuccess();
+        form.reset();
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: `Gagal ${isEditMode ? 'memperbarui' : 'menyimpan'} data pelanggan.`,
+        description: `Gagal ${isEditMode ? 'memperbarui' : 'menambahkan'} data pelanggan. Silakan coba lagi.`,
         variant: "destructive",
       });
     }
@@ -115,7 +117,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             <FormItem>
               <FormLabel>Nomor Telepon</FormLabel>
               <FormControl>
-                <Input placeholder="cth: 08123456789" {...field} />
+                <Input placeholder="cth: 081234567890" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -129,7 +131,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
               <FormLabel>Alamat</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="cth: Jl. Industri Raya No. 123, Jakarta"
+                  placeholder="cth: Jl. Industri Raya No. 123, Jakarta Barat"
                   className="resize-none"
                   {...field}
                 />
@@ -140,7 +142,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
         />
         <div className="flex justify-end">
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan'}
+              {form.formState.isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
             </Button>
         </div>
       </form>

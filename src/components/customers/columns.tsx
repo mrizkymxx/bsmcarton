@@ -1,3 +1,4 @@
+
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
@@ -34,12 +35,14 @@ import {
 import { CustomerForm } from "./customer-form"
 import { deleteCustomer } from "@/lib/actions/customers"
 import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 
 function ActionsCell({ customer }: { customer: Customer }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleDelete = async () => {
     try {
@@ -48,6 +51,8 @@ function ActionsCell({ customer }: { customer: Customer }) {
         title: "Sukses",
         description: "Pelanggan berhasil dihapus.",
       });
+      // Refresh data by reloading the page or using router.refresh()
+      router.refresh();
     } catch (error) {
        toast({
         title: "Error",
@@ -70,7 +75,10 @@ function ActionsCell({ customer }: { customer: Customer }) {
           </DialogHeader>
           <CustomerForm 
             customer={customer} 
-            onSuccess={() => setIsEditDialogOpen(false)}
+            onSuccess={() => {
+              setIsEditDialogOpen(false);
+              router.refresh();
+            }}
           />
         </DialogContent>
       </Dialog>
@@ -78,9 +86,9 @@ function ActionsCell({ customer }: { customer: Customer }) {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Anda yakin?</AlertDialogTitle>
+            <AlertDialogTitle>Anda yakin ingin menghapus?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus pelanggan secara permanen.
+              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data pelanggan secara permanen dari server kami.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -95,24 +103,18 @@ function ActionsCell({ customer }: { customer: Customer }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">Buka menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => navigator.clipboard.writeText(customer.id)}
-          >
-            Salin ID Pelanggan
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit Pelanggan</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit</DropdownMenuItem>
           <DropdownMenuItem 
             onClick={() => setIsDeleteDialogOpen(true)}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
-            Hapus Pelanggan
+            Hapus
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -131,14 +133,14 @@ export const columns: ColumnDef<Customer>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="Pilih semua"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="Pilih baris"
       />
     ),
     enableSorting: false,

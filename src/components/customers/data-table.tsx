@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -13,6 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { useRouter } from "next/navigation"
 
 import {
   Table,
@@ -58,6 +60,7 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({})
     
   const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
+  const router = useRouter();
 
 
   const table = useReactTable({
@@ -81,7 +84,7 @@ export function DataTable<TData, TValue>({
     <div>
         <div className="flex items-center justify-between py-4">
             <Input
-            placeholder="Filter nama pelanggan..."
+            placeholder="Cari berdasarkan nama..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
@@ -103,13 +106,16 @@ export function DataTable<TData, TValue>({
                       Isi detail pelanggan di bawah ini. Klik simpan jika sudah selesai.
                   </DialogDescription>
                   </DialogHeader>
-                  <CustomerForm onSuccess={() => setIsCreateDialogOpen(false)} />
+                  <CustomerForm onSuccess={() => {
+                    setIsCreateDialogOpen(false);
+                    router.refresh();
+                  }} />
               </DialogContent>
             </Dialog>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto">
-                Kolom
+                Tampilkan Kolom
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -128,7 +134,7 @@ export function DataTable<TData, TValue>({
                         column.toggleVisibility(!!value)
                         }
                     >
-                        {column.id}
+                        {column.id === 'name' ? 'Nama Pelanggan' : column.id}
                     </DropdownMenuCheckboxItem>
                     )
                 })}
@@ -173,7 +179,7 @@ export function DataTable<TData, TValue>({
             ) : (
                 <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No results.
+                    Tidak ada data pelanggan.
                 </TableCell>
                 </TableRow>
             )}
@@ -187,7 +193,7 @@ export function DataTable<TData, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
             >
-            Previous
+            Sebelumnya
             </Button>
             <Button
             variant="outline"
@@ -195,7 +201,7 @@ export function DataTable<TData, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
             >
-            Next
+            Berikutnya
             </Button>
       </div>
     </div>
