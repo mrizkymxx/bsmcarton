@@ -47,7 +47,7 @@ const deliveryItemSchema = z.object({
   finishedSize: z.object({
     length: z.number(),
     width: z.number(),
-    height: z.number(),
+    height: z.number().optional(),
   }),
 });
 
