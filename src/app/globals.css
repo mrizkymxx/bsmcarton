@@ -8,31 +8,31 @@ body {
 
 @layer base {
   :root {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215.4 20.3% 30.8%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
-    --radius: 0.8rem;
-    --chart-1: 263.4 70% 50.4%;
-    --chart-2: 22.4 93.9% 52.9%;
-    --chart-3: 150 80% 40%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 258 88% 66%;
+    --primary-foreground: 223 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 12 84% 60%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 258 88% 66%;
+    --radius: 0.75rem;
+    --chart-1: 258 88% 66%;
+    --chart-2: 219 83% 63%;
+    --chart-3: 12 84% 60%;
+    --chart-4: 147 78% 41%;
+    --chart-5: 43 74% 66%;
     --sidebar-background: 240 5.3% 13.1%;
     --sidebar-foreground: 210 20% 98%;
     --sidebar-primary: 263.4 70% 50.4%;
@@ -44,30 +44,30 @@ body {
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215.4 20.3% 30.8%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
-    --chart-1: 263.4 70% 50.4%;
-    --chart-2: 22.4 93.9% 52.9%;
-    --chart-3: 150 80% 40%;
-    --chart-4: 280 70% 60%;
-    --chart-5: 330 70% 55%;
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 258 88% 66%;
+    --primary-foreground: 223 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 12 84% 60%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 258 88% 66%;
+    --chart-1: 258 88% 66%;
+    --chart-2: 219 83% 63%;
+    --chart-3: 12 84% 60%;
+    --chart-4: 147 78% 41%;
+    --chart-5: 43 74% 66%;
     --sidebar-background: 240 5.3% 13.1%;
     --sidebar-foreground: 210 20% 98%;
     --sidebar-primary: 263.4 70% 50.4%;
@@ -88,7 +88,7 @@ body {
   }
   .dark {
     background-color: hsl(var(--background));
-    background-image: radial-gradient(hsl(var(--foreground) / 0.1) 1px, transparent 0);
+    background-image: radial-gradient(hsl(var(--foreground) / 0.05) 1px, transparent 0);
     background-size: 40px 40px;
     background-position: -19px -19px;
   }
@@ -106,7 +106,9 @@ body {
         hsl(var(--sidebar-background) / 0.8) 50%,
         hsl(var(--sidebar-background)) 100%
       ),
-      url('https://www.transparenttextures.com/patterns/cubes.png');
+      url('https://i.pinimg.com/736x/bb/da/08/bbda08b6c9b1343044675e319440a6f8.jpg');
     background-blend-mode: multiply;
+    background-size: cover;
+    background-position: center;
   }
 }
