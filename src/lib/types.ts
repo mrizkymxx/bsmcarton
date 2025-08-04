@@ -1,3 +1,4 @@
+
 export interface Customer {
   id: string;
   name: string;
@@ -13,6 +14,7 @@ export type OrderItemType = 'Box' | 'Layer';
 export interface OrderItem {
   id: string;
   type: OrderItemType;
+  name: string;
   layoutImage?: string;
   materialSize: { length: number; width: number };
   finishedSize: { length: number; width: number; height: number };
@@ -20,7 +22,6 @@ export interface OrderItem {
   produced: number;
   status: OrderItemStatus;
   notes?: string;
-  name: string;
 }
 
 export interface PurchaseOrder {
@@ -32,6 +33,14 @@ export interface PurchaseOrder {
   items: OrderItem[];
   status: 'Open' | 'Completed' | 'Cancelled';
 }
+
+export interface ProductionItem extends OrderItem {
+    poId: string;
+    poNumber: string;
+    customerName: string;
+    orderDate: string;
+}
+
 
 export interface Delivery {
   id: string;
