@@ -96,5 +96,5 @@ export const columns: ColumnDef<ProductionItem>[] = [
         }
       return <Badge variant={variant}>{status}</Badge>
     }
-  }
+  },
 ]
