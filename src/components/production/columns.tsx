@@ -2,28 +2,8 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { ProductionItem } from "@/lib/types"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
-import { ProductionForm } from "./production-form"
 import { Progress } from "../ui/progress"
 
 
@@ -71,7 +51,7 @@ export const columns: ColumnDef<ProductionItem>[] = [
       const item = row.original;
       const delivered = item.delivered || 0;
       const notDelivered = item.produced - delivered;
-      const progress = item.total > 0 ? ((item.delivered || 0) / item.total) * 100 : 0;
+      const progress = item.total > 0 ? (delivered / item.total) * 100 : 0;
       
       return (
         <div className="flex flex-col gap-1.5 w-48">
@@ -92,14 +72,17 @@ export const columns: ColumnDef<ProductionItem>[] = [
       const delivered = item.delivered || 0;
       let status:any = item.status;
       
-      // Force status to 'Dikirim' if all items are delivered, overriding any other status.
       if (delivered >= item.total) {
         status = "Dikirim";
       }
 
+      if (status === 'Siap Kirim') {
+        status = 'Belum di kirim';
+      }
+
       let variant: "default" | "secondary" | "outline" | "destructive" = "outline";
         switch (status) {
-            case 'Siap Kirim':
+            case 'Belum di kirim':
                 variant = 'secondary';
                 break;
             case 'Dikirim':
