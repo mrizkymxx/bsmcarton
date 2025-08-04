@@ -14,6 +14,7 @@ import { UserNav } from "./user-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { SidebarNavigation } from "./sidebar-navigation";
 import { usePathname } from "next/navigation";
+import { Star } from "lucide-react";
 
 const pageTitles: { [key: string]: string } = {
   "/": "Dashboard",
@@ -34,8 +35,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2 p-2">
-                <span className="flex items-center justify-center h-8 w-8 text-primary font-bold text-3xl">
-                  工
+                <span className="flex items-center justify-center h-8 w-8 text-primary">
+                  <Star className="h-6 w-6" />
                 </span>
                 <h1 className="text-xl font-bold">BSMcarton</h1>
             </div>
