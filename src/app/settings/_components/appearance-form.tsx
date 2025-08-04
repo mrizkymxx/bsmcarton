@@ -57,7 +57,8 @@ export function AppearanceForm() {
     if(currentFontSize === 'base') document.documentElement.style.setProperty("--font-size-base", '16px');
     if(currentFontSize === 'lg') document.documentElement.style.setProperty("--font-size-base", '18px');
 
-  }, [form]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function onSubmit(data: AppearanceFormValues) {
     setTheme(data.theme);
