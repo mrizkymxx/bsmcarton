@@ -204,6 +204,7 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead>Jenis</TableHead>
                                 <TableHead>Nama Style</TableHead>
                                 <TableHead>Uk. Jadi (cm)</TableHead>
                                 <TableHead>Uk. Bahan (mm)</TableHead>
@@ -214,8 +215,14 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
                         <TableBody>
                             {items.map(item => (
                                 <TableRow key={item.id}>
+                                    <TableCell>{item.type}</TableCell>
                                     <TableCell>{item.name}</TableCell>
-                                    <TableCell>{`${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height}`}</TableCell>
+                                    <TableCell>
+                                      {item.type === 'Box'
+                                          ? `${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height}`
+                                          : `${item.finishedSize.length}x${item.finishedSize.width}`
+                                      }
+                                    </TableCell>
                                     <TableCell>{`${item.materialSize.length}x${item.materialSize.width}`}</TableCell>
                                     <TableCell>{item.total}</TableCell>
                                     <TableCell className="max-w-[150px] truncate">{item.notes || '-'}</TableCell>

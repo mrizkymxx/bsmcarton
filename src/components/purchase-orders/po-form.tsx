@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { upsertPurchaseOrder } from "@/lib/actions/purchase-orders"
-import { Customer, PurchaseOrder } from "@/lib/types"
+import { Customer, OrderItemType, PurchaseOrder } from "@/lib/types"
 import {
   Select,
   SelectContent,
@@ -38,7 +37,7 @@ import { Separator } from "@/components/ui/separator"
 const finishedSizeSchema = z.object({
   length: z.coerce.number({invalid_type_error: "Panjang harus berupa angka."}).positive("P harus lebih dari 0."),
   width: z.coerce.number({invalid_type_error: "Lebar harus berupa angka."}).positive("L harus lebih dari 0."),
-  height: z.coerce.number({invalid_type_error: "Tinggi harus berupa angka."}).positive("T harus lebih dari 0."),
+  height: z.coerce.number({invalid_type_error: "Tinggi harus berupa angka."}),
 })
 
 const materialSizeSchema = z.object({
@@ -48,11 +47,20 @@ const materialSizeSchema = z.object({
 
 const orderItemSchema = z.object({
   id: z.string().optional(),
+  type: z.enum(["Box", "Layer"], { required_error: "Jenis item harus dipilih." }),
   name: z.string().min(3, "Nama item minimal 3 karakter."),
   finishedSize: finishedSizeSchema,
   materialSize: materialSizeSchema.optional(),
   total: z.coerce.number().min(1, "Jumlah harus lebih dari 0."),
   notes: z.string().optional(),
+}).refine(data => {
+    if (data.type === 'Box') {
+        return data.finishedSize.height > 0;
+    }
+    return true;
+}, {
+    message: "Tinggi harus lebih dari 0 untuk jenis 'Box'.",
+    path: ["finishedSize", "height"],
 });
 
 
@@ -78,14 +86,25 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
         name: `items.${index}`
     });
 
+    const itemType = itemValues.type as OrderItemType;
     const P = parseFloat(itemValues.finishedSize?.length) || 0;
     const L = parseFloat(itemValues.finishedSize?.width) || 0;
-    const T = parseFloat(itemValues.finishedSize?.height) || 0;
+    const T = itemType === 'Box' ? (parseFloat(itemValues.finishedSize?.height) || 0) : 0;
 
-    const panjangBahan = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
-    const lebarBahan = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
+    const [panjangBahan, lebarBahan] = (() => {
+        if (itemType === 'Box') {
+            const panjang = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
+            const lebar = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
+            return [panjang, lebar];
+        }
+        if (itemType === 'Layer') {
+             const panjang = P > 0 ? P * 10 : 0;
+             const lebar = L > 0 ? L * 10 : 0;
+             return [panjang, lebar];
+        }
+        return [0, 0];
+    })();
     
-    // Use setValue from the form instance to update the materialSize
     useEffect(() => {
         form.setValue(`items.${index}.materialSize`, {
             length: panjangBahan,
@@ -93,18 +112,42 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
         }, { shouldValidate: true });
     }, [panjangBahan, lebarBahan, index, form.setValue, form]);
 
+    const formatNumber = (num: number) => {
+        return Number.isInteger(num) ? num : num.toFixed(2);
+    }
 
     return (
         <div className="flex items-start gap-4 p-4 border rounded-md relative">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-x-4 gap-y-2 flex-1">
+                 <FormField
+                    control={control}
+                    name={`items.${index}.type`}
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-4">
+                        <FormLabel>Jenis Item</FormLabel>
+                         <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih jenis" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectItem value="Box">Box</SelectItem>
+                                <SelectItem value="Layer">Layer</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
                 <FormField
                     control={control}
                     name={`items.${index}.name`}
                     render={({ field }) => (
-                    <FormItem className="md:col-span-12">
+                    <FormItem className="md:col-span-8">
                         <FormLabel>Nama Style</FormLabel>
                         <FormControl>
-                        <Input placeholder="cth: Box Standar" {...field} />
+                        <Input placeholder="cth: Box Standar / Layer Polos" {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -136,19 +179,21 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     </FormItem>
                     )}
                 />
-                 <FormField
-                    control={control}
-                    name={`items.${index}.finishedSize.height`}
-                    render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                        <FormLabel>Tinggi (cm)</FormLabel>
-                        <FormControl>
-                            <Input type="number" placeholder="T" {...field} step="0.01" />
-                        </FormControl>
-                         <FormMessage />
-                    </FormItem>
-                    )}
-                />
+                {itemType === 'Box' && (
+                    <FormField
+                        control={control}
+                        name={`items.${index}.finishedSize.height`}
+                        render={({ field }) => (
+                        <FormItem className="md:col-span-2">
+                            <FormLabel>Tinggi (cm)</FormLabel>
+                            <FormControl>
+                                <Input type="number" placeholder="T" {...field} step="0.01" />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                )}
                  <FormField
                     control={control}
                     name={`items.${index}.total`}
@@ -163,9 +208,11 @@ const ItemRow = ({ control, index, remove, form }: { control: any, index: number
                     )}
                 />
                 <div className="md:col-span-4 flex items-end">
-                    <p className="text-sm text-muted-foreground">
-                        Ukuran Bahan: {Number(panjangBahan.toFixed(2))} x {Number(lebarBahan.toFixed(2))} mm
-                    </p>
+                     {panjangBahan > 0 && lebarBahan > 0 && (
+                        <p className="text-sm text-muted-foreground">
+                            Ukuran Bahan: {formatNumber(panjangBahan)} x {formatNumber(lebarBahan)} mm
+                        </p>
+                    )}
                 </div>
                 <FormField
                     control={control}
@@ -257,18 +304,35 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
       }
       
        const processedItems = values.items.map(item => {
+        const itemType = item.type;
         const P = parseFloat(String(item.finishedSize.length)) || 0;
         const L = parseFloat(String(item.finishedSize.width)) || 0;
-        const T = parseFloat(String(item.finishedSize.height)) || 0;
-
-        const panjangBahan = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
-        const lebarBahan = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
+        const T = itemType === 'Box' ? (parseFloat(String(item.finishedSize.height)) || 0) : 0;
+        
+        const [panjangBahan, lebarBahan] = (() => {
+            if (itemType === 'Box') {
+                const panjang = P > 0 && L > 0 ? ((P + L) * 2 + 3) * 10 : 0;
+                const lebar = L > 0 && T > 0 ? (L + T + 0.2) * 10 : 0;
+                return [panjang, lebar];
+            }
+            if (itemType === 'Layer') {
+                const panjang = P > 0 ? P * 10 : 0;
+                const lebar = L > 0 ? L * 10 : 0;
+                return [panjang, lebar];
+            }
+            return [0, 0];
+        })();
 
         return {
            ...item,
            id: item.id || crypto.randomUUID(),
            produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
            status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
+           finishedSize: {
+               length: P,
+               width: L,
+               height: T
+           },
            materialSize: {
              length: panjangBahan,
              width: lebarBahan,
@@ -399,11 +463,11 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
               size="sm"
               className="mt-4"
               onClick={() => append({ 
+                  type: 'Box',
                   name: "", 
                   total: 0, 
                   notes: "", 
-                  finishedSize: {length: 0, width: 0, height: 0}, 
-                  materialSize: {length: 0, width: 0}
+                  finishedSize: {length: 0, width: 0, height: 0},
                 })}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -443,5 +507,3 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     </Form>
   )
 }
-
-    

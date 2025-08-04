@@ -8,9 +8,11 @@ export interface Customer {
 }
 
 export type OrderItemStatus = 'Draft' | 'Diproduksi' | 'Siap Kirim' | 'Dikirim';
+export type OrderItemType = 'Box' | 'Layer';
 
 export interface OrderItem {
   id: string;
+  type: OrderItemType;
   layoutImage?: string;
   materialSize: { length: number; width: number };
   finishedSize: { length: number; width: number; height: number };
