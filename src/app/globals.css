@@ -109,8 +109,4 @@ body {
     @apply bg-sidebar/80 backdrop-blur-sm;
   }
 
-  [data-sidebar=menu-button][data-active=true] {
-    @apply bg-primary/80 text-primary-foreground;
-  }
-
 }
