@@ -47,11 +47,15 @@ export function AppearanceForm() {
   })
 
   useEffect(() => {
-    form.setValue("theme", theme === "light" || theme === "dark" ? theme : "dark");
-    const currentFont = localStorage.getItem("font") || "inter";
-    const currentFontSize = localStorage.getItem("fontSize") || "base";
-    form.setValue("font", currentFont as "inter" | "roboto" | "poppins");
-    form.setValue("fontSize", currentFontSize as "sm" | "base" | "lg");
+    const currentTheme = theme === "light" || theme === "dark" ? theme : "dark";
+    const currentFont = (localStorage.getItem("font") as "inter" | "roboto" | "poppins") || "inter";
+    const currentFontSize = (localStorage.getItem("fontSize") as "sm" | "base" | "lg") || "base";
+    
+    form.reset({
+      theme: currentTheme,
+      font: currentFont,
+      fontSize: currentFontSize,
+    });
   }, [theme, form]);
 
   function onSubmit(data: AppearanceFormValues) {
