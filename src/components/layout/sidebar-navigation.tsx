@@ -36,7 +36,6 @@ export function SidebarNavigation() {
         <SidebarMenuItem key={item.href}>
           <SidebarMenuButton
             asChild
-            isActive={pathname === item.href}
             tooltip={item.label}
           >
             <Link href={item.href}>
