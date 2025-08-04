@@ -129,7 +129,7 @@ export function DataTable<TData, TValue>({
                         customerName: "Nama Pelanggan",
                         orderDate: "Tanggal Pesan",
                         status: "Status",
-                        items: "Total Item",
+                        items: "Detail Item",
                     }
                     return (
                     <DropdownMenuCheckboxItem

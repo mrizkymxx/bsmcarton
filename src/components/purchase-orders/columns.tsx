@@ -36,6 +36,8 @@ import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { PurchaseOrderForm } from "./po-form"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 function ActionsCell({ po }: { po: PurchaseOrder }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -186,10 +188,45 @@ export const columns: ColumnDef<PurchaseOrder>[] = [
   },
     {
     accessorKey: "items",
-    header: "Total Item",
+    header: "Detail Item",
     cell: ({ row }) => {
-      const items = row.getValue("items") as any[];
-      return <span>{items.length}</span>;
+      const items = row.original.items;
+      if (!items || items.length === 0) {
+        return <span>-</span>;
+      }
+      return (
+        <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1" className="border-none">
+                <AccordionTrigger className="p-0 hover:no-underline">
+                   {items.length} Item
+                </AccordionTrigger>
+                <AccordionContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Nama Style</TableHead>
+                                <TableHead>Uk. Jadi (cm)</TableHead>
+                                <TableHead>Uk. Bahan (mm)</TableHead>
+                                <TableHead>Jumlah</TableHead>
+                                <TableHead>Catatan</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {items.map(item => (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{`${item.finishedSize.length}x${item.finishedSize.width}x${item.finishedSize.height}`}</TableCell>
+                                    <TableCell>{`${item.materialSize.length}x${item.materialSize.width}`}</TableCell>
+                                    <TableCell>{item.total}</TableCell>
+                                    <TableCell className="max-w-[150px] truncate">{item.notes || '-'}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
+      )
     },
   },
   {

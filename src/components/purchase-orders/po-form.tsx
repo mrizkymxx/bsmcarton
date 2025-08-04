@@ -2,7 +2,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useFieldArray, useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -35,13 +35,24 @@ import { useEffect, useState } from "react"
 import { getCustomers } from "@/lib/actions/customers"
 import { Separator } from "@/components/ui/separator"
 
+const finishedSizeSchema = z.object({
+  length: z.coerce.number().positive("P harus lebih dari 0."),
+  width: z.coerce.number().positive("L harus lebih dari 0."),
+  height: z.coerce.number().positive("T harus lebih dari 0."),
+})
+
+const materialSizeSchema = z.object({
+    length: z.coerce.number(),
+    width: z.coerce.number()
+})
+
 const orderItemSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(3, "Nama item minimal 3 karakter."),
+  finishedSize: finishedSizeSchema,
+  materialSize: materialSizeSchema,
   total: z.coerce.number().min(1, "Jumlah harus lebih dari 0."),
   notes: z.string().optional(),
-  // For simplicity, we'll omit the other fields for now
-  // and set default values when creating/updating.
 });
 
 
@@ -59,6 +70,122 @@ type POFormValues = z.infer<typeof formSchema>
 interface POFormProps {
   purchaseOrder?: PurchaseOrder;
   onSuccess?: () => void;
+}
+
+const ItemRow = ({ control, index, remove }: { control: any, index: number, remove: (index: number) => void }) => {
+    const itemValues = useWatch({
+        control,
+        name: `items.${index}`
+    });
+
+    const P = itemValues.finishedSize?.length || 0;
+    const L = itemValues.finishedSize?.width || 0;
+    const T = itemValues.finishedSize?.height || 0;
+    
+    const panjang_bahan = Math.floor(((P + L) * 2 + 3) * 10);
+    const lebar_bahan = Math.floor((L + T + 0.2) * 10);
+
+    return (
+        <div className="flex items-start gap-4 p-4 border rounded-md relative">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-x-4 gap-y-2 flex-1">
+                <FormField
+                    control={control}
+                    name={`items.${index}.name`}
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-12">
+                        <FormLabel>Nama Style</FormLabel>
+                        <FormControl>
+                        <Input placeholder="cth: Box Standar" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={control}
+                    name={`items.${index}.finishedSize.length`}
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                        <FormLabel>Panjang (cm)</FormLabel>
+                        <FormControl>
+                            <Input type="number" placeholder="P" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={control}
+                    name={`items.${index}.finishedSize.width`}
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                        <FormLabel>Lebar (cm)</FormLabel>
+                        <FormControl>
+                            <Input type="number" placeholder="L" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={control}
+                    name={`items.${index}.finishedSize.height`}
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                        <FormLabel>Tinggi (cm)</FormLabel>
+                        <FormControl>
+                            <Input type="number" placeholder="T" {...field} />
+                        </FormControl>
+                         <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={control}
+                    name={`items.${index}.total`}
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                        <FormLabel>Jumlah</FormLabel>
+                        <FormControl>
+                        <Input type="number" placeholder="cth: 1000" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <div className="md:col-span-4 flex items-end">
+                    <p className="text-sm text-muted-foreground">
+                        Ukuran Bahan: {panjang_bahan || 0} x {lebar_bahan || 0} mm
+                    </p>
+                </div>
+                <FormField
+                    control={control}
+                    name={`items.${index}.notes`}
+                    render={({ field }) => (
+                    <FormItem className="md:col-span-12">
+                        <FormLabel>Catatan</FormLabel>
+                        <FormControl>
+                        <Textarea placeholder="Opsional" className="resize-none" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                {/* Hidden fields for material size */}
+                 <FormField control={control} name={`items.${index}.materialSize.length`} render={({field}) => <Input type="hidden" {...field} value={panjang_bahan}/>} />
+                 <FormField control={control} name={`items.${index}.materialSize.width`} render={({field}) => <Input type="hidden" {...field} value={lebar_bahan} />} />
+            </div>
+            <Button
+                type="button"
+                variant="destructive"
+                size="icon"
+                onClick={() => remove(index)}
+                className="mt-7 shrink-0"
+            >
+                <Trash className="h-4 w-4" />
+            </Button>
+        </div>
+    )
 }
 
 export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
@@ -88,16 +215,13 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     customerName: purchaseOrder?.customerName || "",
     orderDate: purchaseOrder ? new Date(purchaseOrder.orderDate) : new Date(),
     status: purchaseOrder?.status || "Open",
-    items: purchaseOrder?.items.map(item => ({
-      ...item,
-      total: item.total || 0,
-    })) || [],
+    items: purchaseOrder?.items || [],
   }
 
   const form = useForm<POFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
-    mode: "onChange",
+    mode: "onBlur",
   })
   
   const { fields, append, remove } = useFieldArray({
@@ -121,8 +245,6 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
           id: item.id || crypto.randomUUID(),
           produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
           status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
-          materialSize: { length: 0, width: 0 },
-          finishedSize: { length: 0, width: 0, height: 0 },
         })),
       };
       
@@ -233,58 +355,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
            <h3 className="text-lg font-medium mb-2">Item Pesanan</h3>
           <div className="space-y-4">
             {fields.map((field, index) => (
-              <div key={field.id} className="flex items-start gap-4 p-4 border rounded-md">
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-4 flex-1">
-                   <FormField
-                    control={form.control}
-                    name={`items.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-3">
-                        <FormLabel>Nama Item</FormLabel>
-                        <FormControl>
-                          <Input placeholder="cth: Box Standar" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`items.${index}.total`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Jumlah</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="cth: 1000" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                   <FormField
-                    control={form.control}
-                    name={`items.${index}.notes`}
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-2">
-                        <FormLabel>Catatan</FormLabel>
-                        <FormControl>
-                           <Textarea placeholder="Opsional" className="resize-none" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                 <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    onClick={() => remove(index)}
-                    className="mt-7"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-              </div>
+              <ItemRow key={field.id} control={form.control} index={index} remove={remove} />
             ))}
           </div>
            <Button
@@ -292,7 +363,13 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
               variant="outline"
               size="sm"
               className="mt-4"
-              onClick={() => append({ name: "", total: 0, notes: ""})}
+              onClick={() => append({ 
+                  name: "", 
+                  total: 0, 
+                  notes: "", 
+                  finishedSize: {length: 0, width: 0, height: 0}, 
+                  materialSize: {length: 0, width: 0}
+                })}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
               Tambah Item
