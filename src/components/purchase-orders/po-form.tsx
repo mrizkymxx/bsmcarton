@@ -242,26 +242,19 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
       if (!selectedCustomer) {
         throw new Error("Pelanggan tidak valid.");
       }
-
+      
       const processedItems = values.items.map(item => {
-         const P = item.finishedSize.length;
-         const L = item.finishedSize.width;
-         const T = item.finishedSize.height;
-
-         const panjang_bahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
-         const lebar_bahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
-         
-         return {
-            ...item,
-            id: item.id || crypto.randomUUID(),
-            produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
-            status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
-            materialSize: {
-                length: panjang_bahan,
-                width: lebar_bahan
-            }
-        }
-      });
+        // The materialSize is already calculated and set in the form state by the ItemRow component.
+        // We just need to ensure it's passed through correctly.
+        return {
+           ...item,
+           id: item.id || crypto.randomUUID(),
+           produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
+           status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
+           // No need to recalculate, just use the value from the form
+           materialSize: item.materialSize 
+       }
+     });
 
 
       const poData: Omit<PurchaseOrder, "id"> = {
@@ -431,5 +424,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     </Form>
   )
 }
+
+    
 
     
