@@ -99,10 +99,7 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
   return (
     <>
       <Dialog open={!!pdfUrl} onOpenChange={(isOpen) => !isOpen && setPdfUrl(null)}>
-        <DialogContent className="max-w-4xl h-[90vh]">
-          <DialogHeader>
-            <DialogTitle>PDF Preview</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-4xl h-[90vh] p-2">
           <iframe src={pdfUrl ?? ''} className="w-full h-full border rounded-md" />
         </DialogContent>
       </Dialog>
