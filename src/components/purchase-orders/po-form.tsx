@@ -72,7 +72,7 @@ interface POFormProps {
   onSuccess?: () => void;
 }
 
-const ItemRow = ({ control, index, remove }: { control: any, index: number, remove: (index: number) => void }) => {
+const ItemRow = ({ control, index, remove, setValue }: { control: any, index: number, remove: (index: number) => void, setValue: any }) => {
     const itemValues = useWatch({
         control,
         name: `items.${index}`
@@ -82,8 +82,18 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
     const L = parseFloat(itemValues.finishedSize?.width) || 0;
     const T = parseFloat(itemValues.finishedSize?.height) || 0;
     
-    const panjang_bahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
-    const lebar_bahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
+    const [panjangBahan, setPanjangBahan] = useState(0);
+    const [lebarBahan, setLebarBahan] = useState(0);
+
+    useEffect(() => {
+        const pb = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
+        const lb = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
+        setPanjangBahan(pb);
+        setLebarBahan(lb);
+        setValue(`items.${index}.materialSize.length`, pb, { shouldValidate: true });
+        setValue(`items.${index}.materialSize.width`, lb, { shouldValidate: true });
+    }, [P, L, T, index, setValue]);
+
 
     return (
         <div className="flex items-start gap-4 p-4 border rounded-md relative">
@@ -155,7 +165,7 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
                 />
                 <div className="md:col-span-4 flex items-end">
                     <p className="text-sm text-muted-foreground">
-                        Ukuran Bahan: {panjang_bahan || 0} x {lebar_bahan || 0} mm
+                        Ukuran Bahan: {panjangBahan || 0} x {lebarBahan || 0} mm
                     </p>
                 </div>
                 <FormField
@@ -171,9 +181,6 @@ const ItemRow = ({ control, index, remove }: { control: any, index: number, remo
                     </FormItem>
                     )}
                 />
-                {/* Hidden fields for material size */}
-                 <FormField control={control} name={`items.${index}.materialSize.length`} render={({field}) => <Input type="hidden" {...field} value={panjang_bahan}/>} />
-                 <FormField control={control} name={`items.${index}.materialSize.width`} render={({field}) => <Input type="hidden" {...field} value={lebar_bahan} />} />
             </div>
             <Button
                 type="button"
@@ -236,16 +243,32 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
         throw new Error("Pelanggan tidak valid.");
       }
 
+      const processedItems = values.items.map(item => {
+         const P = item.finishedSize.length;
+         const L = item.finishedSize.width;
+         const T = item.finishedSize.height;
+
+         const panjang_bahan = P > 0 && L > 0 ? Math.floor(((P + L) * 2 + 3) * 10) : 0;
+         const lebar_bahan = L > 0 && T > 0 ? Math.floor((L + T + 0.2) * 10) : 0;
+         
+         return {
+            ...item,
+            id: item.id || crypto.randomUUID(),
+            produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
+            status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
+            materialSize: {
+                length: panjang_bahan,
+                width: lebar_bahan
+            }
+        }
+      });
+
+
       const poData: Omit<PurchaseOrder, "id"> = {
         ...values,
         customerName: selectedCustomer.name,
         orderDate: values.orderDate.toISOString(),
-        items: values.items.map(item => ({
-          ...item,
-          id: item.id || crypto.randomUUID(),
-          produced: purchaseOrder?.items.find(i => i.id === item.id)?.produced || 0,
-          status: purchaseOrder?.items.find(i => i.id === item.id)?.status || 'Draft',
-        })),
+        items: processedItems,
       };
       
       await upsertPurchaseOrder(isEditMode ? purchaseOrder.id : null, poData);
@@ -355,7 +378,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
            <h3 className="text-lg font-medium mb-2">Item Pesanan</h3>
           <div className="space-y-4">
             {fields.map((field, index) => (
-              <ItemRow key={field.id} control={form.control} index={index} remove={remove} />
+              <ItemRow key={field.id} control={form.control} index={index} remove={remove} setValue={form.setValue} />
             ))}
           </div>
            <Button
@@ -375,6 +398,7 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
               Tambah Item
             </Button>
             <FormMessage>{form.formState.errors.items?.message}</FormMessage>
+            <FormMessage>{form.formState.errors.items?.root?.message}</FormMessage>
         </div>
 
 
@@ -407,3 +431,5 @@ export function PurchaseOrderForm({ purchaseOrder, onSuccess }: POFormProps) {
     </Form>
   )
 }
+
+    
