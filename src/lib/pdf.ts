@@ -21,7 +21,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
   // 1. Header Section
   const headerRectHeight = 30;
-  doc.setFillColor(240, 240, 240); // Light gray background
+  doc.setFillColor(248, 249, 250); // Lighter gray background
   doc.rect(0, 0, pageWidth, headerRectHeight, 'F');
 
   doc.setFont('helvetica', 'bold');
@@ -47,8 +47,10 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.text('Kepada Yth:', margin, infoYStart);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont('helvetica', 'bold');
   doc.text(delivery.customerName.toUpperCase(), margin, infoYStart + 5);
+  
+  doc.setFont('helvetica', 'normal');
   const addressText = doc.splitTextToSize(customer?.address || '', boxWidth - 5);
   doc.text(addressText, margin, infoYStart + 10);
   const addressHeight = doc.getTextDimensions(addressText).h;
@@ -72,7 +74,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.text(`: ${delivery.expedition || '-'}`, valueX, infoYStart + 15);
   
   const infoSectionHeight = Math.max(40, addressHeight + 20);
-  doc.setDrawColor(200, 200, 200);
+  doc.setDrawColor(224, 224, 224); // Lighter border color
   doc.roundedRect(margin - 5, infoYStart - 8, boxWidth + 10, infoSectionHeight, 3, 3, 'S');
   doc.roundedRect(rightBoxX - 5, infoYStart - 8, boxWidth + 10, infoSectionHeight, 3, 3, 'S');
 
@@ -103,7 +105,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
     body: tableRows,
     startY: infoYStart + infoSectionHeight + 5, 
     theme: 'grid',
-    headStyles: { fillColor: [49, 46, 129], textColor: 255 },
+    headStyles: { fillColor: [49, 46, 129], textColor: 255, fontStyle: 'bold' },
     alternateRowStyles: { fillColor: [248, 249, 250] },
     columnStyles: {
         0: { cellWidth: 10, halign: 'center' },
@@ -115,9 +117,9 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
   // Watermark
   const watermarkText = 'PT. BINTANG SUKSES MULIA';
-  doc.setFontSize(40);
+  doc.setFontSize(30);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(235, 235, 235);
+  doc.setTextColor(240, 240, 240); // Even lighter watermark
   doc.text(watermarkText, pageWidth / 2, pageHeight / 2, {
     angle: -45,
     align: 'center'
@@ -142,7 +144,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   }
 
   doc.setFontSize(10);
-  doc.setTextColor(40, 40, 40);
+  doc.setFont('helvetica', 'normal');
   doc.text('Hormat Kami,', signatureX.sender, signatureY, { align: 'center' });
   doc.text('Pengirim,', signatureX.driver, signatureY, { align: 'center' });
   doc.text('Penerima,', signatureX.receiver, signatureY, { align: 'center' });
