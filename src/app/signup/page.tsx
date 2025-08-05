@@ -38,7 +38,7 @@ export default function SignUpPage() {
         title: "Sign-up Successful",
         description: "You have been successfully registered. Redirecting to login...",
       });
-      router.push("/login");
+      router.push("/login"); // Keep this to redirect to login after successful sign-up
     } catch (error) {
       let errorMessage = "An unexpected error occurred during sign-up.";
        if (error instanceof FirebaseError) {
