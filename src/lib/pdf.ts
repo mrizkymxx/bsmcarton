@@ -121,7 +121,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(240, 240, 240); // Even lighter watermark
   doc.text(watermarkText, pageWidth / 2, pageHeight / 2, {
-    angle: -45,
+    angle: -10,
     align: 'center'
   });
 
