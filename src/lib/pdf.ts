@@ -19,19 +19,21 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   const margin = 15;
 
   // 1. Header Section
-  const headerRectHeight = 40; // Increased height from 30 to 40
+  const headerRectHeight = 45; // Increased height from 40 to 45
   doc.setFillColor(248, 249, 250); // Lighter gray background
   doc.rect(0, 0, pageWidth, headerRectHeight, 'F');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16); // Slightly larger company name
   doc.setTextColor(40, 40, 40);
-  doc.text('PT. BINTANG SUKSES MULIA', margin, 18); // Adjusted Y position
+  doc.text('PT. BINTANG SUKSES MULIA', margin, 18);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', margin, 26); // Adjusted Y position
-  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', margin, 31); // Adjusted Y position
+  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', margin, 26);
+  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', margin, 31);
+  doc.text('Email: bsm.carton@gmail.com | Telp: 0812-3456-7890', margin, 36);
+
 
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');

@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
@@ -105,4 +104,3 @@ export default function OverviewChart({ orders, deliveries }: OverviewChartProps
         </ChartContainer>
     );
 }
-
