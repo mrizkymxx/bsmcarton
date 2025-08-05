@@ -32,7 +32,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.setFontSize(9);
   doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', margin, 26);
   doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', margin, 31);
-  doc.text('Email: bsm.carton@gmail.com | Telp: 0812-3456-7890', margin, 36);
+  doc.text('Email: bintangsuksesmulia@hotmail.com | Telp: +6282352181830', margin, 36);
 
 
   doc.setFontSize(18);
