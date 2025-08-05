@@ -5,6 +5,7 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Delivery, PurchaseOrder } from '@/lib/types';
 import { ChartContainer, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
+import { useEffect, useState } from 'react';
 
 interface OverviewChartProps {
     orders: PurchaseOrder[];
@@ -63,14 +64,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 
-const OverviewChart = ({ orders, deliveries }: OverviewChartProps) => {
-    const currentYear = new Date().getFullYear();
-    const data = processChartData(orders, deliveries, currentYear);
+export default function OverviewChart({ orders, deliveries }: OverviewChartProps) {
+    const [chartData, setChartData] = useState<any[]>([]);
+
+    useEffect(() => {
+        const currentYear = new Date().getFullYear();
+        const data = processChartData(orders, deliveries, currentYear);
+        setChartData(data);
+    }, [orders, deliveries]);
     
     return (
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={data}>
+                <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                     <XAxis
                         dataKey="name"
@@ -100,4 +106,3 @@ const OverviewChart = ({ orders, deliveries }: OverviewChartProps) => {
     );
 }
 
-export default OverviewChart;
