@@ -4,6 +4,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -35,10 +36,20 @@ import { deletePurchaseOrder } from "@/lib/actions/purchase-orders"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
-import { PurchaseOrderForm } from "./po-form"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DeliveryForm } from "../deliveries/delivery-form"
+import { Skeleton } from "../ui/skeleton"
+
+const PurchaseOrderForm = dynamic(() => import("./po-form").then(mod => mod.PurchaseOrderForm), {
+  loading: () => <Skeleton className="h-96 w-full" />,
+  ssr: false
+});
+
+const DeliveryForm = dynamic(() => import("../deliveries/delivery-form").then(mod => mod.DeliveryForm), {
+  loading: () => <Skeleton className="h-96 w-full" />,
+  ssr: false
+});
+
 
 function ActionsCell({ po }: { po: PurchaseOrder }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);

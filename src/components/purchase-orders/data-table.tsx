@@ -15,6 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
 
 import {
   Table,
@@ -41,9 +42,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { PurchaseOrderForm } from "./po-form"
 import { PurchaseOrder } from "@/lib/types"
 import { Card, CardContent } from "../ui/card"
+import { Skeleton } from "../ui/skeleton"
+
+const PurchaseOrderForm = dynamic(() => import("./po-form").then(mod => mod.PurchaseOrderForm), {
+  loading: () => <Skeleton className="h-96 w-full" />,
+  ssr: false
+});
+
 
 interface DataTableProps<TData extends PurchaseOrder, TValue> {
   columns: ColumnDef<TData, TValue>[]

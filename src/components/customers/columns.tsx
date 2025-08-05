@@ -4,6 +4,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -32,10 +33,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { CustomerForm } from "./customer-form"
 import { deleteCustomer } from "@/lib/actions/customers"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
+import { Skeleton } from "../ui/skeleton"
+
+const CustomerForm = dynamic(() => import("./customer-form").then(mod => mod.CustomerForm), {
+  loading: () => <Skeleton className="h-64 w-full" />,
+  ssr: false
+});
 
 
 function ActionsCell({ customer }: { customer: Customer }) {

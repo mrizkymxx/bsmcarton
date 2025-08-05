@@ -15,6 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
 
 import {
   Table,
@@ -41,9 +42,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { CustomerForm } from "./customer-form"
 import { Card, CardContent } from "../ui/card"
 import { Customer } from "@/lib/types"
+import { Skeleton } from "../ui/skeleton"
+
+const CustomerForm = dynamic(() => import("./customer-form").then(mod => mod.CustomerForm), {
+  loading: () => <Skeleton className="h-64 w-full" />,
+  ssr: false
+});
 
 interface DataTableProps<TData extends Customer, TValue> {
   columns: ColumnDef<TData, TValue>[]
