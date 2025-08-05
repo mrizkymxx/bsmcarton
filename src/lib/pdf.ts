@@ -115,9 +115,9 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
   // Watermark
   const watermarkText = 'PT. BINTANG SUKSES MULIA';
-  doc.setFontSize(50);
+  doc.setFontSize(40);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(230, 230, 230); // Light gray color
+  doc.setTextColor(235, 235, 235);
   doc.text(watermarkText, pageWidth / 2, pageHeight / 2, {
     angle: -45,
     align: 'center'
