@@ -15,6 +15,6 @@ interface OverviewChartWrapperProps {
   deliveries: Delivery[];
 }
 
-export function OverviewChartWrapper({ orders, deliveries }: OverviewChartWrapperProps) {
+export default function OverviewChartWrapper({ orders, deliveries }: OverviewChartWrapperProps) {
   return <OverviewChart orders={orders} deliveries={deliveries} />;
 }

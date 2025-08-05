@@ -20,7 +20,7 @@ import { getPurchaseOrders } from '@/lib/actions/purchase-orders';
 import { getCustomers } from '@/lib/actions/customers';
 import { getDeliveries } from '@/lib/actions/deliveries';
 import { FileText, Truck } from 'lucide-react';
-import { OverviewChartWrapper } from '@/components/dashboard/overview-chart-wrapper';
+import OverviewChartWrapper from '@/components/dashboard/overview-chart-wrapper';
 
 type RecentActivity = {
     id: string;
