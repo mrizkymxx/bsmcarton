@@ -40,7 +40,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
 
   // 2. Delivery Info Section
-  const infoYStart = headerRectHeight + 5;
+  const infoYStart = headerRectHeight + 10;
   const boxWidth = (pageWidth - (margin * 3)) / 2;
 
   // Customer Info Box
