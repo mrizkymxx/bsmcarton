@@ -16,67 +16,66 @@ declare module 'jspdf' {
 export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Customer): Promise<string> => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
-  
-  // 1. Header
-  const headerYStart = 15;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 15;
+
+  // 1. Header Section
+  const headerRectHeight = 30;
+  doc.setFillColor(240, 240, 240); // Light gray background
+  doc.rect(0, 0, pageWidth, headerRectHeight, 'F');
+
+  doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('PT. BINTANG SUKSES MULIA', pageWidth / 2, headerYStart, { align: 'center' });
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', pageWidth / 2, headerYStart + 6, { align: 'center' });
-  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', pageWidth / 2, headerYStart + 11, { align: 'center' });
-  doc.text('Phone : 082 352 181 830', pageWidth / 2, headerYStart + 16, { align: 'center' });
-  doc.text('E-mail : bintangsuksesmulia@hotmail.com', pageWidth / 2, headerYStart + 21, { align: 'center' });
+  doc.setTextColor(40, 40, 40);
+  doc.text('PT. BINTANG SUKSES MULIA', margin, 15);
   
-  // Add a line separator
-  const lineY = headerYStart + 25;
-  doc.setLineWidth(0.5);
-  doc.line(15, lineY, pageWidth - 15, lineY);
-
-  // Main Title (Moved below header)
-  const titleY = lineY + 10;
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN', pageWidth / 2, titleY, { align: 'center' });
-
-
-  // 2. Delivery Info
-  const infoY = titleY + 15; // Decreased this value to move it up
-  const labelX = pageWidth - 70;
-  const colonX = labelX + 30;
-  const valueX = colonX + 2;
-
-  doc.setFontSize(10);
-  
-  // Left column
-  doc.setFont('helvetica', 'bold');
-  doc.text('Kepada Yth:', 15, infoY);
   doc.setFont('helvetica', 'normal');
-  doc.text(delivery.customerName.toUpperCase(), 15, infoY + 5);
-  const addressText = doc.splitTextToSize(customer?.address || '', 80);
-  doc.text(addressText, 15, infoY + 10);
+  doc.setFontSize(9);
+  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', margin, 21);
+  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', margin, 25);
+
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('SURAT JALAN', pageWidth - margin, 20, { align: 'right' });
+
+
+  // 2. Delivery Info Section
+  const infoYStart = headerRectHeight + 12;
+  const boxWidth = (pageWidth - (margin * 3)) / 2;
+
+  // Customer Info Box
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Kepada Yth:', margin, infoYStart);
+  doc.setFont('helvetica', 'normal');
+  doc.text(delivery.customerName.toUpperCase(), margin, infoYStart + 5);
+  const addressText = doc.splitTextToSize(customer?.address || '', boxWidth - 5);
+  doc.text(addressText, margin, infoYStart + 10);
   const addressHeight = doc.getTextDimensions(addressText).h;
-  doc.text(customer?.phone || '', 15, infoY + 10 + addressHeight + 2);
-  
-  // Right column - Aligned colons
+  doc.text(`Telp: ${customer?.phone || ''}`, margin, infoYStart + 10 + addressHeight + 2);
+
+  // Delivery Details Box
+  const rightBoxX = pageWidth - margin - boxWidth;
+  const labelX = rightBoxX;
+  const valueX = labelX + 32;
+
   doc.setFont('helvetica', 'bold');
-  doc.text('Tanggal Kirim', labelX, infoY);
-  doc.text('No. Surat Jalan', labelX, infoY + 5);
-  doc.text('No. Kendaraan', labelX, infoY + 10);
-  doc.text('Berat Muatan', labelX, infoY + 15);
-  
-  doc.text(':', colonX, infoY);
-  doc.text(':', colonX, infoY + 5);
-  doc.text(':', colonX, infoY + 10);
-  doc.text(':', colonX, infoY + 15);
+  doc.text('No. Surat Jalan', labelX, infoYStart);
+  doc.text('Tanggal Kirim', labelX, infoYStart + 5);
+  doc.text('No. Kendaraan', labelX, infoYStart + 10);
+  doc.text('Ekspedisi', labelX, infoYStart + 15);
 
   doc.setFont('helvetica', 'normal');
-  doc.text(new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }), valueX, infoY);
-  doc.text(delivery.deliveryNoteNumber, valueX, infoY + 5);
-  doc.text(delivery.vehicleNumber || '', valueX, infoY + 10);
-  doc.text('', valueX, infoY + 15);
+  doc.text(`: ${delivery.deliveryNoteNumber}`, valueX, infoYStart);
+  doc.text(`: ${new Date(delivery.deliveryDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}`, valueX, infoYStart + 5);
+  doc.text(`: ${delivery.vehicleNumber || '-'}`, valueX, infoYStart + 10);
+  doc.text(`: ${delivery.expedition || '-'}`, valueX, infoYStart + 15);
   
+  const infoSectionHeight = Math.max(40, addressHeight + 20);
+  doc.setDrawColor(200, 200, 200);
+  doc.roundedRect(margin - 5, infoYStart - 8, boxWidth + 10, infoSectionHeight, 3, 3, 'S');
+  doc.roundedRect(rightBoxX - 5, infoYStart - 8, boxWidth + 10, infoSectionHeight, 3, 3, 'S');
+
 
   // 3. Table of Items
   const tableColumn = ["No.", "Nama Barang", "No. PO", "Ukuran", "Jumlah"];
@@ -102,26 +101,34 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.autoTable({
     head: [tableColumn],
     body: tableRows,
-    startY: infoY + 35, // Increased this value to move the table down
+    startY: infoYStart + infoSectionHeight + 5, 
     theme: 'grid',
-    headStyles: { fillColor: [22, 163, 74] },
+    headStyles: { fillColor: [22, 163, 74], textColor: 255 },
+    alternateRowStyles: { fillColor: [248, 249, 250] },
     columnStyles: {
         0: { cellWidth: 10, halign: 'center' },
         4: { halign: 'right' },
     }
   });
   
-  let finalY = (doc as any).lastAutoTable.finalY || 100;
+  let finalY = (doc as any).lastAutoTable.finalY || 150;
+  finalY = Math.max(finalY, pageHeight - 80); // Ensure footer is not too high
+
+  // Separator line
+  doc.setDrawColor(220, 220, 220);
+  doc.setLineWidth(0.3);
+  doc.line(margin, finalY + 5, pageWidth - margin, finalY + 5);
 
   // 4. Footer & Signature
   const signatureY = finalY + 15;
   const signatureX = {
-      sender: 30,
+      sender: margin + 30,
       driver: pageWidth / 2,
-      receiver: pageWidth - 30
+      receiver: pageWidth - margin - 30
   }
 
   doc.setFontSize(10);
+  doc.setTextColor(40, 40, 40);
   doc.text('Hormat Kami,', signatureX.sender, signatureY, { align: 'center' });
   doc.text('Pengirim,', signatureX.driver, signatureY, { align: 'center' });
   doc.text('Penerima,', signatureX.receiver, signatureY, { align: 'center' });
@@ -130,6 +137,12 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   doc.text('(_________________)', signatureX.sender, signatureLineY, { align: 'center' });
   doc.text(`(${delivery.driverName || '_________________'})`, signatureX.driver, signatureLineY, { align: 'center' });
   doc.text('(_________________)', signatureX.receiver, signatureLineY, { align: 'center' });
+
+  // Absolute Footer Note
+  doc.setFontSize(8);
+  doc.setTextColor(150, 150, 150);
+  const footerText = "Dokumen ini dibuat secara otomatis oleh sistem. Terima kasih atas kerja sama Anda.";
+  doc.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
 
 
   // Return the PDF as a data URI
