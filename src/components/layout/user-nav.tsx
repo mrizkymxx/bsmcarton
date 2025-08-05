@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -13,11 +14,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
+import { useAuth } from "@/hooks/use-auth"
+import { useRouter } from "next/navigation"
 
 export function UserNav() {
+  const { user, signOut: handleLogout } = useAuth();
+  const router = useRouter();
 
-  const handleLogout = () => {
-    alert("Log out functionality is not implemented yet.");
+  if (!user) {
+    return (
+       <Button onClick={() => router.push('/login')}>
+        Log In
+      </Button>
+    )
   }
 
   return (
@@ -25,8 +34,8 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="https://placehold.co/40x40" alt="@admin" />
-            <AvatarFallback>A</AvatarFallback>
+            <AvatarImage src={user.photoURL || "https://placehold.co/40x40"} alt={user.email || 'User'} />
+            <AvatarFallback>{user.email?.[0].toUpperCase() || 'A'}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -35,7 +44,7 @@ export function UserNav() {
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">Admin</p>
             <p className="text-xs leading-none text-muted-foreground">
-              admin@cartonflow.com
+             {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
