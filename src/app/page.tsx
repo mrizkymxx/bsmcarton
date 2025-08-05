@@ -1,4 +1,5 @@
 
+import AppLayout from '@/components/layout/app-layout';
 import { StatsCards } from '@/components/dashboard/stats-cards';
 import {
   Card,
@@ -29,7 +30,7 @@ type RecentActivity = {
     description: string;
 };
 
-export default async function Dashboard() {
+async function DashboardPage() {
   const purchaseOrders = await getPurchaseOrders();
   const customers = await getCustomers();
   const deliveries = await getDeliveries();
@@ -135,4 +136,12 @@ export default async function Dashboard() {
       />
     </div>
   );
+}
+
+export default async function Dashboard() {
+    return (
+        <AppLayout>
+            <DashboardPage />
+        </AppLayout>
+    )
 }

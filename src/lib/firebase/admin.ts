@@ -1,11 +1,24 @@
 
 import * as admin from 'firebase-admin';
 
-// This is a placeholder for your admin SDK initialization.
-// In a real application, you would initialize this with your service account credentials.
 if (admin.apps.length === 0) {
-    // console.log("Firebase Admin SDK not initialized.");
+    try {
+        const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+        if (!privateKey) {
+            throw new Error('FIREBASE_PRIVATE_KEY environment variable is not set.');
+        }
+
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                privateKey: privateKey,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            }),
+        });
+    } catch (error: any) {
+        console.error('Firebase admin initialization error:', error.message);
+        throw new Error(`Could not initialize Firebase Admin SDK. Please check your service account credentials. Details: ${error.message}`);
+    }
 }
 
-// export const auth = admin.auth();
 export const db = admin.firestore();

@@ -2,8 +2,9 @@
 import { getPurchaseOrders } from "@/lib/actions/purchase-orders";
 import { columns } from "@/components/purchase-orders/columns";
 import { DataTable } from "@/components/purchase-orders/data-table";
+import AppLayout from "@/components/layout/app-layout";
 
-export default async function PurchaseOrdersPage() {
+async function PurchaseOrdersContent() {
   const purchaseOrders = await getPurchaseOrders();
 
   return (
@@ -19,4 +20,12 @@ export default async function PurchaseOrdersPage() {
       <DataTable data={purchaseOrders} columns={columns} />
     </div>
   );
+}
+
+export default async function PurchaseOrdersPage() {
+    return (
+        <AppLayout>
+            <PurchaseOrdersContent />
+        </AppLayout>
+    )
 }

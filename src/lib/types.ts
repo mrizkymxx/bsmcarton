@@ -1,4 +1,12 @@
 
+export interface User {
+  id: string;
+  username: string;
+  password?: string; // Should always be the hash, not the plain text
+  name: string;
+  email: string;
+}
+
 export interface Customer {
   id: string;
   name: string;

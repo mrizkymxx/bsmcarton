@@ -2,12 +2,19 @@
 import { SidebarNavigation } from './sidebar-navigation';
 import { UserNav } from './user-nav';
 import { MobileSidebar } from './mobile-sidebar';
+import { verifySession } from '@/lib/actions/auth';
+import { redirect } from 'next/navigation';
 
-export default function AppLayout({ 
+export default async function AppLayout({ 
   children
 }: { 
   children: React.ReactNode
 }) {
+  const session = await verifySession();
+  if (!session) {
+    redirect('/login');
+  }
+
   return (
     <div className="min-h-screen w-full flex flex-col bg-background">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">

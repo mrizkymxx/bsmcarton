@@ -2,8 +2,9 @@
 import { getCustomers } from "@/lib/actions/customers";
 import { columns } from "@/components/customers/columns";
 import { DataTable } from "@/components/customers/data-table";
+import AppLayout from "@/components/layout/app-layout";
 
-export default async function CustomersPage() {
+async function CustomersContent() {
   const customers = await getCustomers();
 
   return (
@@ -19,4 +20,13 @@ export default async function CustomersPage() {
       <DataTable data={customers} columns={columns} />
     </div>
   );
+}
+
+
+export default async function CustomersPage() {
+    return (
+        <AppLayout>
+            <CustomersContent />
+        </AppLayout>
+    )
 }

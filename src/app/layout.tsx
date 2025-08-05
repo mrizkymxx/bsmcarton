@@ -2,7 +2,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Inter } from 'next/font/google';
-import AppLayout from '@/components/layout/app-layout';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -30,7 +29,7 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-            <AppLayout>{children}</AppLayout>
+            {children}
             <Toaster />
           </ThemeProvider>
       </body>

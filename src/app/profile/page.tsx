@@ -1,5 +1,7 @@
 
-export default function ProfilePage() {
+import AppLayout from "@/components/layout/app-layout";
+
+function ProfileContent() {
   return (
     <div className="w-full space-y-4">
        <div className="flex items-center justify-between">
@@ -14,4 +16,12 @@ export default function ProfilePage() {
        <p>This is where your profile settings will be.</p>
     </div>
   )
+}
+
+export default function ProfilePage() {
+    return (
+        <AppLayout>
+            <ProfileContent />
+        </AppLayout>
+    )
 }

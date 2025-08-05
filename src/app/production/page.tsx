@@ -2,8 +2,9 @@
 import { getProductionItems } from "@/lib/actions/production";
 import { columns } from "@/components/production/columns";
 import { DataTable } from "@/components/production/data-table";
+import AppLayout from "@/components/layout/app-layout";
 
-export default async function ProductionPage() {
+async function ProductionContent() {
   const productionItems = await getProductionItems();
 
   return (
@@ -19,4 +20,13 @@ export default async function ProductionPage() {
       <DataTable data={productionItems} columns={columns} />
     </div>
   );
+}
+
+
+export default async function ProductionPage() {
+    return (
+        <AppLayout>
+            <ProductionContent />
+        </AppLayout>
+    )
 }
