@@ -36,7 +36,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN', pageWidth - margin, 25, { align: 'right' }); // Adjusted Y position
+  doc.text('SURAT JALAN / 送货单', pageWidth - margin, 25, { align: 'right' }); // Adjusted Y position
 
 
   // 2. Delivery Info Section
@@ -46,7 +46,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   // Customer Info Box
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  doc.text('Kepada Yth:', margin, infoYStart);
+  doc.text('Kepada Yth: / 致:', margin, infoYStart);
   doc.setFont('helvetica', 'bold');
   doc.text(delivery.customerName.toUpperCase(), margin, infoYStart + 5);
   
@@ -59,13 +59,13 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   // Delivery Details Box
   const rightBoxX = pageWidth - margin - boxWidth;
   const labelX = rightBoxX;
-  const valueX = labelX + 32;
+  const valueX = labelX + 38; // Increased width for Chinese characters
 
   doc.setFont('helvetica', 'bold');
-  doc.text('No. Surat Jalan', labelX, infoYStart);
-  doc.text('Tanggal Kirim', labelX, infoYStart + 5);
-  doc.text('No. Kendaraan', labelX, infoYStart + 10);
-  doc.text('Ekspedisi', labelX, infoYStart + 15);
+  doc.text('No. Surat Jalan / 送货单号', labelX, infoYStart);
+  doc.text('Tanggal Kirim / 发货日期', labelX, infoYStart + 5);
+  doc.text('No. Kendaraan / 车牌号码', labelX, infoYStart + 10);
+  doc.text('Ekspedisi / 运输', labelX, infoYStart + 15);
 
   doc.setFont('helvetica', 'normal');
   doc.text(`: ${delivery.deliveryNoteNumber}`, valueX, infoYStart);
@@ -80,7 +80,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
 
   // 3. Table of Items
-  const tableColumn = ["No.", "Nama Barang", "No. PO", "Ukuran", "Jumlah"];
+  const tableColumn = ["No. / 序号", "Nama Barang / 货品名称", "No. PO / 订单号", "Ukuran / 规格", "Jumlah / 数量"];
   const tableRows: any[][] = [];
 
   delivery.items.forEach((item, index) => {
@@ -145,9 +145,9 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text('Hormat Kami,', signatureX.sender, signatureY, { align: 'center' });
-  doc.text('Pengirim,', signatureX.driver, signatureY, { align: 'center' });
-  doc.text('Penerima,', signatureX.receiver, signatureY, { align: 'center' });
+  doc.text('Hormat Kami, / 敬上,', signatureX.sender, signatureY, { align: 'center' });
+  doc.text('Pengirim, / 发货人,', signatureX.driver, signatureY, { align: 'center' });
+  doc.text('Penerima, / 收货人,', signatureX.receiver, signatureY, { align: 'center' });
 
   const signatureLineY = signatureY + 20;
   doc.text('(_________________)', signatureX.sender, signatureLineY, { align: 'center' });
