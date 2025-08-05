@@ -1,4 +1,3 @@
-
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -8,17 +7,14 @@ import { getAuth } from "firebase/auth";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  "projectId": "cartonflow-shyw4",
-  "appId": "1:142328250405:web:1939db7116e40b4cbfbfcc",
-  "storageBucket": "cartonflow-shyw4.firebasestorage.app",
-  "apiKey": "AIzaSyAFUf5AUsT8fvqHYvA_vDVVjBRuVXWsxwA",
-  "authDomain": "cartonflow-shyw4.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "142328250405"
+  apiKey: "AIzaSyAFUf5AUsT8fvqHYvA_vDVVjBRuVXWsxwA",
+  authDomain: "cartonflow-shyw4.firebaseapp.com",
+  projectId: "cartonflow-shyw4",
+  storageBucket: "cartonflow-shyw4.firebasestorage.app",
+  messagingSenderId: "142328250405",
+  appId: "1:142328250405:web:1939db7116e40b4cbfbfcc"
 };
-
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();

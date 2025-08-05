@@ -16,8 +16,6 @@ if (admin.apps.length === 0) {
             credential: admin.credential.cert({
                 projectId: projectId,
                 clientEmail: clientEmail,
-                // This is the standard way to handle multi-line private keys stored in an environment variable.
-                // It replaces the literal '\\n' characters with actual newline characters.
                 privateKey: privateKey.replace(/\\n/g, '\n'),
             }),
         });
