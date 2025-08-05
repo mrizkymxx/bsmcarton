@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { getPurchaseOrders } from '@/lib/actions/purchase-orders';
 import { getCustomers } from '@/lib/actions/customers';
 import { getDeliveries } from '@/lib/actions/deliveries';
@@ -77,14 +76,8 @@ export default async function Dashboard() {
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
       </div>
-      <StatsCards 
-        totalCustomers={customers.length}
-        activePOCount={activePOCount}
-        readyToShipCount={readyToShipCount}
-        deliveriesThisMonth={deliveriesThisMonth}
-      />
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 lg:col-span-3">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <Card className="col-span-1 lg:col-span-4">
           <CardHeader>
             <CardTitle>Recent Updates</CardTitle>
             <CardDescription>
@@ -125,7 +118,7 @@ export default async function Dashboard() {
             </Table>
           </CardContent>
         </Card>
-        <Card className="col-span-4">
+        <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
             <CardTitle>Production Summary</CardTitle>
           </CardHeader>
@@ -134,7 +127,12 @@ export default async function Dashboard() {
           </CardContent>
         </Card>
       </div>
+       <StatsCards 
+        totalCustomers={customers.length}
+        activePOCount={activePOCount}
+        readyToShipCount={readyToShipCount}
+        deliveriesThisMonth={deliveriesThisMonth}
+      />
     </div>
   );
 }
-
