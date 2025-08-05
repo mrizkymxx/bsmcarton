@@ -40,7 +40,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
 
   // 2. Delivery Info Section
-  const infoYStart = headerRectHeight + 12;
+  const infoYStart = headerRectHeight + 8;
   const boxWidth = (pageWidth - (margin * 3)) / 2;
 
   // Customer Info Box
@@ -112,6 +112,20 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   });
   
   let finalY = (doc as any).lastAutoTable.finalY || 150;
+
+  // Watermark
+  const watermarkText = 'PT. BINTANG SUKSES MULIA';
+  doc.setFontSize(50);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(230, 230, 230); // Light gray color
+  doc.text(watermarkText, pageWidth / 2, pageHeight / 2, {
+    angle: -45,
+    align: 'center'
+  });
+
+  // Reset text color for footer
+  doc.setTextColor(40, 40, 40);
+
   finalY = Math.max(finalY, pageHeight - 80); // Ensure footer is not too high
 
   // Separator line
