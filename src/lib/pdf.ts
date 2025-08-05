@@ -20,23 +20,23 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
   const margin = 15;
 
   // 1. Header Section
-  const headerRectHeight = 30;
+  const headerRectHeight = 40; // Increased height from 30 to 40
   doc.setFillColor(248, 249, 250); // Lighter gray background
   doc.rect(0, 0, pageWidth, headerRectHeight, 'F');
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(14);
+  doc.setFontSize(16); // Slightly larger company name
   doc.setTextColor(40, 40, 40);
-  doc.text('PT. BINTANG SUKSES MULIA', margin, 15);
+  doc.text('PT. BINTANG SUKSES MULIA', margin, 18); // Adjusted Y position
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', margin, 21);
-  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', margin, 25);
+  doc.text('Jl. Raya Jepara - Kudus Desa Krasak RT. 001 RW . 005', margin, 26); // Adjusted Y position
+  doc.text('Kec. Pecangaan, Kab. Jepara - Jawa Tengah', margin, 31); // Adjusted Y position
 
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
-  doc.text('SURAT JALAN', pageWidth - margin, 20, { align: 'right' });
+  doc.text('SURAT JALAN', pageWidth - margin, 25, { align: 'right' }); // Adjusted Y position
 
 
   // 2. Delivery Info Section
