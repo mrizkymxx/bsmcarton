@@ -42,13 +42,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState, useTransition } from "react"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { deleteDelivery } from "@/lib/actions/deliveries"
-import { generateDeliveryNotePDF } from "@/lib/pdf"
 import { getCustomers } from "@/lib/actions/customers"
 
 function ActionsCell({ delivery }: { delivery: Delivery }) {
@@ -79,6 +77,8 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
   const handlePrint = async () => {
     startPrinting(async () => {
       try {
+        // Dynamically import the PDF generator
+        const { generateDeliveryNotePDF } = await import('@/lib/pdf');
         const allCustomers = await getCustomers();
         const customer = allCustomers.find(c => c.id === delivery.customerId);
         if (!customer) {
