@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { FirebaseError } from "firebase/app";
+import { useRouter } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
@@ -19,14 +20,15 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await signIn(email, password);
-      // Navigation is handled by AuthProvider, no need to do anything here on success
-    } catch (error: any) {
+      // AuthProvider will handle redirection
+    } catch (error) {
         let errorMessage = "An unexpected error occurred.";
         if (error instanceof FirebaseError) {
             switch (error.code) {
@@ -39,9 +41,11 @@ export default function LoginPage() {
                     errorMessage = 'Please enter a valid email address.';
                     break;
                 default:
-                    errorMessage = 'An error occurred during sign-in. Please try again later.';
+                    errorMessage = `An error occurred: ${error.message}`;
                     break;
             }
+        } else if (error instanceof Error) {
+            errorMessage = error.message;
         }
        toast({
         title: "Sign-in Failed",

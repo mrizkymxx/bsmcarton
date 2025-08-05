@@ -38,7 +38,7 @@ export default function SignUpPage() {
         title: "Sign-up Successful",
         description: "You have been successfully registered. Redirecting to login...",
       });
-      router.push("/login"); // Keep this to redirect to login after successful sign-up
+      router.push("/login"); 
     } catch (error) {
       let errorMessage = "An unexpected error occurred during sign-up.";
        if (error instanceof FirebaseError) {
@@ -53,16 +53,19 @@ export default function SignUpPage() {
              errorMessage = 'The password is too weak. Please use a stronger password.';
              break;
            default:
-             errorMessage = 'An error occurred. Please try again later.';
+             errorMessage = `An error occurred: ${error.message}`;
              break;
          }
+       } else if (error instanceof Error) {
+            errorMessage = error.message;
        }
       toast({
         title: "Sign-up Failed",
         description: errorMessage,
         variant: "destructive",
       });
-      setIsLoading(false);
+    } finally {
+        setIsLoading(false);
     }
   };
 

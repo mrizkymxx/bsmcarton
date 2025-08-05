@@ -42,12 +42,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const signIn = async (email: string, password: string): Promise<void> => {
      const { signInWithEmailAndPassword } = await import('firebase/auth');
-     await signInWithEmailAndPassword(auth, email, password);
+     try {
+        await signInWithEmailAndPassword(auth, email, password);
+     } catch (error) {
+        throw error;
+     }
   }
   
   const signUp = async (email: string, password: string): Promise<void> => {
       const { createUserWithEmailAndPassword } = await import('firebase/auth');
-      await createUserWithEmailAndPassword(auth, email, password);
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        throw error;
+      }
   }
   
   const signOut = async (): Promise<void> => {
