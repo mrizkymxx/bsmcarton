@@ -23,7 +23,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await signIn(email, password);
-      // Navigation is handled by AuthProvider
+      // Navigation is handled by AuthProvider, no need to do anything here on success
     } catch (error: any) {
         let errorMessage = "An unexpected error occurred.";
         if (error instanceof FirebaseError) {
