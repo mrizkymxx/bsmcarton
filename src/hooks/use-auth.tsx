@@ -1,22 +1,43 @@
 
 "use client";
 
-import React, { createContext, useContext } from 'react';
-import { AuthUser } from '@/lib/types';
+import React, { createContext, useContext, useMemo } from 'react';
+import type { User } from "firebase/auth";
+
+// A mock user object for demonstration purposes
+const mockUser = {
+    uid: 'mock-uid-123',
+    email: 'admin@example.com',
+    displayName: 'Admin User',
+    photoURL: '',
+    emailVerified: true,
+    isAnonymous: false,
+    metadata: {},
+    providerData: [],
+    refreshToken: '',
+    tenantId: null,
+    delete: async () => {},
+    getIdToken: async () => '',
+    getIdTokenResult: async () => ({} as any),
+    reload: async () => {},
+    toJSON: () => ({}),
+} as User;
+
 
 type AuthContextType = {
-  user: AuthUser | null;
+  user: User | null;
 };
 
 const AuthContext = createContext<AuthContextType>({ user: null });
 
 export const AuthProvider = ({
   children,
-  user,
 }: {
   children: React.ReactNode;
-  user: AuthUser | null;
 }) => {
+  // We'll use a mock user for now. In a real app, you'd fetch this.
+  const user = useMemo(() => mockUser, []);
+
   return (
     <AuthContext.Provider value={{ user }}>
         {children}
