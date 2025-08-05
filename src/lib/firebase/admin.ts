@@ -1,8 +1,7 @@
 
 import * as admin from 'firebase-admin';
 
-// Ensure the private key is correctly formatted by replacing escaped newlines.
-const privateKey = (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 const projectId = process.env.FIREBASE_PROJECT_ID;
 const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
 
@@ -10,16 +9,17 @@ if (!projectId || !privateKey || !clientEmail) {
     throw new Error('Firebase Admin SDK credentials are not set. Please check your environment variables.');
 }
 
-const serviceAccount = {
-  projectId,
-  privateKey,
-  clientEmail,
-};
-
+// Only initialize the app if it hasn't been initialized yet
 if (admin.apps.length === 0) {
     try {
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount as any)
+            credential: admin.credential.cert({
+                projectId: projectId,
+                clientEmail: clientEmail,
+                // This is the standard way to handle multi-line private keys stored in an environment variable.
+                // It replaces the literal '\\n' characters with actual newline characters.
+                privateKey: privateKey.replace(/\\n/g, '\n'),
+            }),
         });
     } catch (error: any) {
         console.error('Firebase admin initialization error:', error.message);
