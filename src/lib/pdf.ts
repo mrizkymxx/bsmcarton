@@ -40,7 +40,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
 
 
   // 2. Delivery Info Section
-  const infoYStart = headerRectHeight + 8;
+  const infoYStart = headerRectHeight + 5;
   const boxWidth = (pageWidth - (margin * 3)) / 2;
 
   // Customer Info Box
@@ -103,7 +103,7 @@ export const generateDeliveryNotePDF = async (delivery: Delivery, customer: Cust
     body: tableRows,
     startY: infoYStart + infoSectionHeight + 5, 
     theme: 'grid',
-    headStyles: { fillColor: [22, 163, 74], textColor: 255 },
+    headStyles: { fillColor: [49, 46, 129], textColor: 255 },
     alternateRowStyles: { fillColor: [248, 249, 250] },
     columnStyles: {
         0: { cellWidth: 10, halign: 'center' },
