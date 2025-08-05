@@ -38,26 +38,19 @@ export default function SignUpPage() {
         title: "Sign-up Successful",
         description: "You have been successfully registered. Redirecting to login...",
       });
-      router.push("/login"); 
+      // No need to push, AuthProvider will handle it.
     } catch (error) {
       let errorMessage = "An unexpected error occurred during sign-up.";
-       if (error instanceof FirebaseError) {
-         switch (error.code) {
-           case 'auth/email-already-in-use':
-             errorMessage = 'This email address is already in use.';
-             break;
-           case 'auth/invalid-email':
-             errorMessage = 'Please enter a valid email address.';
-             break;
-           case 'auth/weak-password':
-             errorMessage = 'The password is too weak. Please use a stronger password.';
-             break;
-           default:
-             errorMessage = `An error occurred: ${error.message}`;
-             break;
-         }
-       } else if (error instanceof Error) {
-            errorMessage = error.message;
+       if (error instanceof Error) {
+            if (error.message.includes('auth/email-already-in-use')) {
+                errorMessage = 'This email address is already in use.';
+            } else if (error.message.includes('auth/invalid-email')) {
+                errorMessage = 'Please enter a valid email address.';
+            } else if (error.message.includes('auth/weak-password')) {
+                errorMessage = 'The password is too weak. Please use a stronger password.';
+            } else {
+                errorMessage = error.message;
+            }
        }
       toast({
         title: "Sign-up Failed",

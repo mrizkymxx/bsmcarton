@@ -20,40 +20,32 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
   const { toast } = useToast();
-  const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       await signIn(email, password);
-      // AuthProvider will handle redirection
+      // AuthProvider will handle redirection, so no need to push here.
     } catch (error) {
-        let errorMessage = "An unexpected error occurred.";
-        if (error instanceof FirebaseError) {
-            switch (error.code) {
-                case 'auth/user-not-found':
-                case 'auth/wrong-password':
-                case 'auth/invalid-credential':
-                    errorMessage = 'Invalid email or password. Please try again.';
-                    break;
-                case 'auth/invalid-email':
-                    errorMessage = 'Please enter a valid email address.';
-                    break;
-                default:
-                    errorMessage = `An error occurred: ${error.message}`;
-                    break;
-            }
-        } else if (error instanceof Error) {
-            errorMessage = error.message;
-        }
-       toast({
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      if (error instanceof Error) {
+          // Simplification: Check for common auth error codes in the message
+          if (error.message.includes('auth/invalid-credential') || error.message.includes('auth/wrong-password') || error.message.includes('auth/user-not-found')) {
+              errorMessage = "Invalid email or password.";
+          } else if (error.message.includes('auth/invalid-email')) {
+              errorMessage = "Please enter a valid email address.";
+          } else {
+              errorMessage = error.message;
+          }
+      }
+      toast({
         title: "Sign-in Failed",
         description: errorMessage,
         variant: "destructive",
       });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
