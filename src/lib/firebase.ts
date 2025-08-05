@@ -10,12 +10,7 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  "projectId": "cartonflow-shyw4",
-  "appId": "1:142328250405:web:1939db7116e40b4cbfbfcc",
-  "storageBucket": "cartonflow-shyw4.appspot.com",
-  "apiKey": "AIzaSyAFUf5AUsT8fvqHYvA_vDVVjBRuVXWsxwA",
-  "authDomain": "cartonflow-shyw4.firebaseapp.com",
-  "messagingSenderId": "142328250405"
+  // Your config will be automatically placed here
 };
 
 
