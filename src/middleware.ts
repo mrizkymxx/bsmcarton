@@ -15,19 +15,18 @@ const PUBLIC_ROUTES = ['/login'];
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const sessionToken = request.cookies.get('sessionToken')?.value;
-
-    const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
-    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
     
-    if (isProtectedRoute && !sessionToken) {
-        // If trying to access a protected route without a session, redirect to login
+    const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+
+    // If there's no session token and the user is trying to access a protected route, redirect to login.
+    if (!sessionToken && !isPublicRoute) {
         const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('next', pathname);
         return NextResponse.redirect(loginUrl);
     }
-    
-    if (isPublicRoute && sessionToken) {
-        // If trying to access a public route (like login) with a session, redirect to dashboard
+
+    // If there's a session token and the user is on a public route (like /login), redirect to the dashboard.
+    if (sessionToken && isPublicRoute) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 

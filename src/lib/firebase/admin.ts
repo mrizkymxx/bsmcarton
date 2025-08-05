@@ -9,7 +9,7 @@ const serviceAccount = {
 
 if (admin.apps.length === 0) {
     admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
+        credential: admin.credential.cert(serviceAccount as any)
     });
 }
 
