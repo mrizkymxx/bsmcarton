@@ -103,7 +103,7 @@ function ActionsCell({ delivery }: { delivery: Delivery }) {
             <DialogHeader className="sr-only">
               <DialogTitle>PDF Preview</DialogTitle>
             </DialogHeader>
-          <iframe src={pdfUrl ?? ''} className="w-full h-full border rounded-md" />
+            {pdfUrl && <iframe src={pdfUrl} className="w-full h-full border rounded-md" />}
         </DialogContent>
       </Dialog>
       
