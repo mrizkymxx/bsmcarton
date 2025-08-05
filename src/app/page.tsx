@@ -103,7 +103,7 @@ export default async function Dashboard() {
                         }
                         <div>
                           <div className="font-medium">{activity.title}</div>
-                          <div className="hidden text-sm text-muted-foreground md:inline">
+                          <div className="text-sm text-muted-foreground">
                             {activity.description}
                           </div>
                         </div>
