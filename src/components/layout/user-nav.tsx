@@ -14,18 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { useAuth } from "@/hooks/use-auth";
-import { logout } from "@/lib/actions/auth";
-import { useRouter } from "next/navigation";
 
 export function UserNav() {
-  const { user } = useAuth();
-  const router = useRouter();
 
   const handleLogout = async () => {
     // Placeholder for logout logic
     console.log("Logout clicked");
-    router.push('/login');
   };
 
   const getInitials = (name: string | null | undefined) => {
