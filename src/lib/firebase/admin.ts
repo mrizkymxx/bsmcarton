@@ -3,30 +3,25 @@ import * as admin from 'firebase-admin';
 
 if (admin.apps.length === 0) {
     try {
-        const projectId = process.env.FIREBASE_PROJECT_ID;
-        const privateKey = process.env.FIREBASE_PRIVATE_KEY;
-        const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+        const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
-        if (!projectId) {
-            throw new Error('FIREBASE_PROJECT_ID is not set.');
+        if (!serviceAccountEnv) {
+            throw new Error('The FIREBASE_SERVICE_ACCOUNT_JSON environment variable is not set.');
         }
-        if (!privateKey) {
-            throw new Error('FIREBASE_PRIVATE_KEY is not set.');
-        }
-        if (!clientEmail) {
-            throw new Error('FIREBASE_CLIENT_EMAIL is not set.');
-        }
+
+        const serviceAccount = JSON.parse(serviceAccountEnv);
 
         admin.initializeApp({
-            credential: admin.credential.cert({
-                projectId,
-                privateKey: privateKey.replace(/\\n/g, '\n'),
-                clientEmail,
-            }),
+            credential: admin.credential.cert(serviceAccount),
         });
+
     } catch (error: any) {
         console.error('Firebase admin initialization error:', error.message);
-        throw new Error(`Could not initialize Firebase Admin SDK. Please check your service account credentials. Details: ${error.message}`);
+        let detail = error.message;
+        if (error instanceof SyntaxError) {
+            detail = "Failed to parse service account JSON. Please ensure it's a valid, single-line JSON string.";
+        }
+        throw new Error(`Could not initialize Firebase Admin SDK. Please check your service account credentials. Details: ${detail}`);
     }
 }
 

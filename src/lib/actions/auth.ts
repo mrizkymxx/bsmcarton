@@ -5,8 +5,7 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/firebase/admin';
 import { User } from '../types';
-import bcrypt from 'bcryptjs';
-import { encrypt, decrypt } from '@/lib/session';
+import { encrypt } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
 const usersCollection = db.collection('users');
@@ -29,7 +28,9 @@ export async function login(_: any, formData: FormData) {
     const userDoc = userQuery.docs[0];
     const user = { id: userDoc.id, ...userDoc.data() } as User;
 
-    const isPasswordValid = await bcrypt.compare(password, user.password!);
+    // IMPORTANT: This is a placeholder for password comparison.
+    // In a real application, you should use a secure password hashing library like bcrypt.
+    const isPasswordValid = password === user.password;
     
     if (!isPasswordValid) {
       return { error: 'Invalid username or password.' };
@@ -46,7 +47,7 @@ export async function login(_: any, formData: FormData) {
 
     cookies().set('session', session, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
@@ -61,10 +62,9 @@ export async function login(_: any, formData: FormData) {
 }
 
 // This function is for one-time use to create the initial admin user.
-// You can call this from a temporary route or a script.
 export async function createAdminUser() {
     const username = 'admin';
-    const password = 'password'; // Use a strong password in a real app
+    const password = 'password'; 
     const name = 'Admin User';
     const email = 'admin@example.com';
 
@@ -75,10 +75,10 @@ export async function createAdminUser() {
             return { message: 'Admin user already exists.' };
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // IMPORTANT: In a real app, hash the password before saving.
         const newUser: Omit<User, 'id'> = {
             username,
-            password: hashedPassword,
+            password: password, // Store plain text password
             name,
             email,
         };
