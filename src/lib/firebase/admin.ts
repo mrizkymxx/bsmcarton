@@ -3,23 +3,25 @@ import * as admin from 'firebase-admin';
 
 if (admin.apps.length === 0) {
     try {
-        const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-        
-        if (!process.env.FIREBASE_PROJECT_ID) {
+        const projectId = process.env.FIREBASE_PROJECT_ID;
+        const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+        const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+
+        if (!projectId) {
             throw new Error('FIREBASE_PROJECT_ID is not set.');
         }
         if (!privateKey) {
             throw new Error('FIREBASE_PRIVATE_KEY is not set.');
         }
-        if (!process.env.FIREBASE_CLIENT_EMAIL) {
+        if (!clientEmail) {
             throw new Error('FIREBASE_CLIENT_EMAIL is not set.');
         }
 
         admin.initializeApp({
             credential: admin.credential.cert({
-                projectId: process.env.FIREBASE_PROJECT_ID,
-                privateKey: privateKey,
-                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                projectId,
+                privateKey: privateKey.replace(/\\n/g, '\n'),
+                clientEmail,
             }),
         });
     } catch (error: any) {
