@@ -8,8 +8,8 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('session')?.value;
 
-  const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
-  
+  const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route) && route.length === pathname.length);
+
   if (!sessionCookie && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
