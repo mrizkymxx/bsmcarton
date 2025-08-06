@@ -2,18 +2,12 @@
 import { SidebarNavigation } from './sidebar-navigation';
 import { UserNav } from './user-nav';
 import { MobileSidebar } from './mobile-sidebar';
-import { verifySession } from '@/lib/session';
-import { redirect } from 'next/navigation';
 
 export default async function AppLayout({ 
   children
 }: { 
   children: React.ReactNode
 }) {
-  const session = await verifySession();
-  if (!session?.isAuth) {
-    redirect('/login');
-  }
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-background">
@@ -25,7 +19,7 @@ export default async function AppLayout({
           <MobileSidebar />
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
-            <UserNav name={session.name} email={session.email} />
+            <UserNav name="Admin User" email="admin@example.com" />
         </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 lg:p-8">

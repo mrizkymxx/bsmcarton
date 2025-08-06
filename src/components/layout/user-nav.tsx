@@ -13,7 +13,6 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { deleteSession } from "@/lib/actions/session"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -26,8 +25,7 @@ export function UserNav({ name, email }: UserNavProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await deleteSession();
-    router.push('/login');
+    // No-op
   };
 
   const getInitials = (name: string | null | undefined) => {
@@ -36,11 +34,7 @@ export function UserNav({ name, email }: UserNavProps) {
   }
   
   if (!name) {
-      return (
-          <Button asChild>
-            <Link href="/login">Login</Link>
-          </Button>
-      )
+      return null
   }
 
   return (
@@ -64,12 +58,6 @@ export function UserNav({ name, email }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/profile" passHref>
-            <DropdownMenuItem>
-              Profile
-              <DropdownMenuShortcut>⇧P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </Link>
            <Link href="/settings" passHref>
             <DropdownMenuItem>
               Settings
