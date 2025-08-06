@@ -2,7 +2,7 @@
 import { SidebarNavigation } from './sidebar-navigation';
 import { UserNav } from './user-nav';
 import { MobileSidebar } from './mobile-sidebar';
-import { verifySession } from '@/lib/actions/auth';
+import { verifySession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
 export default async function AppLayout({ 

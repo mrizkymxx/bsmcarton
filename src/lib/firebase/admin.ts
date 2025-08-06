@@ -4,8 +4,15 @@ import * as admin from 'firebase-admin';
 if (admin.apps.length === 0) {
     try {
         const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+        
+        if (!process.env.FIREBASE_PROJECT_ID) {
+            throw new Error('FIREBASE_PROJECT_ID is not set.');
+        }
         if (!privateKey) {
-            throw new Error('FIREBASE_PRIVATE_KEY environment variable is not set.');
+            throw new Error('FIREBASE_PRIVATE_KEY is not set.');
+        }
+        if (!process.env.FIREBASE_CLIENT_EMAIL) {
+            throw new Error('FIREBASE_CLIENT_EMAIL is not set.');
         }
 
         admin.initializeApp({
