@@ -11,7 +11,7 @@ export default async function AppLayout({
   children: React.ReactNode
 }) {
   const session = await verifySession();
-  if (!session) {
+  if (!session?.isAuth) {
     redirect('/login');
   }
 
@@ -25,7 +25,7 @@ export default async function AppLayout({
           <MobileSidebar />
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
-            <UserNav />
+            <UserNav name={session.name} email={session.email} />
         </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 lg:p-8">

@@ -68,10 +68,6 @@ export async function verifySession() {
   return { isAuth: true, userId: session.userId, name: session.name, email: session.email };
 }
 
-export async function deleteSession() {
-  cookies().delete('session');
-}
-
 
 export async function login(_: any, formData: FormData) {
   const username = formData.get('username') as string;
