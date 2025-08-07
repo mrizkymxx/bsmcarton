@@ -19,7 +19,7 @@ export default async function AppLayout({
           <MobileSidebar />
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
-            <UserNav name="Admin User" email="admin@example.com" />
+            <UserNav name="BSMcarton" email={null} />
         </div>
       </header>
       <main className="flex-1 p-4 sm:p-6 lg:p-8">
