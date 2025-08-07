@@ -4,7 +4,6 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Delivery, PurchaseOrder } from '@/lib/types';
 import { ChartContainer, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
-import { useEffect, useState } from 'react';
 
 interface OverviewChartProps {
     orders: PurchaseOrder[];
@@ -63,14 +62,9 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 
-export default function OverviewChart({ orders, deliveries }: OverviewChartProps) {
-    const [chartData, setChartData] = useState<any[]>([]);
-
-    useEffect(() => {
-        const currentYear = new Date().getFullYear();
-        const data = processChartData(orders, deliveries, currentYear);
-        setChartData(data);
-    }, [orders, deliveries]);
+export default function OverviewChartWrapper({ orders, deliveries }: OverviewChartProps) {
+    const currentYear = new Date().getFullYear();
+    const chartData = processChartData(orders, deliveries, currentYear);
     
     return (
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
