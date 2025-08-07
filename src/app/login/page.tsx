@@ -25,7 +25,7 @@ export default function LoginPage() {
       localStorage.setItem("isLoggedIn", "true");
       router.push("/");
     } else {
-      alert("Kata sandi salah!");
+      alert("Incorrect password!");
       setPassword("");
     }
   };
@@ -42,13 +42,13 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            Silakan masukkan kata sandi untuk mengakses dasbor.
+            Please enter your password to access the dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="password">Kata Sandi</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -60,7 +60,7 @@ export default function LoginPage() {
               />
             </div>
             <Button onClick={handleLogin} className="w-full">
-              Masuk
+              Login
             </Button>
           </div>
         </CardContent>
