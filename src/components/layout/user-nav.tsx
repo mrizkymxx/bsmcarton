@@ -42,7 +42,7 @@ export function UserNav({ name, email }: UserNavProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://placehold.co/40x40`} alt={name || 'User Avatar'} data-ai-hint="chinese person" />
+            <AvatarImage src={`https://images.unsplash.com/photo-1574282411425-e949c106126a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxrdWNpbmd8ZW58MHx8fHwxNzU0NTUyODAxfDA&ixlib=rb-4.1.0&q=80&w=1080`} alt={name || 'User Avatar'} data-ai-hint="chinese person" />
             <AvatarFallback>{getInitials(name)}</AvatarFallback>
           </Avatar>
         </Button>
