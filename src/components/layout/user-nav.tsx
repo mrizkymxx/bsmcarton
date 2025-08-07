@@ -10,11 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 interface UserNavProps {
   name: string | null;
@@ -22,12 +20,6 @@ interface UserNavProps {
 }
 
 export function UserNav({ name, email }: UserNavProps) {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    // No-op
-  };
-
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'A';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -61,15 +53,9 @@ export function UserNav({ name, email }: UserNavProps) {
            <Link href="/settings" passHref>
             <DropdownMenuItem>
               Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          Log out
-          <DropdownMenuShortcut>⇧Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
