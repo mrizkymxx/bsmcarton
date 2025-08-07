@@ -49,4 +49,78 @@ Struktur folder proyek diorganisir untuk menjaga keterbacaan dan kemudahan pemel
     -   `pdf.ts`: Logika untuk membuat dokumen PDF.
 -   `src/hooks/`: Berisi custom hooks React, seperti `use-toast` untuk notifikasi.
 
+## Diagram Aplikasi
+
+### Entity-Relationship Diagram (ERD)
+
+Diagram ini menjelaskan struktur dan hubungan antar data di dalam database Firestore.
+
+```mermaid
+erDiagram
+    CUSTOMERS ||--o{ PURCHASE_ORDERS : "memiliki"
+    CUSTOMERS ||--o{ DELIVERIES : "menerima"
+
+    PURCHASE_ORDERS {
+        string id PK "Unique ID"
+        string customerId FK "ID Pelanggan"
+        string customerName "Nama Pelanggan"
+        string poNumber "Nomor PO"
+        string orderDate "Tanggal Pesanan"
+        string status "Status PO (Open, Completed)"
+        OrderItem[] items "Daftar Item Pesanan"
+    }
+
+    DELIVERIES {
+        string id PK "Unique ID"
+        string customerId FK "ID Pelanggan"
+        string customerName "Nama Pelanggan"
+        string deliveryNoteNumber "Nomor Surat Jalan"
+        string deliveryDate "Tanggal Pengiriman"
+        DeliveryItem[] items "Daftar Item Pengiriman"
+    }
+
+    PURCHASE_ORDERS }o--o{ DELIVERIES : "terkait melalui"
+
+```
+*   Seorang `CUSTOMER` dapat memiliki banyak `PURCHASE_ORDERS` dan `DELIVERIES`.
+*   Setiap `PURCHASE_ORDER` berisi array `OrderItem`.
+*   Setiap `DELIVERY` berisi array `DeliveryItem`.
+*   `DeliveryItem` mengambil referensi dari `OrderItem` di dalam `PurchaseOrder` untuk mengurangi jumlah stok yang tersedia.
+
+### Flowchart Alur Kerja
+
+Diagram ini menggambarkan alur kerja utama dari pesanan hingga pengiriman.
+
+```mermaid
+graph TD
+    A[Mulai] --> B{Manajemen Pelanggan};
+    B --> C[Tambah/Update Data Pelanggan];
+    C --> D{Manajemen PO};
+    D --> E[Buat PO Baru & Pilih Pelanggan];
+    E --> F[Input Detail Item Pesanan];
+    F --> G{Pelacakan Produksi};
+    G --> H[Update Jumlah Barang yang Selesai Diproduksi];
+    H --> I{Manajemen Pengiriman};
+    I --> J[Buat Surat Jalan dari Item yang 'Ready to Ship'];
+    J --> K[Cetak/Simpan PDF Surat Jalan];
+    K --> L[Stok pada PO Otomatis Berkurang];
+    L --> M[Selesai];
+
+    subgraph "Dashboard"
+        B -- Ringkasan --> Z[Dashboard];
+        D -- Ringkasan --> Z;
+        I -- Ringkasan --> Z;
+    end
+
+```
+**Penjelasan Alur:**
+1.  **Manajemen Pelanggan**: Admin dapat menambah atau mengubah data pelanggan.
+2.  **Manajemen PO**: Admin membuat Purchase Order baru untuk pelanggan yang sudah terdaftar, lalu memasukkan detail setiap item yang dipesan.
+3.  **Pelacakan Produksi**: Tim produksi melihat daftar item yang harus dibuat dan memperbarui jumlah yang sudah selesai diproduksi.
+4.  **Manajemen Pengiriman**: Admin membuat surat jalan dengan memilih item-item yang stoknya sudah siap kirim.
+5.  **Otomatisasi**: Pembuatan surat jalan secara otomatis mengurangi jumlah barang yang "tersedia untuk dikirim" dari PO yang bersangkutan. Jika semua item dalam sebuah PO sudah terkirim, status PO akan diperbarui.
+6.  **Dashboard**: Semua aktivitas ini dirangkum dalam dashboard untuk pemantauan secara real-time.
+
+---
+
 Proyek ini siap untuk di-hosting di platform modern seperti Firebase App Hosting atau Vercel.
