@@ -21,8 +21,9 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     if (password === hardcodedPassword) {
-      alert("Login Berhasil!");
-      router.push("/"); // Arahkan ke halaman utama (dashboard)
+      // Store login status in localStorage
+      localStorage.setItem("isLoggedIn", "true");
+      router.push("/");
     } else {
       alert("Kata sandi salah!");
       setPassword("");
