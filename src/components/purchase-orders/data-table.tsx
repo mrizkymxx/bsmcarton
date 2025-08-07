@@ -91,15 +91,51 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
   return (
     <div className="w-full">
         <div className="flex items-center justify-between py-4">
-            <Input
-            placeholder="Search by PO number..."
-            value={(table.getColumn("poNumber")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-                table.getColumn("poNumber")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-            />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
+              <Input
+                placeholder="Search by PO number..."
+                value={(table.getColumn("poNumber")?.getFilterValue() as string) ?? ""}
+                onChange={(event) =>
+                    table.getColumn("poNumber")?.setFilterValue(event.target.value)
+                }
+                className="max-w-sm"
+              />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="ml-auto hidden sm:flex">
+                    Show Columns
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    {table
+                    .getAllColumns()
+                    .filter(
+                        (column) => column.getCanHide()
+                    )
+                    .map((column) => {
+                        const columnMap: Record<string, string> = {
+                            poNumber: "PO Number",
+                            customerName: "Customer Name",
+                            orderDate: "Order Date",
+                            status: "Status",
+                            items: "Item Details",
+                        }
+                        return (
+                        <DropdownMenuCheckboxItem
+                            key={column.id}
+                            className="capitalize"
+                            checked={column.getIsVisible()}
+                            onCheckedChange={(value) =>
+                            column.toggleVisibility(!!value)
+                            }
+                        >
+                            {columnMap[column.id] ?? column.id}
+                        </DropdownMenuCheckboxItem>
+                        )
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="btn-primary-glow">
@@ -120,46 +156,10 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
                   }} />
               </DialogContent>
             </Dialog>
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto hidden sm:flex">
-                Show Columns
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                {table
-                .getAllColumns()
-                .filter(
-                    (column) => column.getCanHide()
-                )
-                .map((column) => {
-                    const columnMap: Record<string, string> = {
-                        poNumber: "PO Number",
-                        customerName: "Customer Name",
-                        orderDate: "Order Date",
-                        status: "Status",
-                        items: "Item Details",
-                    }
-                    return (
-                    <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                        }
-                    >
-                        {columnMap[column.id] ?? column.id}
-                    </DropdownMenuCheckboxItem>
-                    )
-                })}
-            </DropdownMenuContent>
-            </DropdownMenu>
-            </div>
         </div>
 
         {/* Desktop View */}
-        <div className="rounded-md border hidden md:block">
+        <div className="rounded-lg border hidden md:block">
             <Table>
                 <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -215,7 +215,7 @@ export function DataTable<TData extends PurchaseOrder, TValue>({
                   const ActionsCell = columns.find(c => c.id === 'actions')?.cell;
 
                   return (
-                    <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
+                    <Card key={row.id} data-state={row.getIsSelected() && "selected"} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-4 flex flex-col gap-2">
                             <div className="flex justify-between items-start">
                                 <div className="space-y-1">

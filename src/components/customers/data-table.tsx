@@ -93,37 +93,17 @@ export function DataTable<TData extends Customer, TValue>({
 
   return (
     <div className="w-full">
-        <div className="flex items-center justify-between py-4">
-            <Input
+       <div className="flex items-center justify-between py-4">
+        <div className="flex items-center gap-4">
+          <Input
             placeholder="Search by name..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
-            />
-            <div className="flex items-center gap-2">
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="btn-primary-glow">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add Customer
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                  <DialogTitle>Add New Customer</DialogTitle>
-                  <DialogDescription>
-                      Fill in the customer details below. Click save when you're done.
-                  </DialogDescription>
-                  </DialogHeader>
-                  <CustomerForm onSuccess={() => {
-                    setIsCreateDialogOpen(false);
-                    router.refresh();
-                  }} />
-              </DialogContent>
-            </Dialog>
-            <DropdownMenu>
+          />
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="ml-auto hidden sm:flex">
                 Show Columns
@@ -150,12 +130,32 @@ export function DataTable<TData extends Customer, TValue>({
                     )
                 })}
             </DropdownMenuContent>
-            </DropdownMenu>
-            </div>
+          </DropdownMenu>
         </div>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="btn-primary-glow">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Customer
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+              <DialogTitle>Add New Customer</DialogTitle>
+              <DialogDescription>
+                  Fill in the customer details below. Click save when you're done.
+              </DialogDescription>
+              </DialogHeader>
+              <CustomerForm onSuccess={() => {
+                setIsCreateDialogOpen(false);
+                router.refresh();
+              }} />
+          </DialogContent>
+        </Dialog>
+      </div>
         
         {/* Desktop View */}
-        <div className="rounded-md border hidden md:block">
+        <div className="rounded-lg border hidden md:block">
             <Table>
                 <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -207,7 +207,7 @@ export function DataTable<TData extends Customer, TValue>({
                   const customer = row.original;
                   const ActionsCell = columns.find(c => c.id === 'actions')?.cell;
                   return (
-                    <Card key={row.id} data-state={row.getIsSelected() && "selected"}>
+                    <Card key={row.id} data-state={row.getIsSelected() && "selected"} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-4 flex flex-col gap-2">
                            <div className="flex justify-between items-start">
                                 <div className="font-medium text-primary">
